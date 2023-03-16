@@ -49,6 +49,7 @@ export function setupRouterInterceptor(){
 
 function tabHandler(to){
   const tabsStore = useTabsStore()
+  tabsStore.setCurrentTab(to.path)
   const tabs = tabsStore.getTabs
   if((to.name && tabs.length === 0 || tabs.every(it => it.path !== to.path)) && !to.path.startsWith('/redirect') && !to.path.startsWith('/login')){
     tabsStore.pushTab(to)
