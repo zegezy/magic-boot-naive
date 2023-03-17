@@ -40,15 +40,16 @@
       show-trigger
     >
       <n-layout position="absolute">
-        <n-layout-header class="h-16">
-          magic-boot
+        <n-layout-header class="nav-bg">
+          <p class="text-center text-xl m-0 pt-5 pb-5 text-white">Magic Boot</p>
         </n-layout-header>
-        <n-layout-content class="absolute top-16 right-0 bottom-0 left-0" :native-scrollbar="false">
+        <n-layout-content class="absolute top-16 right-0 bottom-0 left-0 nav-bg" :native-scrollbar="false">
           <n-menu
             :indent="24"
             :collapsed-width="64"
             :collapsed-icon-size="22"
             :options="menuOptions"
+            :inverted="true"
           />
         </n-layout-content>
       </n-layout>
@@ -103,3 +104,9 @@
   }
 
 </script>
+
+<style scoped>
+.nav-bg{
+  background-color: #041427;
+}
+</style>
