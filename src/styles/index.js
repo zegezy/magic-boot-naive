@@ -1,5 +1,6 @@
 import {Menu} from '@/styles/override/Menu';
 import {LoadingBar} from "@/styles/override/LoadingBar";
+import {Common} from "@/styles/override/Common";
 
 
 /**
@@ -7,5 +8,6 @@ import {LoadingBar} from "@/styles/override/LoadingBar";
  */
 export const lightThemeOverrides = {
     Menu: Menu,
-    LoadingBar:LoadingBar
+    LoadingBar:LoadingBar,
+    common: Common
 }
