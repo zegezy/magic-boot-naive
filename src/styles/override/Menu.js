@@ -28,5 +28,7 @@ export const Menu = {
     "itemColorActiveCollapsedInverted": "#2D8CF0FF",
     "itemColorActive": "rgba(45, 140, 240, 0.1)",
     "itemColorActiveHover": "#2D8CF01A",
-    "itemColorActiveCollapsed": "#2D8CF01A"
+    "itemColorActiveCollapsed": "#2D8CF01A",
+    "itemTextColorHoverHorizontal": "#2D8CF0FF",
+    "itemIconColorHoverHorizontal": "#2D8CF0FF"
 }
