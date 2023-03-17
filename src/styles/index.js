@@ -1,6 +1,6 @@
-import {Menu} from '@/styles/override/Menu';
-import {LoadingBar} from "@/styles/override/LoadingBar";
-import {Common} from "@/styles/override/Common";
+import {Menu} from '@/styles/override/menu';
+import {LoadingBar} from "@/styles/override/loading-bar";
+import {Common} from "@/styles/override/common";
 
 
 /**
