@@ -69,7 +69,7 @@ async function loadData(userStore){
   await dictStore.getDictData()
 
   await generateRoutes().then(accessRoutes => {
-    userStore.pushPermissionRouter(...accessRoutes)
+    userStore.pushPermissionRouter(accessRoutes)
     accessRoutes.forEach(it => {
       router.addRoute(it)
     })

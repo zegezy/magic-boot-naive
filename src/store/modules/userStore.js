@@ -24,7 +24,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function pushPermissionRouter(value){
-    permissionRouters.value.push(value)
+    permissionRouters.value.push(...value)
   }
 
   function clear(){

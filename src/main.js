@@ -4,6 +4,7 @@ import App from './App.vue'
 import { setupNaive, setupNaiveDiscreteApi, setupDirectives } from '@/scripts/plugins'
 import { setupRouter } from '@/scripts/router'
 import { setupStore } from '@/store'
+import { setupComponents } from '@/components'
 const app = createApp(App)
 
 async function start(){
@@ -12,6 +13,7 @@ async function start(){
     setupNaiveDiscreteApi()
     setupDirectives(app)
     setupRouter(app)
+    setupComponents(app)
     app.mount('#app')
 }
 

@@ -53,8 +53,8 @@ common.$postJson = (url, data) => request.post(url, JSON.stringify(data), {
 })
 
 common.renderWhere = (where) => {
-  var newWhere = {}
-  for(var key in where) {
+  let newWhere = {}
+  for(let key in where) {
     if(where[key] instanceof Object){
       newWhere[key] = where[key].value
     }else{

@@ -1,36 +1,4 @@
 <template>
-<!--  <n-layout position="absolute">-->
-<!--    <n-layout-header class="h-16" bordered>-->
-<!--      magic boot-->
-<!--    </n-layout-header>-->
-<!--    <n-layout has-sider class="absolute top-16 right-0 bottom-0 left-0">-->
-<!--      <n-layout-sider-->
-<!--        bordered-->
-<!--        show-trigger-->
-<!--        collapse-mode="width"-->
-<!--        :collapsed-width="64"-->
-<!--        :width="240"-->
-<!--        :native-scrollbar="false"-->
-<!--      >-->
-<!--        <n-menu-->
-<!--          :indent="24"-->
-<!--          :collapsed-width="64"-->
-<!--          :collapsed-icon-size="22"-->
-<!--          :options="menuOptions"-->
-<!--        />-->
-<!--      </n-layout-sider>-->
-<!--      <n-layout>-->
-<!--        <n-layout-header class="h-10">-->
-<!--          &lt;!&ndash; tabs &ndash;&gt;-->
-<!--        </n-layout-header>-->
-<!--        <n-layout-content class="absolute top-10 right-0 bottom-0 left-0">-->
-<!--          <router-view v-slot="{ Component }">-->
-<!--            <component :is="Component" />-->
-<!--          </router-view>-->
-<!--        </n-layout-content>-->
-<!--      </n-layout>-->
-<!--    </n-layout>-->
-<!--  </n-layout>-->
   <n-layout position="absolute" has-sider>
     <n-layout-sider
       bordered
@@ -65,9 +33,11 @@
           <n-layout-header class="h-12 p-2">
             <tabs />
           </n-layout-header>
-          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2">
+          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2 router-view-content">
             <router-view v-slot="{ Component }">
-              <component :is="Component" />
+              <keep-alive :include="tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1))">
+                <component :is="Component" :key="$route.path" />
+              </keep-alive>
             </router-view>
           </n-layout-content>
         </n-layout>

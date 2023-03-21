@@ -12,3 +12,7 @@ import {NConfigProvider, NThemeEditor, zhCN, dateZhCN} from 'naive-ui'
 import {lightThemeOverrides} from "@/styles";
 
 </script>
+
+<style lang="less">
+  @import 'styles/index.less';
+</style>
