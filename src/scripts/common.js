@@ -6,31 +6,28 @@ import { utils, writeFile } from 'xlsx'
 
 const common = {}
 
-// common.handleDelete = (options) => {
-//   const url = options.url
-//   const id = options.id
-//   ElMessageBox.confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-//     confirmButtonText: '确定',
-//     cancelButtonText: '取消',
-//     type: 'warning'
-//   }).then(() => {
-//     request({
-//       url: url,
-//       method: 'delete',
-//       params: {
-//         id: id
-//       }
-//     }).then(() => {
-//       ElNotification({
-//         title: '成功',
-//         message: '删除成功',
-//         type: 'success',
-//         duration: 2000
-//       })
-//       options && options.done()
-//     })
-//   })
-// }
+common.handleDelete = (options) => {
+  const url = options.url
+  const id = options.id
+  $dialog.warning({
+    title: '提示',
+    content: '此操作将永久删除该数据, 是否继续?',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      request({
+        url: url,
+        method: 'delete',
+        params: {
+          id: id
+        }
+      }).then(() => {
+        $message.success('删除成功')
+        options && options.done()
+      })
+    }
+  })
+}
 
 const formatJson = (list, filterVal) => {
   return list.map(v => filterVal.map(j => {

@@ -20,9 +20,9 @@
       </n-space>
     </div>
     <div class="mb-table">
-      <mb-table ref="table" v-bind="tableOptions" key="123123123"/>
+      <mb-table ref="table" v-bind="tableOptions" />
     </div>
-    <mb-modal ref="menuFormDialog" style="width: 1050px" :title="dialogTitle" @confirm="menuFormRef.save($event)">
+    <mb-modal ref="menuFormDialog" width="1050px" :title="dialogTitle" @confirm="menuFormRef.save($event)">
       <menu-form ref="menuFormRef" :menu-tree="menuTree" :menu-data="menuData" @reload-table="reloadTable" />
     </mb-modal>
   </div>
@@ -116,6 +116,15 @@ const tableOptions = reactive({
       title: '是否缓存',
       type: 'switch',
       width: 100,
+      if: (row) => {
+        if(row.isShow == 0){
+          return false
+        }
+        if(!$xe.isEmpty(row.children) && row.children.some(it => it.isShow == 1)){
+          return false
+        }
+        return row.url ? true : false
+      },
       change: (row) => {
         common.$get('/system/menu/change', {
           id: row.id,

@@ -5,7 +5,7 @@
     :title="title"
     :show-icon="false"
     :mask-closable="false"
-    :style="style"
+    :style="{ width }"
   >
     <slot />
     <template #action>
@@ -27,7 +27,7 @@
       type: String,
       default: ''
     },
-    style: {
+    width: {
       type: String,
       default: ''
     }

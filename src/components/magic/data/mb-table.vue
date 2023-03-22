@@ -15,7 +15,7 @@
     @update:page="table.handlerPage"
   >
     <template #switch="{ row, col }">
-      <mb-switch v-model="row[col.key]" @change="col.change(row)" />
+      <mb-switch v-model="row[col.key]" @change="col.change(row)" v-if="(!col.if && true) || (col.if && col.if(row))" />
     </template>
     <template #html="{ row, col }">
       <span v-html="row[col.key]"></span>
