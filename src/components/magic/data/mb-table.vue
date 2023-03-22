@@ -21,7 +21,9 @@
       <span v-html="row[col.key]"></span>
     </template>
     <template #buttons="{ row, col }">
-      <a class="mx-1 cursor-pointer" v-for="it in col.buttons" @click="it.click(row)">{{ it.title }}</a>
+      <template v-for="it in col.buttons">
+        <a v-if="it.link" v-permission="it.permission" class="mx-1 cursor-pointer" @click="it.click(row)">{{ it.title }}</a>
+      </template>
     </template>
   </n-data-table>
 </template>
@@ -33,7 +35,6 @@
   import { NButton } from 'naive-ui'
   import MbSwitch from '@/components/magic/form/mb-switch.vue'
   const slots = useSlots()
-  console.log(Object.keys(slots))
   const props = defineProps({
     props: {
       type: Object,

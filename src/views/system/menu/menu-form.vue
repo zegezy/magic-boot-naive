@@ -1,9 +1,3 @@
-<style>
-.el-input-number .el-input__inner{
-  text-align: left;
-}
-</style>
-
 <template>
   <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
     <n-grid :cols="24">
@@ -47,12 +41,14 @@
     </n-form-item>
     <n-grid :cols="24">
       <n-gi :span="6">
-        <n-form-item label="排序" prop="sort">
+        <n-form-item label="排序" path="sort">
           <n-input-number v-model:value="temp.sort" />
         </n-form-item>
       </n-gi>
       <n-gi :span="6">
-        todo
+        <n-form-item label="图标" path="icon">
+          <n-input v-model:value="temp.icon" />
+        </n-form-item>
       </n-gi>
       <n-gi :span="6">
         <n-form-item label="菜单显示" path="isShow" v-if="menuType == 'menu'">
@@ -71,53 +67,11 @@
         </n-form-item>
       </n-gi>
     </n-grid>
-<!--    <el-row :gutter="24">-->
-<!--      <el-col :span="6">-->
-<!--        <el-form-item label="排序" prop="sort">-->
-<!--          <el-input-number v-model="temp.sort" controls-position="right" />-->
-<!--        </el-form-item>-->
-<!--      </el-col>-->
-<!--      <el-col :span="6">-->
-<!--        <el-form-item label="选择图标" prop="icon" v-if="menuType == 'menu'">-->
-<!--          <a @click="openIcons">-->
-<!--            <el-input v-model="temp.icon" class="input-with-select">-->
-<!--              <template #append>-->
-<!--                <el-button style="height:32px;">-->
-<!--                  <mb-icon :icon="temp.icon" />-->
-<!--                </el-button>-->
-<!--              </template>-->
-<!--            </el-input>-->
-<!--          </a>-->
-<!--        </el-form-item>-->
-<!--      </el-col>-->
-<!--      <el-col :span="6">-->
-<!--        <el-form-item label="菜单显示" v-if="menuType == 'menu'">-->
-<!--          <el-radio-group v-model="temp.isShow">-->
-<!--            <el-radio-button label="1">显示</el-radio-button>-->
-<!--            <el-radio-button label="0">不显示</el-radio-button>-->
-<!--          </el-radio-group>-->
-<!--        </el-form-item>-->
-<!--      </el-col>-->
-<!--      <el-col :span="6">-->
-<!--        <el-form-item label="路由缓存" v-if="menuType == 'menu'">-->
-<!--          <el-radio-group v-model="temp.keepAlive">-->
-<!--            <el-radio-button label="1">缓存</el-radio-button>-->
-<!--            <el-radio-button label="0">不缓存</el-radio-button>-->
-<!--          </el-radio-group>-->
-<!--        </el-form-item>-->
-<!--      </el-col>-->
-<!--    </el-row>-->
   </n-form>
-<!--  <mb-dialog ref="iconDialog">-->
-<!--    <template #content>-->
-<!--      <menu-icons :select-icon="selectIcon" />-->
-<!--    </template>-->
-<!--  </mb-dialog>-->
 </template>
 
 <script setup>
 import { ref, reactive, watch, nextTick } from 'vue'
-// import MenuIcons from './menu-icons'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 
@@ -135,7 +89,6 @@ const props = defineProps({
 const emit = defineEmits(['reload-table'])
 const componentTree = ref()
 const dataForm = ref()
-const iconDialog = ref()
 const menuType = ref('menu')
 const openModeRef = ref('0')
 const getTemp = () => {
@@ -162,6 +115,7 @@ common.$get('/system/component/select').then(res => {
 const temp = ref(getTemp())
 
 let validateUrl = (rule, value, callback) => {
+  console.log(callback)
   if(menuType.value == 'menu'){
     if(!value){
       callback(new Error('请输入菜单链接'))
@@ -263,15 +217,6 @@ function getInfo(row) {
 
 function resetTemp() {
   temp.value = getTemp()
-}
-
-function selectIcon(symbol) {
-  temp.value.icon = symbol
-  iconDialog.value.hide()
-}
-
-function openIcons() {
-  iconDialog.value.show()
 }
 
 function getSort() {

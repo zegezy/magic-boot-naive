@@ -30,10 +30,12 @@
 
 <script setup>
 
-import { ref,reactive, onMounted, nextTick, watch } from 'vue'
+import {ref, reactive, onMounted, nextTick, watch, h} from 'vue'
 import MenuForm from './menu-form'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
+import * as icons from "@vicons/ionicons5";
+import { NIcon } from 'naive-ui';
 
 let menuTree = ref([])
 const menuData = ref([])
@@ -63,6 +65,11 @@ const tableOptions = reactive({
     {
       key: 'icon',
       title: '图标',
+      render(row){
+        if(row.icon && icons[row.icon]){
+          return h(NIcon, null, { default: () => h(icons[row.icon]) })
+        }
+      }
     },
     {
       key: 'sort',
@@ -141,30 +148,24 @@ const tableOptions = reactive({
       buttons: [
         {
           title: '添加下级菜单',
-          type: 'primary',
           link: true,
           permission: 'menu:save',
-          icon: 'ElIconPlus',
           click: (row) => {
             addSubMenu(row.id)
           }
         },
         {
           title: '修改',
-          type: 'primary',
           link: true,
           permission: 'menu:save',
-          icon: 'ElIconEdit',
           click: (row) => {
             handleUpdate(row)
           }
         },
         {
           title: '删除',
-          type: 'primary',
           link: true,
           permission: 'menu:delete',
-          icon: 'ElIconDelete',
           click: (row) => {
             common.handleDelete({
               url: '/system/menu/delete',
@@ -213,10 +214,6 @@ function handleUpdate(row) {
   nextTick(() => {
     menuFormRef.value.getInfo(row);
   })
-}
-
-function generateIconCode(symbol) {
-  return `<svg style="width: 20px;height: 20px;fill: #999" aria-hidden="true" class="svg-icon disabled"><use href="#icon-${symbol}"></use></svg>`
 }
 
 onMounted(() => reloadTable())

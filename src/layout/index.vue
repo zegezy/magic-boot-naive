@@ -50,9 +50,7 @@
   import { ref, h, watch } from 'vue';
   import tabs from './tabs.vue'
   import { RouterLink } from 'vue-router'
-  // import {
-  //   BookOutline as BookIcon
-  // } from "@vicons/ionicons5";
+  import * as icons from "@vicons/ionicons5";
   import { NIcon } from 'naive-ui';
   import { useUserStore } from "@/store/modules/userStore"
   import { useTabsStore } from "@/store/modules/tabsStore"
@@ -67,9 +65,9 @@
     selectedKey.value = key
     menuRef.value?.showOption(key);
   }
-  // function renderIcon(icon) {
-  //   return () => h(NIcon, null, { default: () => h(icon) });
-  // }
+  function renderIcon(icon) {
+    return () => h(NIcon, null, { default: () => h(icon) })
+  }
 
   const menuOptions = ref(recursionRouters(userStore.getPermissionRouters))
 
@@ -105,6 +103,9 @@
           },
           { default: () => chi.title }
         )
+      }
+      if(chi.icon && icons[chi.icon]){
+        menu.icon = renderIcon(icons[chi.icon])
       }
       menus.push(menu)
     })
