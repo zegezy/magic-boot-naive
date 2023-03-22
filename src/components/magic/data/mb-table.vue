@@ -2,6 +2,7 @@
   <n-data-table
     v-if="showTable"
     v-bind="bindProps"
+    ref="tableRef"
     :key="tableKey"
     :class="tableKey"
     :columns="columns"
@@ -12,15 +13,27 @@
     :row-key="it => it.id"
     :default-expand-all="defaultExpandAll"
     @update:page="table.handlerPage"
-  />
+  >
+    <template #switch="{ row, col }">
+      <mb-switch v-model="row[col.key]" @change="col.change(row)" />
+    </template>
+    <template #html="{ row, col }">
+      <span v-html="row[col.key]"></span>
+    </template>
+    <template #buttons="{ row, col }">
+      <a class="mx-1 cursor-pointer" v-for="it in col.buttons" @click="it.click(row)">{{ it.title }}</a>
+    </template>
+  </n-data-table>
 </template>
 
 <script setup>
-  import { ref, onMounted, nextTick, h } from 'vue'
+  import { ref, onMounted, nextTick, h, useSlots } from 'vue'
   import common from '@/scripts/common'
   import { createTable } from './mb-table.js'
   import { NButton } from 'naive-ui'
   import MbSwitch from '@/components/magic/form/mb-switch.vue'
+  const slots = useSlots()
+  console.log(Object.keys(slots))
   const props = defineProps({
     props: {
       type: Object,
@@ -67,51 +80,28 @@
       default: () => false
     }
   })
-
+  const tableRef = ref()
   const emit = defineEmits(['update:modelValue'])
 
   function fixColumns(){
+    const slots = tableRef.value.$slots
+    const keys = Object.keys(slots)
     props.columns.forEach((col) => {
-      if(col.type){
-        // 主要是为了解决 树形数据 展开的图标 所在列问题，如果不重置 不会在第一列
-        switch(col.type){
-          case 'html':
-            col.render = (row) => {
-              return h('span', {
-                innerHTML: row[col.key]
-              })
-            }
-            break;
-          case 'buttons':
-            col.render = (row) => {
-              let buttons = []
-              col.buttons.forEach(it => {
-                buttons.push(h(
-                  'a',{
-                    class: 'mx-1 cursor-pointer',
-                    onClick: () => it.click(row)
-                  },{
-                    default: () => it.title
-                  }
-                ))
-              })
-              return buttons
-            }
-            break;
-          case 'switch':
-            col.render = (row) => {
-              return h(MbSwitch, {
-                modelValue: row[col.key],
-                'onUpdate:modelValue': (value) => row[col.key] = value,
-                onChange: () => col.change(row)
-              })
-            }
+      let type = col.type
+      if(type){
+        if(keys.indexOf(type) != -1){
+          col.render = (row) => {
+            return h(slots[type], { row, col })
+          }
         }
+        // 主要是为了解决 树形数据 展开的图标 所在列问题，如果不重置 不会在第一列
         col.type = undefined
       }
     })
   }
-  fixColumns()
+  nextTick(() => {
+    fixColumns()
+  })
 
   const tableKey = ref('magicTable' + common.uuid())
   const table = createTable(props)
