@@ -78,9 +78,22 @@
     children.forEach((chi) => {
       let menu = {}
       if(!$xe.isEmpty(chi.children)){
-        menu.key = chi.path
-        menu.label = chi.title
-        menu.children = recursionRouters(chi.children)
+        if(chi['alwaysShow'] === true){
+          menu.key = chi.path
+          menu.label = chi.title
+          menu.children = recursionRouters(chi.children)
+        }else{
+          menu.key = chi.children[0].path
+          menu.label = () => h(
+            RouterLink,
+            {
+              to: {
+                path: chi.children[0].path
+              }
+            },
+            { default: () => chi.children[0].title }
+          )
+        }
       }else{
         menu.key = chi.path
         menu.label = () => h(
