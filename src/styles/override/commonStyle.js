@@ -1,4 +1,4 @@
-export const Common = {
+export const CommonStyle = {
     "primaryColor": "#2D8CF0FF",
     "primaryColorHover": "#6FAFF4FF",
     "primaryColorPressed": "#2D8CF0FF",
