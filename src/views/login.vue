@@ -12,20 +12,20 @@
       <n-grid-item :span="9">
         <div class="login-form">
           <p class="text-4xl">欢迎回来</p>
-          <n-form ref="formRef" :model="model">
+          <n-form ref="formRef" :model="loginForm">
             <n-form-item path="age" label="用户名">
-              <n-input v-model:value="model.username" placeholder="请输入用户名" @keydown.enter.prevent/>
+              <n-input v-model:value="loginForm.username" @keyup.enter.native="handleLogin" placeholder="请输入用户名"/>
             </n-form-item>
             <n-form-item path="password" label="密码">
               <n-input
-                  v-model:value="model.password"
+                  v-model:value="loginForm.password"
                   type="password"
-                  @keydown.enter.prevent
+                  @keyup.enter.native="handleLogin"
                   placeholder="请输入密码"
               />
             </n-form-item>
             <n-form-item>
-              <n-button round block size="large" type="info" @click="loginClick">
+              <n-button round block size="large" type="info" @click="handleLogin">
                 登录
               </n-button>
             </n-form-item>
@@ -41,20 +41,34 @@
 <script setup>
 import router from '@/scripts/router'
 import {useUserStore} from '@/store/modules/userStore'
-import {reactive} from 'vue'
+import {reactive, ref} from 'vue'
 
 const userStore = useUserStore()
-const model = reactive({
+const loginForm = reactive({
   username: '',
   password: ''
 })
+const loading = ref(false)
 
-function loginClick() {
-  userStore.login({username: model.username, password: model.password}).then(token => {
-    if (token) {
-      router.push({path: '/home'})
-    }
-  })
+function handleLogin() {
+  if(!loginForm.username){
+    $message.warning('请输入用户名')
+    return
+  }else if(!loginForm.password){
+    $message.warning('请输入密码')
+    return
+  }else{
+    loading.value = true
+    userStore.login({username: loginForm.username, password: loginForm.password}).then(token => {
+      if (token) {
+        router.push({path: '/home'})
+      }else{
+        loading.value = false
+      }
+    }).catch(() => {
+      loading.value = false
+    })
+  }
 }
 </script>
 
