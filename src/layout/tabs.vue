@@ -101,7 +101,7 @@ function handleDropdownSelect(e) {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 
 .n-tag {
   padding: 17px 20px;
@@ -114,7 +114,6 @@ function handleDropdownSelect(e) {
 .selected {
 
 }
-
 
 .tabs {
   width: 100%;

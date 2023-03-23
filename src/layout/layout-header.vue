@@ -37,10 +37,9 @@ import {useRouter} from "vue-router";
 
 const router = useRouter();
 
-console.log(router)
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="less">
 .header {
   display: flex;
   justify-content: space-around;

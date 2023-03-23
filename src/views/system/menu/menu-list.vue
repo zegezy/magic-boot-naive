@@ -45,26 +45,26 @@ const tableOptions = reactive({
   loading: false,
   showNo: false,
   page: false,
-  columns: [
+  cols: [
     {
-      key: 'name',
-      title: '菜单名称',
+      field: 'name',
+      label: '菜单名称',
       type: 'html'
     },
     {
-      key: 'url',
-      title: '路径',
+      field: 'url',
+      label: '路径',
       type: 'html'
     },
     {
-      key: 'permission',
-      title: '权限标识',
+      field: 'permission',
+      label: '权限标识',
       width: 150,
       type: 'html'
     },
     {
-      key: 'icon',
-      title: '图标',
+      field: 'icon',
+      label: '图标',
       render(row){
         if(row.icon && icons[row.icon]){
           return h(NIcon, null, { default: () => h(icons[row.icon]) })
@@ -72,16 +72,16 @@ const tableOptions = reactive({
       }
     },
     {
-      key: 'sort',
-      title: '排序',
+      field: 'sort',
+      label: '排序',
     },
     {
-      title: '排序',
+      label: '排序',
       type: 'buttons',
       width: 180,
       buttons: [
         {
-          title: '上移',
+          label: '上移',
           click: (row) => {
             common.$get('/system/menu/sort/up',{
               id: row.id,
@@ -93,7 +93,7 @@ const tableOptions = reactive({
           }
         },
         {
-          title: '下移',
+          label: '下移',
           click: (row) => {
             common.$get('/system/menu/sort/down',{
               id: row.id,
@@ -107,8 +107,8 @@ const tableOptions = reactive({
       ]
     },
     {
-      key: 'isShow',
-      title: '是否显示',
+      field: 'isShow',
+      label: '是否显示',
       type: 'switch',
       width: 100,
       change: (row) => {
@@ -119,8 +119,8 @@ const tableOptions = reactive({
       }
     },
     {
-      key: 'keepAlive',
-      title: '是否缓存',
+      field: 'keepAlive',
+      label: '是否缓存',
       type: 'switch',
       width: 100,
       if: (row) => {
@@ -140,14 +140,14 @@ const tableOptions = reactive({
       }
     },
     {
-      title: '操作',
+      label: '操作',
       type: 'buttons',
       width: 280,
       fixed: 'right',
       align: 'left',
       buttons: [
         {
-          title: '添加下级菜单',
+          label: '添加下级菜单',
           link: true,
           permission: 'menu:save',
           click: (row) => {
@@ -155,7 +155,7 @@ const tableOptions = reactive({
           }
         },
         {
-          title: '修改',
+          label: '修改',
           link: true,
           permission: 'menu:save',
           click: (row) => {
@@ -163,7 +163,7 @@ const tableOptions = reactive({
           }
         },
         {
-          title: '删除',
+          label: '删除',
           link: true,
           permission: 'menu:delete',
           click: (row) => {
