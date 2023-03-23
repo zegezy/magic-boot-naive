@@ -15,26 +15,30 @@
     @update:page="table.handlerPage"
   >
     <template #switch="{ row, col }">
-      <mb-switch v-model="row[col.key]" @change="col.change(row)" v-if="(!col.if && true) || (col.if && col.if(row))" />
+      <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="(!col.if && true) || (col.if && col.if(row))" />
     </template>
     <template #html="{ row, col }">
-      <span v-html="row[col.key]"></span>
+      <span v-html="row[col.field]"></span>
     </template>
     <template #buttons="{ row, col }">
       <template v-for="it in col.buttons">
-        <a v-if="it.link" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.title }}</a>
+        <a v-if="it.link" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
       </template>
+    </template>
+    <template #dictType="{ row, col }">
+      <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
     </template>
   </n-data-table>
 </template>
 
 <script setup>
-  import { ref, onMounted, nextTick, h, useSlots } from 'vue'
+  import { ref, onMounted, nextTick, h } from 'vue'
   import common from '@/scripts/common'
   import { createTable } from './mb-table.js'
-  import { NButton } from 'naive-ui'
   import MbSwitch from '@/components/magic/form/mb-switch.vue'
-  const slots = useSlots()
+  import { useDictStore } from "@/store/modules/dictStore";
+  const dictStore = useDictStore()
+
   const props = defineProps({
     props: {
       type: Object,
@@ -52,7 +56,7 @@
       type: Object,
       default: () => {}
     },
-    columns: {
+    cols: {
       type: Array,
       default: () => []
     },
@@ -60,7 +64,7 @@
       type: String,
       default: 'post'
     },
-    size: {
+    limit: {
       type: Number,
       default: 10
     },
@@ -82,26 +86,46 @@
     }
   })
   const tableRef = ref()
-  const emit = defineEmits(['update:modelValue'])
+  const tableSlots = ref()
+  const columns = ref([])
 
-  function fixColumns(){
-    const slots = tableRef.value.$slots
-    const keys = Object.keys(slots)
-    props.columns.forEach((col) => {
+  function fixCols(){
+    tableSlots.value = tableRef.value.$slots
+    const keys = Object.keys(tableSlots.value)
+    props.cols.forEach((col) => {
+      let column = {}
+      column.key = col.field
+      column.title = col.label
+      column.align = col.align
+      column.width = col.width
+      column.fixed = col.fixed
       let type = col.type
-      if(type){
-        if(keys.indexOf(type) != -1){
-          col.render = (row) => {
-            return h(slots[type], { row, col })
-          }
+      if(!col.render && type && keys.indexOf(type) != -1){
+        renderSlot(col, type)
+      }else{
+        if(col.dictType){
+          renderSlot(col, 'dictType')
         }
-        // 主要是为了解决 树形数据 展开的图标 所在列问题，如果不重置 不会在第一列
-        col.type = undefined
       }
+      if(col.render){
+        column.render = col.render
+      }
+      if(col.props){
+        for(let key in col.props){
+          column[key] = col.props[key]
+        }
+      }
+      columns.value.push(column)
     })
   }
+  function renderSlot(col, type){
+    col.render = (row) => {
+      return h(tableSlots.value[type], { row, col })
+    }
+  }
+
   nextTick(() => {
-    fixColumns()
+    fixCols()
   })
 
   const tableKey = ref('magicTable' + common.uuid())

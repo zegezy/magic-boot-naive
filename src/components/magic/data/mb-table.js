@@ -5,7 +5,7 @@ function requestData(props, bindProps, where) {
   bindProps.loading = true
   if (props.page) {
     where.current = bindProps.pagination.page
-    where.size = props.size
+    where.size = props.limit
   } else {
     where.size = 99999999
   }
@@ -30,7 +30,7 @@ export function createTable(props) {
     bindProps.pagination = {
       page: 1,
       pageCount: 1,
-      pageSize: props.size
+      pageSize: props.limit
     }
   }
   bindProps.remote = !!props.url
