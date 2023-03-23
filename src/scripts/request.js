@@ -36,9 +36,6 @@ service.interceptors.response.use(
             userStore.logout()
           }, duration * 1000)
         }else{
-          if(res.code === 500){
-            resolve(res)
-          }
           if(res.code === 403 && import.meta.env.MODE === 'demo'){
             res.message = '演示模式，不允许操作！'
           }
