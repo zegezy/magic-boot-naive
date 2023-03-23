@@ -39,12 +39,16 @@ export function createTable(props) {
     if(props.page){
       bindProps.pagination.page = 1
     }
+    alert(1)
     bindProps.data = props.data
   }, { deep: true })
   const where = reactive(common.renderWhere(props.where))
   const loadData = () => {
     if(props.url){
       requestData(props, bindProps, where)
+    }
+    if(props.data){
+      bindProps.data = props.data
     }
   }
   watch(() => props.loading, value => bindProps.loading = value)
