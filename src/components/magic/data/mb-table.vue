@@ -22,7 +22,7 @@
     </template>
     <template #buttons="{ row, col }">
       <template v-for="it in col.buttons">
-        <a v-if="it.link" v-permission="it.permission" class="mx-1 cursor-pointer" @click="it.click(row)">{{ it.title }}</a>
+        <a v-if="it.link" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.title }}</a>
       </template>
     </template>
   </n-data-table>
@@ -128,3 +128,8 @@
   defineExpose({ expand, toggleExpand })
 
 </script>
+<style scoped>
+.btn-blue{
+  color: #2D8CF0;
+}
+</style>

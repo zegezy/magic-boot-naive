@@ -26,14 +26,14 @@
     </n-layout-sider>
     <n-layout>
       <n-layout-header class="h-16">
-        logout
+        <layout-header />
       </n-layout-header>
       <n-layout-content class="absolute top-16 right-0 bottom-0 left-0">
         <n-layout position="absolute">
           <n-layout-header class="h-12 p-2">
             <tabs />
           </n-layout-header>
-          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2 router-view-content">
+          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2 router-view-content p-1">
             <router-view v-slot="{ Component }">
               <keep-alive :include="tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1))">
                 <component :is="Component" :key="$route.path" />
@@ -54,6 +54,7 @@
   import { NIcon } from 'naive-ui';
   import { useUserStore } from "@/store/modules/userStore"
   import { useTabsStore } from "@/store/modules/tabsStore"
+  import LayoutHeader from "@/layout/layout-header.vue";
   const tabsStore = useTabsStore()
   const userStore = useUserStore()
   const menuRef = ref()

@@ -22,7 +22,7 @@
     <div class="mb-table">
       <mb-table ref="table" v-bind="tableOptions" />
     </div>
-    <mb-modal ref="menuFormDialog" width="1050px" :title="dialogTitle" @confirm="menuFormRef.save($event)">
+    <mb-modal ref="menuFormDialog" width="650px" :title="dialogTitle" @confirm="menuFormRef.save($event)">
       <menu-form ref="menuFormRef" :menu-tree="menuTree" :menu-data="menuData" @reload-table="reloadTable" />
     </mb-modal>
   </div>
