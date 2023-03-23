@@ -39,34 +39,36 @@
     <n-form-item label="权限标识" path="permission" v-if="menuType == 'button'">
       <n-input v-model:value="temp.permission" />
     </n-form-item>
-    <n-grid :cols="24">
-      <n-gi :span="6">
-        <n-form-item label="排序" path="sort">
-          <n-input-number v-model:value="temp.sort" />
-        </n-form-item>
-      </n-gi>
-      <n-gi :span="6">
-        <n-form-item label="图标" path="icon">
-          <n-input v-model:value="temp.icon" />
-        </n-form-item>
-      </n-gi>
-      <n-gi :span="6">
+
+    <div class="flex flex-wrap">
+      <div style="width: 50%">
         <n-form-item label="菜单显示" path="isShow" v-if="menuType == 'menu'">
           <n-radio-group v-model:value="temp.isShow">
             <n-radio-button :key="1" :value="1" label="显示" />
             <n-radio-button :key="0" :value="0" label="不显示" />
           </n-radio-group>
         </n-form-item>
-      </n-gi>
-      <n-gi :span="6">
+      </div>
+      <div style="width: 50%">
         <n-form-item label="路由缓存" path="keepAlive" v-if="menuType == 'menu'">
           <n-radio-group v-model:value="temp.keepAlive">
             <n-radio-button :key="1" :value="1" label="缓存" />
             <n-radio-button :key="0" :value="0" label="不缓存" />
           </n-radio-group>
         </n-form-item>
-      </n-gi>
-    </n-grid>
+      </div>
+      <div style="width: 50%">
+        <n-form-item label="排序" path="sort">
+          <n-input-number v-model:value="temp.sort" button-placement="both" />
+        </n-form-item>
+      </div>
+      <div style="width: 50%">
+        <n-form-item label="图标" path="icon">
+          <n-input v-model:value="temp.icon" />
+        </n-form-item>
+      </div>
+
+    </div>
   </n-form>
 </template>
 
