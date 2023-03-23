@@ -19,7 +19,8 @@
             :collapsed-width="64"
             :collapsed-icon-size="22"
             :options="menuOptions"
-            :inverted="true"
+            inverted
+            accordion
           />
         </n-layout-content>
       </n-layout>
