@@ -145,11 +145,15 @@
     nextTick(() => showTable.value = true)
   }
 
-  onMounted(() => {
+  function reload(){
     table.loadData()
+  }
+
+  onMounted(() => {
+    reload()
   })
 
-  defineExpose({ expand, toggleExpand })
+  defineExpose({ expand, toggleExpand, reload })
 
 </script>
 <style scoped>

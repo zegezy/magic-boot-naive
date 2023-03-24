@@ -11,7 +11,7 @@ function requestData(props, bindProps, where) {
   }
   let processData = (res) => {
     const { data } = res
-    bindProps.data = data.list
+    bindProps.data = data.list || []
     bindProps.loading = false
     bindProps.pagination.pageCount = Math.ceil(data.total / where.size)
     bindProps.pagination.itemCount = data.total
@@ -41,9 +41,10 @@ export function createTable(props) {
     }
     bindProps.data = props.data
   }, { deep: true })
-  const where = reactive(common.renderWhere(props.where))
+
   const loadData = () => {
     if(props.url){
+      let where = common.renderWhere(props.where)
       requestData(props, bindProps, where)
     }
     if(props.data){
