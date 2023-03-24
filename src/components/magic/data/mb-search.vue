@@ -1,6 +1,6 @@
 <template>
   <div class="mb-search">
-    <n-form :inline="true" label-placement="left" @keyup.enter="search">
+    <n-form inline label-placement="left" @keyup.enter="search">
       <template v-for="(it, i) in where">
         <n-form-item v-if="it && it.label" :label="it.label" :key="i">
           <component

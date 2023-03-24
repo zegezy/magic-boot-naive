@@ -26,19 +26,6 @@
       :node-props="nodeProps"
       @update:checked-keys="updateCheckedKeys"
     />
-<!--    <el-tree-->
-<!--      v-if="refreshTree"-->
-<!--      ref="tree"-->
-<!--      :data="treeData"-->
-<!--      v-bind="props.props"-->
-<!--      node-key="id"-->
-<!--      :default-expand-all="defaultExpandAll"-->
-<!--      @check-change="checkChange"-->
-<!--      @node-click="nodeClick"-->
-<!--      :props="defaultProps"-->
-<!--      :filter-node-method="searchTree"-->
-<!--      :style="style"-->
-<!--    />-->
   </div>
 </template>
 
