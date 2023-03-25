@@ -214,17 +214,22 @@ const table = ref()
 const userForm = ref()
 
 function setWhere(){
-  if(route.query.roleId){
+  let re = false
+  if(route.query.roleId && tableOptions.where.roleId.value != route.query.roleId){
     tableOptions.where.roleId.value = route.query.roleId
+    re = true
   }
-  if(route.query.officeId){
+  if(route.query.officeId && tableOptions.where.officeId != route.query.officeId){
     tableOptions.where.officeId = route.query.officeId
+    re = true
+  }
+  if(re){
+    table.value && table.value.reload()
   }
 }
 
 onActivated(() => {
   setWhere()
-  table.value && table.value.reload()
 })
 
 setWhere()
