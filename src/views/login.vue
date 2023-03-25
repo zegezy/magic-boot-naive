@@ -25,7 +25,7 @@
               />
             </n-form-item>
             <n-form-item>
-              <n-button round block size="large" type="info" @click="handleLogin">
+              <n-button round block size="large" type="info" :loading="loading" @click="handleLogin">
                 登录
               </n-button>
             </n-form-item>
