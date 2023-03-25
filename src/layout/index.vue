@@ -39,9 +39,11 @@
           </n-layout-header>
           <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2 router-view-content p-1">
             <router-view v-slot="{ Component }">
-              <keep-alive :include="tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1))">
-                <component :is="Component" :key="$route.path" />
-              </keep-alive>
+              <transition name="fade" mode="out-in" appear>
+                <keep-alive :include="tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1))">
+                  <component :is="Component" :key="$route.path" />
+                </keep-alive>
+              </transition>
             </router-view>
           </n-layout-content>
         </n-layout>
