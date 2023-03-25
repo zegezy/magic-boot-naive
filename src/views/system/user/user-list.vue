@@ -66,7 +66,7 @@
 <script setup>
 import UserForm from './user-form.vue'
 
-import { ref, reactive, nextTick, watch } from 'vue'
+import { ref, reactive, nextTick, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import common from '@/scripts/common'
 const route = useRoute()
@@ -213,13 +213,21 @@ const userFormDialog = ref()
 const table = ref()
 const userForm = ref()
 
-if(route.query.roleId){
-  tableOptions.where.roleId.value = route.query.roleId
+function setWhere(){
+  if(route.query.roleId){
+    tableOptions.where.roleId.value = route.query.roleId
+  }
+  if(route.query.officeId){
+    tableOptions.where.officeId = route.query.officeId
+  }
 }
 
-if(route.query.officeId){
-  tableOptions.where.officeId = route.query.officeId
-}
+onActivated(() => {
+  setWhere()
+  table.value && table.value.reload()
+})
+
+setWhere()
 
 function checkChange(values) {
   tableOptions.where.officeId = values
