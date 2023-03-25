@@ -168,7 +168,7 @@
     return data
   }
 
-  function exportExcel(){
+  function exportExcel({fileName}){
     if(props.url){
       let where = common.renderWhere(props.where)
       where.size = 99999999
@@ -176,7 +176,7 @@
         const { data } = res
         common.exportExcel({
           data: renderExportData(data.list),
-          fileName: '用户数据'
+          fileName: fileName
         })
       }
       if(props.method.toLowerCase() == 'post'){
@@ -191,7 +191,7 @@
     }else if(props.data){
       common.exportExcel({
         data: props.data,
-        fileName: '用户数据'
+        fileName: fileName
       })
     }
   }
