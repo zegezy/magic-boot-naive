@@ -1,7 +1,7 @@
 import './styles/tailwind.css'
 import { createApp } from 'vue'
 import App from './App.vue'
-import { setupNaive, setupNaiveDiscreteApi, setupDirectives } from '@/scripts/plugins'
+import { setupNaive, setupNaiveDiscreteApi, setupDirectives, setupGlobalProperties } from '@/scripts/plugins'
 import { setupRouter } from '@/scripts/router'
 import { setupStore } from '@/store'
 import { setupComponents } from '@/components'
@@ -12,6 +12,7 @@ async function start(){
     setupNaive(app)
     setupNaiveDiscreteApi()
     setupDirectives(app)
+    setupGlobalProperties(app)
     setupRouter(app)
     setupComponents(app)
     app.mount('#app')
