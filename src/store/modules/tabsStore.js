@@ -16,6 +16,10 @@ export const useTabsStore = defineStore('tabs', () => {
     tabs.value.push(value)
   }
 
+  function closeTab(i){
+    tabs.value.splice(i, 1)
+  }
+
   function replaceTab(value, i){
     tabs.value[i] = value
   }
@@ -25,6 +29,7 @@ export const useTabsStore = defineStore('tabs', () => {
   return {
     setCurrentTab,
     pushTab,
+    closeTab,
     replaceTab,
     getCurrentTab,
     getTabs

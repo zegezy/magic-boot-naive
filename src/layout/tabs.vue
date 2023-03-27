@@ -105,13 +105,11 @@ function refresh(){
       break
     }
   }
-  tabs.splice(oldi, 1)
-  tabs.splice(oldi, 0, lastTab.value)
-  nextTick(() => {
-    router.replace({
-      path: `/redirect${path}`,
-      query: tabs.filter(it => it.path == path)[0].query
-    })
+  // tabs.splice(oldi, 1)
+  // tabs.splice(oldi, 0, lastTab.value)
+  router.replace({
+    path: `/redirect${path}`,
+    query: tabs.filter(it => it.path == path)[0].query
   })
 }
 

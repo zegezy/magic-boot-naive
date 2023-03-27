@@ -20,6 +20,17 @@ const routes = [
     component: () => import('@/views/login.vue'),
     hidden: true
   },
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
 ]
 
 const router = createRouter({
