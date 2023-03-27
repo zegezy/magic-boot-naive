@@ -16,7 +16,7 @@
       <div>
         <n-avatar
             round
-            :size="42"
+            :size="40"
             src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
         />
       </div>

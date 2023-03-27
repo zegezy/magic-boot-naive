@@ -7,7 +7,9 @@
     :mask-closable="false"
     :style="{ width }"
   >
-    <slot />
+    <div style="margin-top:24px">
+      <slot />
+    </div>
     <template #action>
       <slot name="action">
         <n-button @click="() => showModal = false">关闭</n-button>

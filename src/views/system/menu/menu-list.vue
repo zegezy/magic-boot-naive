@@ -4,9 +4,15 @@
       <n-space>
         <n-input v-model:value="searchValue" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识" style="width: 200px"></n-input>
         <n-button type="primary" @click="searchMenu">
+          <n-icon>
+            <Search />
+          </n-icon>
           搜索
         </n-button>
         <n-button @click="() => { searchValue = ''; searchMenu() }">
+          <n-icon>
+            <TrashOutline />
+          </n-icon>
           清空
         </n-button>
       </n-space>
@@ -14,9 +20,17 @@
     <div class="mb-toolbar">
       <n-space>
         <n-button type="primary" @click="addSubMenu('0')" v-permission="'menu:save'">
+          <n-icon>
+            <AddOutline />
+          </n-icon>
           添加菜单
         </n-button>
-        <n-button type="primary" @click="() => table.toggleExpand()">展开/折叠</n-button>
+        <n-button type="primary" @click="() => table.toggleExpand()">
+          <n-icon>
+            <ArrowDownOutline />
+          </n-icon>
+          展开/折叠
+        </n-button>
       </n-space>
     </div>
     <div class="mb-table">
@@ -36,6 +50,8 @@ import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import * as icons from "@vicons/ionicons5";
 import { NIcon } from 'naive-ui';
+import {Search,TrashOutline,AddOutline,ArrowDownOutline} from "@vicons/ionicons5";
+
 
 let menuTree = ref([])
 const menuData = ref([])
