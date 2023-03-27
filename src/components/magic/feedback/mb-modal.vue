@@ -7,7 +7,9 @@
     :mask-closable="maskClosable"
     :style="{ width }"
   >
-    <slot />
+    <div style="margin-top:24px">
+      <slot />
+    </div>
     <template #action>
       <slot name="action" v-if="showFooter">
         <n-button @click="() => showModal = false">关闭</n-button>

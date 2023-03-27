@@ -4,9 +4,15 @@
       <n-space>
         <n-input v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识" style="width: 200px"></n-input>
         <n-button type="primary" @click="searchOffice">
+          <n-icon>
+            <Search />
+          </n-icon>
           搜索
         </n-button>
         <n-button @click="() => { searchValue = ''; searchOffice() }">
+          <n-icon>
+            <TrashOutline />
+          </n-icon>
           清空
         </n-button>
       </n-space>
@@ -14,9 +20,17 @@
     <div class="mb-toolbar">
       <n-space>
         <n-button type="primary" @click="addSubOffice('0')" v-permission="'office:save'">
+          <n-icon>
+            <AddOutline />
+          </n-icon>
           添加机构
         </n-button>
-        <n-button type="primary" @click="() => table.toggleExpand()">展开/折叠</n-button>
+        <n-button type="primary" @click="() => table.toggleExpand()">
+          <n-icon>
+            <ArrowDownOutline />
+          </n-icon>
+          展开/折叠
+        </n-button>
       </n-space>
     </div>
     <div class="mb-table">
@@ -68,6 +82,7 @@ import { ref, reactive, onMounted, watch, nextTick } from 'vue'
 import router from '@/scripts/router'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
+import {Search,TrashOutline,AddOutline,ArrowDownOutline} from "@vicons/ionicons5";
 
 const officeData = ref([])
 const officeTree = ref([])
@@ -82,13 +97,14 @@ const tableOptions = reactive({
       field: 'name',
       label: '机构名称',
       align: 'left',
-      type: 'html'
+      type: 'html',
+      width: 500
     },
     {
       field: 'code',
       label: '机构编码',
       width: 300,
-      align: 'left',
+      align: 'center',
       type: 'html'
     },
     {
@@ -96,12 +112,13 @@ const tableOptions = reactive({
       dictType: 'office_type',
       label: '机构类型',
       width: 300,
-      align: 'left'
+      align: 'center'
     },
     {
       field: 'sort',
       label: '排序',
-      width: 60
+      width: 60,
+      align: "center"
     },
     {
       label: '排序',
@@ -141,7 +158,7 @@ const tableOptions = reactive({
       type: 'buttons',
       width: 360,
       fixed: 'right',
-      align: 'left',
+      align: 'center',
       buttons: [
         {
           label: '添加下级机构',
