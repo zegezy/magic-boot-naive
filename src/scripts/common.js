@@ -1,8 +1,6 @@
 import request from '@/scripts/request'
-// import { ElMessageBox, ElNotification } from 'element-plus'
 import global from '@/scripts/global'
 import { utils, writeFile } from 'xlsx'
-// import { getToken } from '@/scripts/auth'
 
 const common = {}
 

@@ -4,7 +4,7 @@
       <n-grid-item :span="15">
       <div class="left-bar">
         <div class="logo-content">
-          <p class="text-6xl mt-0 mb-0 italic font-black text-white">「Magic Boot」</p>
+          <p class="text-6xl mt-0 mb-0 italic font-black text-white">「{{ $global.title }}」</p>
           <p class="text-base text-gray-50">"加速您的开发世界，轻松启动您的创意"</p>
         </div>
       </div>
@@ -25,7 +25,7 @@
               />
             </n-form-item>
             <n-form-item>
-              <n-button round block size="large" type="info" @click="handleLogin">
+              <n-button round block size="large" type="info" :loading="loading" @click="handleLogin">
                 登录
               </n-button>
             </n-form-item>

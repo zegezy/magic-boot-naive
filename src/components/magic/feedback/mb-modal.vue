@@ -4,14 +4,14 @@
     preset="dialog"
     :title="title"
     :show-icon="false"
-    :mask-closable="false"
+    :mask-closable="maskClosable"
     :style="{ width }"
   >
     <div style="margin-top:24px">
       <slot />
     </div>
     <template #action>
-      <slot name="action">
+      <slot name="action" v-if="showFooter">
         <n-button @click="() => showModal = false">关闭</n-button>
         <n-button type="primary" :loading="confirmLoading" @click="confirm">
           确认
@@ -32,6 +32,14 @@
     width: {
       type: String,
       default: ''
+    },
+    maskClosable: {
+      type: Boolean,
+      default: true
+    },
+    showFooter: {
+      type: Boolean,
+      default: true
     }
   })
   const showModal = ref(false)

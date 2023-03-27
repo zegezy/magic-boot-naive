@@ -1,38 +1,34 @@
 <template>
-  <!--  <n-space>-->
-    <div class="tabs">
-      <n-tag
-          @contextmenu="handleContextMenu(tab,$event)"
-          v-for="tab in tabsStore.getTabs"
-          :closable="tab.path!==`/home`"
-          @close="handleClose(tab.path)"
-          @click="jump(tab)"
-          :type="tabsStore.getCurrentTab == tab.path ? 'primary' : 'default'"
-          :class="tabsStore.getCurrentTab == tab.path?'selected':''"
-          :bordered="false"
-      >
-        {{ tab.meta.title }}
-      </n-tag>
-
-      <n-dropdown
-          placement="bottom-start"
-          trigger="manual"
-          :x="xAxis"
-          :y="yAxis"
-          :options="dropdownOptions"
-          :show="showDropdown"
-          :on-clickoutside="onClickoutside"
-          @select="handleDropdownSelect"
-      />
-    </div>
-
-  <!--  </n-space>-->
+  <div class="tabs">
+    <n-tag
+      @contextmenu="handleContextMenu(tab,$event)"
+      v-for="tab in tabsStore.getTabs"
+      :closable="tab.path!==`/home`"
+      @close="handleClose(tab.path)"
+      @click="jump(tab)"
+      :type="tabsStore.getCurrentTab == tab.path ? 'primary' : 'default'"
+      :class="tabsStore.getCurrentTab == tab.path?'selected':''"
+      :bordered="false"
+    >
+      {{ tab.meta.title }}
+    </n-tag>
+    <n-dropdown
+      placement="bottom-start"
+      trigger="manual"
+      :x="xAxis"
+      :y="yAxis"
+      :options="dropdownOptions"
+      :show="showDropdown"
+      :on-clickoutside="() => showDropdown = false"
+      @select="handleDropdownSelect"
+    />
+  </div>
 </template>
 
 <script setup>
 import {useTabsStore} from '@/store/modules/tabsStore'
 import router from '@/scripts/router'
-import {ref} from "vue";
+import { ref, nextTick } from "vue";
 
 const tabsStore = useTabsStore()
 const tabs = tabsStore.getTabs
@@ -40,16 +36,20 @@ const tabs = tabsStore.getTabs
 const showDropdown = ref(false);
 const dropdownOptions = ref([
   {
-    label: "关闭当前",
-    key: 0
+    label: "刷新",
+    key: 'refresh'
   },
   {
-    label: "关闭其它",
-    key: 1
+    label: "关闭左侧",
+    key: 'left'
   },
   {
-    label: "关闭全部",
-    key: 2
+    label: "关闭右侧",
+    key: 'right'
+  },
+  {
+    label: "关闭其他",
+    key: 'other'
   }
 ])
 
@@ -83,22 +83,78 @@ function jump(item) {
   })
 }
 
+const currentPath = ref()
+const lastTab = ref()
+
 function handleContextMenu(item, e) {
+  lastTab.value = item
+  currentPath.value = item.path
   e.preventDefault();
   xAxis.value = e.clientX;
   yAxis.value = e.clientY;
   showDropdown.value = true;
 }
 
-function onClickoutside() {
+function refresh(){
+  let path = currentPath.value
+  let oldi = 0
+  for(let i = 0; i < tabs.length; i++){
+    let it = tabs[i]
+    if(it.path == path){
+      oldi = i
+      break
+    }
+  }
+  tabs.splice(oldi, 1)
+  tabs.splice(oldi, 0, lastTab.value)
+  nextTick(() => {
+    router.replace({
+      path: `/redirect${path}`,
+      query: tabs.filter(it => it.path == path)[0].query
+    })
+  })
+}
+
+function handleDropdownSelect(type) {
+  if(type != 'refresh'){
+    close(type)
+  }else{
+    refresh()
+  }
   showDropdown.value = false;
 }
 
-function handleDropdownSelect(e) {
-  //TODO 处理弹出菜单点击事件
-  console.log("点击项:", e)
-  showDropdown.value = false;
+function close(type){
+  let path = currentPath.value
+  if(type == 'other'){
+    for(let i = tabs.length - 1; i >= 0; i--){
+      if(tabs[i].path != path){
+        tabs.splice(i, 1)
+      }
+    }
+  }else if(type == 'right'){
+    for(let i = tabs.length - 1; i >= 0; i--){
+      if(tabs[i].path != path){
+        tabs.splice(i, 1)
+      }else{
+        break;
+      }
+    }
+  }else{
+    for(let i = 0, len = tabs.length; i < len; i++){
+      if(tabs[0].path != path){
+        tabs.splice(0, 1)
+      }else{
+        break;
+      }
+    }
+  }
+  router.push({
+    path: path,
+    query: tabs.filter(it => it.path == path)[0].query
+  })
 }
+
 </script>
 
 <style scoped lang="less">

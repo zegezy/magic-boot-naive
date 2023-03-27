@@ -8,6 +8,7 @@
     :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
     clearable
     filterable
+    max-tag-count="responsive"
   />
 </template>
 

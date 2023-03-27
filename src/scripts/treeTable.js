@@ -51,8 +51,8 @@ treeTable.genTree = (children) => {
 }
 
 treeTable.deleteEmptyChildren = (children) => {
-  for(var i in children){
-    var chi = children[i]
+  for(let i in children){
+    let chi = children[i]
     if(chi.children && chi.children.length == 0){
       delete chi.children
     }else{

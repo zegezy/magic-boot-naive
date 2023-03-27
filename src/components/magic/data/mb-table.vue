@@ -145,11 +145,62 @@
     nextTick(() => showTable.value = true)
   }
 
-  onMounted(() => {
+  function reload(){
     table.loadData()
+  }
+
+  function renderExportData(sourceData){
+    let data = []
+    let fields = props.cols.filter(it => it.type != 'buttons')
+    sourceData.forEach(it => {
+      let row = {}
+      fields.forEach(f => {
+        if(f.exportRender){
+          row[f.label] = f.exportRender(it)
+        }else if(f.render){
+          row[f.label] = f.render(it)
+        }else{
+          row[f.label] = it[f.field]
+        }
+      })
+      data.push(row)
+    })
+    return data
+  }
+
+  function exportExcel({fileName}){
+    if(props.url){
+      let where = common.renderWhere(props.where)
+      where.size = 99999999
+      let processData = (res) => {
+        const { data } = res
+        common.exportExcel({
+          data: renderExportData(data.list),
+          fileName: fileName
+        })
+      }
+      if(props.method.toLowerCase() == 'post'){
+        common.$post(props.url, where).then(res => {
+          processData(res)
+        })
+      }else{
+        common.$get(props.url, where).then(res => {
+          processData(res)
+        })
+      }
+    }else if(props.data){
+      common.exportExcel({
+        data: props.data,
+        fileName: fileName
+      })
+    }
+  }
+
+  onMounted(() => {
+    reload()
   })
 
-  defineExpose({ expand, toggleExpand })
+  defineExpose({ expand, toggleExpand, reload, exportExcel })
 
 </script>
 <style scoped>

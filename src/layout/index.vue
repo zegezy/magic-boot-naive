@@ -6,10 +6,13 @@
       :collapsed-width="64"
       :width="200"
       show-trigger
+      @update:collapsed="updateCollapsed"
+      @after-enter="() => isCollapsed = false"
     >
       <n-layout position="absolute">
         <n-layout-header class="nav-bg">
-          <p class="text-center text-xl m-0 pt-5 pb-5 text-white">Magic Boot</p>
+          <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-if="!isCollapsed">{{ $global.title }}</p>
+          <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-else>{{ $global.title.substring(0, 1) }}</p>
         </n-layout-header>
         <n-layout-content class="absolute top-16 right-0 bottom-0 left-0 nav-bg" :native-scrollbar="false">
           <n-menu
@@ -36,9 +39,11 @@
           </n-layout-header>
           <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2 router-view-content p-1">
             <router-view v-slot="{ Component }">
-              <keep-alive :include="tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1))">
-                <component :is="Component" :key="$route.path" />
-              </keep-alive>
+              <transition name="fade" mode="out-in" appear>
+                <keep-alive :include="tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1))">
+                  <component :is="Component" :key="$route.path" />
+                </keep-alive>
+              </transition>
             </router-view>
           </n-layout-content>
         </n-layout>
@@ -69,6 +74,12 @@
   }
   function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) })
+  }
+  const isCollapsed = ref(false)
+  function updateCollapsed(collapsed){
+    if(collapsed){
+      isCollapsed.value = collapsed
+    }
   }
 
   const menuOptions = ref(recursionRouters(userStore.getPermissionRouters))
@@ -119,5 +130,8 @@
 <style scoped>
 .nav-bg{
   background-color: #041427;
+}
+.title{
+  font-family: PoetsenOne;
 }
 </style>
