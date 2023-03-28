@@ -97,19 +97,23 @@ function handleContextMenu(item, e) {
 
 function refresh(){
   let path = currentPath.value
-  let oldi = 0
+  let _i = 0
   for(let i = 0; i < tabs.length; i++){
     let it = tabs[i]
     if(it.path == path){
-      oldi = i
+      _i = i
       break
     }
   }
-  // tabs.splice(oldi, 1)
-  // tabs.splice(oldi, 0, lastTab.value)
-  router.replace({
-    path: `/redirect${path}`,
-    query: tabs.filter(it => it.path == path)[0].query
+  tabs.splice(_i, 1)
+  tabsStore.hide()
+  nextTick(() => {
+    tabs.splice(_i, 0, lastTab.value)
+    tabsStore.show()
+    router.replace({
+      path: `/redirect${path}`,
+      query: tabs.filter(it => it.path == path)[0].query
+    })
   })
 }
 
