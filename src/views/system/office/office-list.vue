@@ -79,7 +79,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, watch, nextTick } from 'vue'
-import router from '@/scripts/router'
+import { push } from '@/scripts/router'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import {Search,TrashOutline,AddOutline,ArrowDownOutline} from "@vicons/ionicons5";
@@ -196,7 +196,7 @@ const tableOptions = reactive({
           label: '用户列表',
           link: true,
           click: (row) => {
-            router.push({
+            push({
               path: '/system/user/user-list',
               query: { officeId: row.id }
             })

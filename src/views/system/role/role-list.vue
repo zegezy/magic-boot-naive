@@ -71,7 +71,7 @@
 <script setup>
 import { ref, reactive, watch, nextTick } from 'vue'
 import common from '@/scripts/common'
-import router from '@/scripts/router'
+import { push } from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
 
 const permissionData = reactive([{
@@ -159,7 +159,7 @@ const tableOptions = reactive({
           label: '用户列表',
           link: true,
           click: (row) => {
-            router.push({
+            push({
               path: '/system/user/user-list',
               query: { roleId: row.id }
             })

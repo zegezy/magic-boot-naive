@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '@/layout'
 import { setupRouterInterceptor } from "@/scripts/router/routerInterceptor";
+import { useTabsStore } from "@/store/modules/tabsStore";
 
 const routes = [
   {
@@ -37,6 +38,15 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
+
+export function push(to){
+  const tabsStore = useTabsStore()
+  if(tabsStore.contains(to.path)){
+    tabsStore.refreshPush(to)
+  }else{
+    router.push(to)
+  }
+}
 
 export function setupRouter(app){
   app.use(router)

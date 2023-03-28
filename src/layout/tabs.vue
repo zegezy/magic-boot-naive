@@ -84,10 +84,8 @@ function jump(item) {
 }
 
 const currentPath = ref()
-const lastTab = ref()
 
 function handleContextMenu(item, e) {
-  lastTab.value = item
   currentPath.value = item.path
   e.preventDefault();
   xAxis.value = e.clientX;
@@ -95,33 +93,11 @@ function handleContextMenu(item, e) {
   showDropdown.value = true;
 }
 
-function refresh(){
-  let path = currentPath.value
-  let _i = 0
-  for(let i = 0; i < tabs.length; i++){
-    let it = tabs[i]
-    if(it.path == path){
-      _i = i
-      break
-    }
-  }
-  tabs.splice(_i, 1)
-  tabsStore.hide()
-  nextTick(() => {
-    tabs.splice(_i, 0, lastTab.value)
-    tabsStore.show()
-    router.replace({
-      path: `/redirect${path}`,
-      query: tabs.filter(it => it.path == path)[0].query
-    })
-  })
-}
-
 function handleDropdownSelect(type) {
   if(type != 'refresh'){
     close(type)
   }else{
-    refresh()
+    tabsStore.refreshReplace({ path: currentPath.value })
   }
   showDropdown.value = false;
 }
