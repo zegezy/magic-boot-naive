@@ -1,40 +1,41 @@
 <template>
-  <div class="app-container">
-    <el-form ref="dataForm" :rules="rules" :model="temp" label-position="right" label-width="80px" style="width: 800px">
-      <el-form-item label="头像" prop="headPortrait">
-        <mb-upload-image v-model="temp.headPortrait" />
-      </el-form-item>
-      <el-form-item label="姓名/昵称" prop="name">
-        <el-input v-model="temp.name" disabled />
-      </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model.integer="temp.phone" maxlength="11" autocomplete="new-password" />
-      </el-form-item>
-      <el-form-item label="原密码" prop="password">
-        <el-input v-model="temp.password" type="password" autocomplete="new-password" />
-      </el-form-item>
-      <el-form-item label="新密码" prop="newPassword">
-        <el-input v-model="temp.newPassword" type="password" autocomplete="new-password" />
-      </el-form-item>
-      <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input v-model="temp.confirmPassword" type="password" autocomplete="new-password" />
-      </el-form-item>
-      <el-form-item>
-        <el-button class="filter-item" type="primary" @click="save">
-          提交
-        </el-button>
-      </el-form-item>
-    </el-form>
-  </div>
+  <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px" style="width: 800px">
+    <n-form-item label="头像" path="headPortrait">
+<!--        <mb-upload-image v-model="temp.headPortrait" />-->
+    </n-form-item>
+    <n-form-item label="姓名/昵称" path="name">
+      <n-input v-model:value="temp.name" disabled />
+    </n-form-item>
+    <n-form-item label="手机号" path="phone">
+      <n-input v-model:value="temp.phone" maxlength="11" autocomplete="new-password" />
+    </n-form-item>
+    <n-form-item label="原密码" path="password">
+      <n-input v-model:value="temp.password" type="password" autocomplete="new-password" />
+    </n-form-item>
+    <n-form-item label="新密码" path="newPassword">
+      <n-input v-model:value="temp.newPassword" type="password" autocomplete="new-password" />
+    </n-form-item>
+    <n-form-item label="确认密码" path="confirmPassword">
+      <n-input v-model:value="temp.confirmPassword" type="password" autocomplete="new-password" />
+    </n-form-item>
+    <n-form-item label=" ">
+      <n-button type="primary" @click="save">
+        提交
+      </n-button>
+    </n-form-item>
+  </n-form>
 </template>
 
 <script setup>
 
-import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
-const temp = ref(getTemp())
-const { proxy } = getCurrentInstance()
+import { ref, reactive, nextTick } from 'vue'
+import common from '@/scripts/common'
+import { useUserStore } from "@/store/modules/userStore";
+const userStore = useUserStore()
 
-var validatePass2 = (rule, value, callback) => {
+const temp = ref(getTemp())
+
+let validatePass2 = (rule, value, callback) => {
   if(temp.value.newPassword){
     if (value === '') {
       callback(new Error('请再次输入密码'));
@@ -70,24 +71,19 @@ function getTemp() {
 function resetTemp() {
   temp.value = getTemp()
   nextTick(() => {
-    dataForm.value.clearValidate()
+    dataForm.value.restoreValidation()
   })
 }
 
 function save() {
-  dataForm.value.validate((valid) => {
-    if (valid) {
-      proxy.$post('/system/user/center/update', temp.value).then(() => {
-        proxy.$notify({
-          title: '成功',
-          message: '修改成功',
-          type: 'success',
-          duration: 2000
-        })
+  dataForm.value.validate((errors) => {
+    if (!errors) {
+      common.$post('/system/user/center/update', temp.value).then(() => {
+        $message.success('修改成功')
       })
     }
   })
 }
 
-proxy.$common.objAssign(temp.value, proxy.$global.user.info, ['password'])
+common.objAssign(temp.value, userStore.getInfo, ['password'])
 </script>

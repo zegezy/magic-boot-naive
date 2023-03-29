@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, h } from 'vue'
   const table = ref()
   const tableOptions = reactive({
     url: '/system/log/login/list',
@@ -37,7 +37,7 @@
         label: '登录状态',
         width: '100px',
         render: (row) => {
-          return row.type == '成功' ? '<b style="color: #409EFF">成功</b>' : '<b style="color: red">失败</b>'
+          return row.type == '成功' ? h('b', { style: { color: '#409EFF' } }, { default: () => '成功' }) : h('b', { style : { color: 'red' } }, { default: () => '失败' })
         }
       },
       {

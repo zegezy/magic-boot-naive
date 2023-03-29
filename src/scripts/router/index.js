@@ -17,6 +17,17 @@ const routes = [
     ]
   },
   {
+    path: '/user-center',
+    redirect: '/system/user/user-center',
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: '/system/user/user-center',
+      component: () => import('@/views/system/user/user-center'),
+      meta: { title: '个人中心' }
+    }]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login.vue'),
     hidden: true

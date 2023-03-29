@@ -1,33 +1,31 @@
 <template>
-  <div class="mb-search">
-    <n-form inline label-placement="left" @keyup.enter="search">
-      <template v-for="(it, i) in where">
-        <n-form-item v-if="it && it.label" :label="it.label" :key="i">
-          <component
-              :is="
-                !it.component ? 'mb-input' : it.component.startsWith('n-') ||
-                // $global.dynamicComponentNames.indexOf(it.component) != -1 ? it.component :
-                'mb-' + it.component
-              "
-              v-model="it.value"
-              :item-label="it.label"
-              v-bind="it.props"
-          />
-        </n-form-item>
-      </template>
-      <n-form-item>
-        <n-space>
-          <n-button type="primary" @click="search">
-            搜索
-          </n-button>
-          <n-button @click="reset">
-            清空
-          </n-button>
-          <slot name="buttons" />
-        </n-space>
+  <n-form inline label-placement="left" @keyup.enter="search">
+    <template v-for="(it, i) in where">
+      <n-form-item v-if="it && it.label" :label="it.label" :key="i">
+        <component
+            :is="
+              !it.component ? 'mb-input' : it.component.startsWith('n-') ||
+              // $global.dynamicComponentNames.indexOf(it.component) != -1 ? it.component :
+              'mb-' + it.component
+            "
+            v-model="it.value"
+            :item-label="it.label"
+            v-bind="it.props"
+        />
       </n-form-item>
-    </n-form>
-  </div>
+    </template>
+    <n-form-item>
+      <n-space>
+        <n-button type="primary" @click="search">
+          搜索
+        </n-button>
+        <n-button @click="reset">
+          清空
+        </n-button>
+        <slot name="buttons" />
+      </n-space>
+    </n-form-item>
+  </n-form>
 </template>
 
 <script setup>

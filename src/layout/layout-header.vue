@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <div class="header">
-      <div style="width: 90%">
+      <div style="width: 95%">
         <div>
           <n-breadcrumb>
             <n-breadcrumb-item>
@@ -14,28 +14,64 @@
         </div>
       </div>
       <div>
-        <n-avatar
+        <template v-if="userStore.getInfo.headPortrait">
+          <n-avatar
             round
             :size="40"
-            src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-        />
+            :src="$global.baseApi + userStore.getInfo.headPortrait"
+          />
+        </template>
+        <n-avatar
+          v-else
+          round
+          :size="40"
+        >
+          {{ userStore.getInfo.name.substring(0,1) }}
+        </n-avatar>
       </div>
       <div>
-        <n-button text style="font-size: 20px;text-align: center">
-          <n-icon>
-            <SettingsOutline/>
-          </n-icon>
-        </n-button>
+        <n-dropdown :options="options" @select="handleSelect">
+          <n-button text style="font-size: 20px;text-align: center">
+            <n-icon>
+              <SettingsOutline/>
+            </n-icon>
+          </n-button>
+        </n-dropdown>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import {SettingsOutline} from "@vicons/ionicons5"
-import {useRouter} from "vue-router";
+import { SettingsOutline } from "@vicons/ionicons5"
+import { ref } from 'vue'
+import { useUserStore } from "@/store/modules/userStore";
+import router from '@/scripts/router'
+const userStore = useUserStore()
 
-const router = useRouter();
+const options = ref([
+  {
+    label: "个人中心",
+    key: "userCenter",
+  },
+  {
+    label: "退出",
+    key: "logout",
+  }
+])
+
+function handleSelect(key){
+  switch (key) {
+    case 'logout':
+      userStore.logout()
+      break;
+    case 'userCenter':
+      router.push({
+        path: '/user-center'
+      })
+      break;
+  }
+}
 
 </script>
 
