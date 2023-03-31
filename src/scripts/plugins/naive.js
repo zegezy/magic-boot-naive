@@ -79,12 +79,15 @@ const naive = NaiveUI.create({
     NaiveUI.NLoadingBarProvider,
     NaiveUI.NModal,
     NaiveUI.NUpload,
+    NaiveUI.NUploadDragger,
     NaiveUI.NTree,
     NaiveUI.NTreeSelect,
     NaiveUI.NSpin,
     NaiveUI.NTimePicker,
     NaiveUI.NBackTop,
     NaiveUI.NSkeleton,
+    NaiveUI.NImage,
+    NaiveUI.NImageGroup,
   ]
 });
 

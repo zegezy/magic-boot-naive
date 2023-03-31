@@ -19,7 +19,8 @@
     "vue-router": "^4.1.6",
     "vuedraggable": "^4.1.0",
     "xe-utils": "^3.5.7",
-    "xlsx": "^0.18.3"
+    "xlsx": "^0.18.3",
+    "ali-oss": "^6.17.1"
   },
   "devDependencies": {
     "@vicons/ionicons5": "^0.12.0",
