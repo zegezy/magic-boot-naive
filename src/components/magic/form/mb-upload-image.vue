@@ -52,6 +52,7 @@
           >
             <n-upload-dragger>
               <n-icon size="30" class="uploadIcon">
+                <span class="draggable-text">可拖拽上传</span>
                 <Add />
                 <span v-show="isUploading" class="uploading">正在上传...</span>
                 <span
@@ -338,6 +339,14 @@ function cropper() {
     font-size: 14px;
     text-align: center;
   }
+  .draggable-text {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+  }
 }
 
 // 拖拽
@@ -353,7 +362,7 @@ function cropper() {
     position: relative;
     overflow: hidden;
 
-    .n-image {
+    :deep(.n-image), :deep(.n-image img) {
       width: 100%;
       height: 100%;
     }
