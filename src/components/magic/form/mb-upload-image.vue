@@ -13,7 +13,7 @@
           <div class="draggable-item" :style="{ width: width + 'px', height: height + 'px' }">
             <n-image :src="$global.baseApi + element" />
             <div class="tools">
-              <div class="shadow" @click="handleRemove(element)">
+              <div class="shadow" @click="handleDelete(element)">
                 <n-icon size="20">
                   <Trash />
                 </n-icon>
@@ -129,6 +129,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  deleteTip: {
+    type: Boolean,
+    default: () => true
+  },
   join: {
     type: Boolean,
     default: true
@@ -192,18 +196,33 @@ function updateValue(value){
   emit('change', value)
 }
 
-function handleRemove(url) {
-  urls.value = urls.value.filter(it => it != url)
-  fileList.value = fileList.value.filter(it => it.fullPath != url)
-  common.$delete('/system/file/delete', { url: encodeURI(url) })
-  if (props.multiple) {
-    if(props.join){
-      updateValue(urls.value.join(','))
-    }else{
-      updateValue(urls.value)
+function handleDelete(url) {
+  let deleteFile = () => {
+    urls.value = urls.value.filter(it => it != url)
+    fileList.value = fileList.value.filter(it => it.fullPath != url)
+    common.$delete('/system/file/delete', { url: encodeURI(url) })
+    if (props.multiple) {
+      if(props.join){
+        updateValue(urls.value.join(','))
+      }else{
+        updateValue(urls.value)
+      }
+    } else {
+      updateValue('')
     }
-  } else {
-    updateValue('')
+  }
+  if(!props.deleteTip){
+    deleteFile()
+  }else{
+    $dialog.warning({
+      title: '提示',
+      content: '确定要删除此图片吗?',
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        deleteFile()
+      }
+    })
   }
 }
 

@@ -14,7 +14,7 @@
       <slot name="action" v-if="showFooter">
         <n-button @click="() => showModal = false">关闭</n-button>
         <n-button type="primary" :loading="confirmLoading" @click="confirm">
-          确认
+          确定
         </n-button>
       </slot>
     </template>
