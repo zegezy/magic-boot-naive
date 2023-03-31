@@ -34,36 +34,38 @@ li:hover{
 </style>
 
 <template>
-  <div v-if="!readonly">
-    <n-button @click="btnClick">点击上传</n-button>
-    <div slot="tip" class="el-upload__tip">支持上传{{ getSettingSuffixs().replaceAll(',', '，') }}文件</div>
+  <div>
+    <div v-if="!readonly">
+      <n-button @click="btnClick">点击上传</n-button>
+      <div slot="tip" class="el-upload__tip">支持上传{{ getSettingSuffixs().replaceAll(',', '，') }}文件</div>
+    </div>
+    <div style="font-size: 16px; font-weight: bold" v-if="readonly && (!fileList || fileList.length == 0)">
+      没有文件
+    </div>
+    <input ref="fileInput" type="file" multiple @change="fileChange" :accept="accept" style="display: none" />
+    <ul :style="{ width, height }">
+      <li v-for="file in fileList" :title="file.name">
+        <div class="file-name">
+          {{ file.name }}
+        </div>
+        <div class="progress">
+          <n-progress :percentage="file.progress" :status="file.progress == 100 ? 'success' : ''" />
+        </div>
+        <div class="delete" v-if="file.progress == 100 && !readonly">
+          <n-icon color="red" @click="deleteFile(file.key)"><Trash /></n-icon>
+        </div>
+        <div v-if="file.progress == 100">
+          <a style="color: blue;cursor: pointer" @click="preview(file.key)" target="_blank">点击查看</a>
+        </div>
+      </li>
+    </ul>
+    <mb-modal ref="videoDialog" title="预览视频" :show-footer="false">
+      <mb-video :url="currentUrl" />
+    </mb-modal>
+    <mb-modal ref="imageDialog" title="预览图片" :show-footer="false">
+      <n-image style="margin: 0 auto;display: table" :src="currentUrl" />
+    </mb-modal>
   </div>
-  <div style="font-size: 16px; font-weight: bold" v-if="readonly && (!fileList || fileList.length == 0)">
-    没有文件
-  </div>
-  <input ref="fileInput" type="file" multiple @change="fileChange" :accept="accept" style="display: none" />
-  <ul :style="{ width, height }">
-    <li v-for="file in fileList" :title="file.name">
-      <div class="file-name">
-        {{ file.name }}
-      </div>
-      <div class="progress">
-        <n-progress :percentage="file.progress" :status="file.progress == 100 ? 'success' : ''" />
-      </div>
-      <div class="delete" v-if="file.progress == 100 && !readonly">
-        <n-icon color="red" @click="deleteFile(file.key)"><Trash /></n-icon>
-      </div>
-      <div v-if="file.progress == 100">
-        <a style="color: blue;cursor: pointer" @click="preview(file.key)" target="_blank">点击查看</a>
-      </div>
-    </li>
-  </ul>
-  <mb-modal ref="videoDialog" title="预览视频" :show-footer="false">
-    <mb-video :url="currentUrl" />
-  </mb-modal>
-  <mb-modal ref="imageDialog" title="预览图片" :show-footer="false">
-    <n-image style="margin: 0 auto;display: table" :src="currentUrl" />
-  </mb-modal>
 </template>
 
 <script setup>
