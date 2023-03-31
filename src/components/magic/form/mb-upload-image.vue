@@ -10,13 +10,8 @@
         item-key="id"
       >
         <template #item="{ element }">
-          <div
-            class="draggable-item"
-            :style="{ width: width + 'px', height: height + 'px' }"
-          >
-            <n-image
-              :src="$global.baseApi + element"
-            />
+          <div class="draggable-item" :style="{ width: width + 'px', height: height + 'px' }">
+            <n-image :src="$global.baseApi + element" />
             <div class="tools">
               <div class="shadow" @click="handleRemove(element)">
                 <n-icon size="20">
@@ -43,8 +38,8 @@
             :show-file-list="false"
             :multiple="multiple"
             :max="limit"
-            @change="handleUploadChange"
-            @finish="onSuccess"
+            @change="onChange"
+            @finish="onFinish"
             @error="onError"
             @before-upload="beforeUpload"
             :file-list="fileList"
@@ -55,10 +50,7 @@
                 <span class="draggable-text">可拖拽上传</span>
                 <Add />
                 <span v-show="isUploading" class="uploading">正在上传...</span>
-                <span
-                    v-if="!isUploading && limit && limit!==99 && multiple"
-                    class="limitTxt"
-                >最多{{ limit }}张</span>
+                <span v-if="!isUploading && limit && limit!==99 && multiple" class="limitTxt">最多{{ limit }}张</span>
               </n-icon>
             </n-upload-dragger>
           </n-upload>
@@ -144,7 +136,7 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
-const action = ref(import.meta.env.VITE_APP_BASE_API + '/system/file/upload')
+const action = ref(global.baseApi + '/system/file/upload')
 const headers = { token: userStore.getToken() }
 const disabled = ref(false)
 const isUploading = ref(false)
@@ -179,16 +171,6 @@ onMounted(() => {
   }
 })
 
-function setFileList(){
-  if(urls.value.length > 0){
-    fileList.value = urls.value.map(it => {
-      return {
-        fullPath: it
-      }
-    })
-  }
-}
-
 function renderFile(){
   if(props.multiple && props.join && props.modelValue){
     urls.value = props.modelValue.split(',')
@@ -204,32 +186,28 @@ function renderFile(){
   }
 }
 
+function updateValue(value){
+  emit('update:modelValue', value)
+  emitUpdate.value = true
+  emit('change', value)
+}
+
 function handleRemove(url) {
-  urls.value.splice(this.urls.indexOf(url), 1)
-  fileList.value.forEach((it, i) => {
-    if (it && it.fullPath.indexOf(url) !== -1) {
-      fileList.value.splice(i, 1)
-    }
-  })
+  urls.value = urls.value.filter(it => it != url)
+  fileList.value = fileList.value.filter(it => it.fullPath != url)
   common.$delete('/system/file/delete', { url: encodeURI(url) })
   if (props.multiple) {
     if(props.join){
-      emit('update:modelValue', urls.value.join(','))
-      emitUpdate.value = true
-      emit('change', urls.value.join(','))
+      updateValue(urls.value.join(','))
     }else{
-      emit('update:modelValue', urls.value)
-      emitUpdate.value = true
-      emit('change', urls.value)
+      updateValue(urls.value)
     }
   } else {
-    emit('update:modelValue', '')
-    emitUpdate.value = true
-    emit('change', '')
+    updateValue('')
   }
 }
 
-function handleUploadChange(data){
+function onChange(data){
   fileList.value = data.fileList
 }
 
@@ -238,27 +216,21 @@ function beforeUpload(){
 }
 
 function onError(){
-  isUploading.value = true
+  isUploading.value = false
 }
 
-function onSuccess({ file, event }) {
+function onFinish({ file, event }) {
   let res = JSON.parse((event?.target).response)
   file.fullPath = res.data.url
   urls.value.push(res.data.url)
   if (props.multiple) {
     if(props.join){
-      emit('update:modelValue', urls.value.join(','))
-      emitUpdate.value = true
-      emit('change', urls.value.join(','))
+      updateValue(urls.value.join(','))
     }else{
-      emit('update:modelValue', urls.value)
-      emitUpdate.value = true
-      emit('change', urls.value)
+      updateValue(urls.value)
     }
   } else {
-    emit('update:modelValue', res.data.url)
-    emitUpdate.value = true
-    emit('change', res.data.url)
+    updateValue(res.data.url)
   }
   onDragEnd()
   isUploading.value = false
@@ -266,11 +238,7 @@ function onSuccess({ file, event }) {
 }
 
 function onDragEnd() {
-  let newUrls = []
-  urls.value.forEach(url => {
-    newUrls.push(encodeURI(url))
-  })
-  common.$get('/system/file/resort', { urls: newUrls.join(',') })
+  common.$get('/system/file/resort', { urls: urls.value.map(url => encodeURI(url)).join(',') })
 }
 
 function beforeCropper(url) {
@@ -280,44 +248,27 @@ function beforeCropper(url) {
 }
 
 function cropper() {
+  let relativeImg = cropperOption.value.relativeImg
   cropperRef.value.getCropBlob((data) => {
-    let dataFile = new File([data], cropperOption.value.relativeImg.substring(cropperOption.value.relativeImg.lastIndexOf('/') + 1), { type: data.type, lastModified: Date.now() })
+    let dataFile = new File([data], relativeImg.substring(relativeImg.lastIndexOf('/') + 1), { type: data.type, lastModified: Date.now() })
     let formData = new FormData()
     formData.append('file', dataFile)
-    formData.append('url', encodeURI(cropperOption.value.relativeImg))
+    formData.append('url', encodeURI(relativeImg))
     request({
       url: '/system/file/cropper',
       method: 'post',
       data: formData
     }).then(res => {
-      urls.value.forEach((it, i) => {
-        if (cropperOption.value.img.indexOf(it) !== -1) {
-          fileList.value.forEach((fl, j) => {
-            if(cropperOption.value.img.indexOf(fl.fullPath) !== -1){
-              fileList.value[j].fullPath =  res.data.url
-            }
-          })
-          urls.value[i] = res.data.url
-          console.log(fileList.value, urls.value)
-          cropperDialog.value.hide()
-        }
-      })
+      fileList.value[fileList.value.map(fl => fl.fullPath).indexOf(relativeImg)].fullPath = res.data.url
+      urls.value[urls.value.indexOf(relativeImg)] = res.data.url
+      cropperDialog.value.hide()
     })
   })
 }
 
 </script>
 
-<style scoped>
-.vue-draggable >>> .n-upload {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-</style>
-
 <style lang="less" scoped>
-// 上传按钮
 .uploadIcon {
   width: 100%;
   height: 100%;
@@ -349,7 +300,6 @@ function cropper() {
   }
 }
 
-// 拖拽
 .vue-draggable {
   display: flex;
   flex-wrap: wrap;
@@ -365,6 +315,11 @@ function cropper() {
     :deep(.n-image), :deep(.n-image img) {
       width: 100%;
       height: 100%;
+    }
+    :deep(.n-upload) {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     .tools {
       position: absolute;
