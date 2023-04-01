@@ -24,6 +24,14 @@
                   placeholder="请输入密码"
               />
             </n-form-item>
+            <n-form-item path="code" label="验证码">
+              <n-input
+                  v-model:value="loginForm.code"
+                  @keyup.enter.native="handleLogin"
+                  placeholder="请输入验证码"
+              />
+              <img class="code-img" :src="codeImg" @click="refreshCode">
+            </n-form-item>
             <n-form-item>
               <n-button round block size="large" type="info" :loading="loading" @click="handleLogin">
                 登录
@@ -42,14 +50,23 @@
 import router from '@/scripts/router'
 import {useUserStore} from '@/store/modules/userStore'
 import {reactive, ref} from 'vue'
+import common from '@/scripts/common'
 
 const userStore = useUserStore()
+const codeImg = ref()
 const loginForm = reactive({
   username: '',
-  password: ''
+  password: '',
+  code: ''
 })
 const loading = ref(false)
-
+function refreshCode(){
+  common.$get('/system/security/verification/code').then(res => {
+    codeImg.value = 'data:image/png;base64,' + res.data.img
+    loginForm.uuid = res.data.uuid
+  })
+}
+refreshCode()
 function handleLogin() {
   if(!loginForm.username){
     $message.warning('请输入用户名')
@@ -59,13 +76,14 @@ function handleLogin() {
     return
   }else{
     loading.value = true
-    userStore.login({username: loginForm.username, password: loginForm.password}).then(token => {
+    userStore.login(loginForm).then(token => {
       if (token) {
         router.push({path: '/home'})
       }else{
         loading.value = false
       }
     }).catch(() => {
+      refreshCode()
       loading.value = false
     })
   }
