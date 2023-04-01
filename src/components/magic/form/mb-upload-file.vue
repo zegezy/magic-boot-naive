@@ -51,7 +51,7 @@
     },
     maxFileSize: {
       type: Number,
-      default: 20000000
+      default: 200
     },
     accept: {
       type: String,
