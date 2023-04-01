@@ -3,14 +3,14 @@
     <template v-for="(it, i) in where">
       <n-form-item v-if="it && it.label" :label="it.label" :key="i">
         <component
-            :is="
-              !it.component ? 'mb-input' : it.component.startsWith('n-') ||
-              // $global.dynamicComponentNames.indexOf(it.component) != -1 ? it.component :
-              'mb-' + it.component
-            "
-            v-model="it.value"
-            :item-label="it.label"
-            v-bind="it.props"
+          :is="
+            !it.component ? 'mb-input' : it.component.startsWith('n-') ||
+            // $global.dynamicComponentNames.indexOf(it.component) != -1 ? it.component :
+            'mb-' + it.component
+          "
+          v-model="it.value"
+          :item-label="it.label"
+          v-bind="it.props"
         />
       </n-form-item>
     </template>
@@ -44,8 +44,22 @@ const props = defineProps({
 })
 
 for(let key in props.where){
-  if(props.where[key] instanceof Object && props.where[key].value == undefined){
-    props.where[key].value = null
+  if(props.where[key] instanceof Object){
+    if(props.where[key].value == undefined){
+      props.where[key].value = null
+    }
+    if(props.where[key].component == 'date'){
+      let isResetValue = false
+      for(let k in props.where[key]){
+        if(k == 'resetValue'){
+          isResetValue = true
+        }
+      }
+      if(!isResetValue){
+        // date 组件 要reset为 undefined 要不然报错
+        props.where[key].resetValue = undefined
+      }
+    }
   }
 }
 
@@ -81,10 +95,20 @@ function reset() {
   for(let key in props.where){
     if(props.notReset.indexOf(key) == -1){
       if(props.where[key] instanceof Object){
-        if(props.where[key].value instanceof Array){
-          props.where[key].value = []
+        let isResetValue = false
+        for(let k in props.where[key]){
+          if(k == 'resetValue'){
+            isResetValue = true
+          }
+        }
+        if(isResetValue){
+          props.where[key].value = props.where[key].resetValue
         }else{
-          props.where[key].value = null
+          if(props.where[key].value instanceof Array){
+            props.where[key].value = []
+          }else{
+            props.where[key].value = null
+          }
         }
       }else{
         if(props.where[key] instanceof Array){

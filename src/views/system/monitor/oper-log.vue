@@ -34,7 +34,11 @@
         label: '路径'
       },
       costTime: {
-        component: 'inputrange',
+        component: 'input',
+        props: {
+          pair: true,
+          separator: '-'
+        },
         label: '耗时区间'
       },
       createDate: {
