@@ -6,19 +6,17 @@
 
 <template>
   <div class="mb-list">
-
-    <mb-search :where="tableOptions.where" @search="reloadTable" />
-
+    <div class="mb-search">
+      <mb-search :where="tableOptions.where" @search="reloadTable" />
+    </div>
     <div class="mb-toolbar">
       <n-button v-permission="'role:save'" type="primary" @click="handleCreate">
         添加
       </n-button>
     </div>
-
     <div class="mb-table">
       <mb-table ref="table" v-bind="tableOptions" />
     </div>
-
     <mb-modal ref="roleFormDialog" :title="dialogTitle" width="900px" @confirm="save($event)">
       <n-form ref="dataForm" :rules="rules"  label-placement="left" :model="temp" label-width="80px">
         <n-grid :cols="24" :x-gap="24">

@@ -98,12 +98,12 @@ const tableOptions = reactive({
       label: '机构名称',
       align: 'left',
       type: 'html',
-      width: 500
+      width: 280
     },
     {
       field: 'code',
       label: '机构编码',
-      width: 300,
+      width: 120,
       align: 'center',
       type: 'html'
     },
@@ -116,14 +116,14 @@ const tableOptions = reactive({
     },
     {
       field: 'sort',
-      label: '排序',
+      label: '序号',
       width: 60,
       align: "center"
     },
     {
       label: '排序',
       type: 'buttons',
-      width: 180,
+      width: 160,
       buttons: [
         {
           label: '上移',

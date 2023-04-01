@@ -89,7 +89,7 @@ const tableOptions = reactive({
     },
     {
       field: 'sort',
-      label: '排序',
+      label: '序号',
     },
     {
       label: '排序',
@@ -98,6 +98,7 @@ const tableOptions = reactive({
       buttons: [
         {
           label: '上移',
+          link: true,
           click: (row) => {
             common.$get('/system/menu/sort/up',{
               id: row.id,
@@ -110,6 +111,7 @@ const tableOptions = reactive({
         },
         {
           label: '下移',
+          link: true,
           click: (row) => {
             common.$get('/system/menu/sort/down',{
               id: row.id,

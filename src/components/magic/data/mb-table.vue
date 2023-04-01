@@ -16,6 +16,7 @@
   >
     <template #switch="{ row, col }">
       <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="(!col.if && true) || (col.if && col.if(row))" />
+      <span v-else>-</span>
     </template>
     <template #html="{ row, col }">
       <span v-html="row[col.field]"></span>

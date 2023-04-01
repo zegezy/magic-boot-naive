@@ -1,7 +1,7 @@
 <template>
   <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px" style="width: 800px">
     <n-form-item label="头像" path="headPortrait">
-<!--        <mb-upload-image v-model="temp.headPortrait" />-->
+      <mb-upload-image v-model="temp.headPortrait" />
     </n-form-item>
     <n-form-item label="姓名/昵称" path="name">
       <n-input v-model:value="temp.name" disabled />
