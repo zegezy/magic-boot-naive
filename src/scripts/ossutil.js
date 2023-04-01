@@ -30,7 +30,7 @@ const init = async () => {
         // 刷新临时访问凭证的时间间隔，单位为毫秒。
         refreshSTSTokenInterval: 30000,
         // 填写Bucket名称。
-        bucket: global.ossBucket
+        bucket: global.config.bucketDomain
     });
     return client
 }

@@ -175,14 +175,15 @@ common.download = (urls, filename) => {
 //   return global.baseApi + `/system/file/download?urls=${encodeURI(urls)}&filename=${filename || ''}&token=${getToken()}`
 // }
 
-// common.loadConfig = async() => {
-//   await request({
-//     url: '/system/config/list'
-//   }).then(res => {
-//     const { data } = res
-//     global.filePrefix = data.filePrefix
-//   })
-// }
+common.loadConfig = async() => {
+  await request({
+    url: '/system/config/list'
+  }).then(res => {
+    const { data } = res
+    global.config = data
+    global.filePrefix = global.config.bucketDomain ? global.config.bucketDomain : global.baseApi
+  })
+}
 
 common.setDefaultValue = (obj, attr, value) => {
   obj[attr] = obj[attr] === undefined ? value : obj[attr]
@@ -198,6 +199,10 @@ common.exportExcel = (options) => {
   const wb = utils.book_new()
   utils.book_append_sheet(wb, workBook, 'sheet1');
   writeFile(wb, `${options.fileName}.${options.suffix || 'xlsx'}`);
+}
+
+common.objectAssign = (target, source) => {
+  return Object.assign({}, JSON.parse(JSON.stringify(target)), JSON.parse(JSON.stringify(source)))
 }
 
 export default common

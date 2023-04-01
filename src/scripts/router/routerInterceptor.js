@@ -3,6 +3,7 @@ import { generateRoutes, generateHiddenRoutes } from './loadRouter'
 import { useUserStore } from "@/store/modules/userStore"
 import { useDictStore } from '@/store/modules/dictStore'
 import { useTabsStore } from '@/store/modules/tabsStore'
+import common from "@/scripts/common";
 
 const whiteList = ['/login']
 let loadInfo = false
@@ -67,6 +68,7 @@ async function loadData(userStore){
 
   await userStore.getUserInfo()
   await dictStore.getDictData()
+  await common.loadConfig()
 
   await generateRoutes().then(accessRoutes => {
     userStore.pushPermissionRouter(accessRoutes)
