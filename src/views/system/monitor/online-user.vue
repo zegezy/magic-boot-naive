@@ -1,45 +1,49 @@
 <template>
   <mb-list ref="magicList" v-bind="listOptions" />
-<!--  <mb-dialog ref="magicDialog" title="提示" width="600px" @confirm-click="disable">-->
-<!--    <template #content>-->
-<!--      <el-row :gutter="24">-->
-<!--        <el-col :span="24">-->
-<!--          确定要踢“{{currRow.username}}”下线并临时封禁吗？-->
-<!--        </el-col>-->
-<!--        <el-col :span="24">-->
-<!--          <mb-radio v-model="time" :options="options"></mb-radio>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
-<!--    </template>-->
-<!--  </mb-dialog>-->
+  <mb-modal ref="magicDialog" title="提示" width="600px" @confirm="disable">
+    <n-grid :cols="24">
+      <n-gi :span="24">
+        确定要踢“{{currRow.username}}”下线并临时封禁吗？
+      </n-gi>
+      <n-gi :span="24">
+        <n-radio-group v-model:value="time">
+          <n-space>
+            <n-radio v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </n-radio>
+          </n-space>
+        </n-radio-group>
+      </n-gi>
+    </n-grid>
+  </mb-modal>
 </template>
 
 <script setup>
-  import {reactive, ref, getCurrentInstance} from "vue";
-  const { proxy } = getCurrentInstance()
+  import {reactive, ref} from "vue";
+  import common from '@/scripts/common'
   const magicList = ref()
-  // const magicDialog = ref()
-  // const currRow = ref()
-  // const time = ref(0)
-  // const options = reactive([{
-  //   label: '不封禁',
-  //   value: 0
-  // },{
-  //   label: '1分钟',
-  //   value: 60
-  // },{
-  //   label: '10分钟',
-  //   value: 10 * 60
-  // },{
-  //   label: '1小时',
-  //   value: 1 * 60 *60
-  // },{
-  //   label: '5小时',
-  //   value: 5 * 60 *60
-  // },{
-  //   label: '永久',
-  //   value: -1
-  // }])
+  const magicDialog = ref()
+  const currRow = ref()
+  const time = ref(0)
+  const options = reactive([{
+    label: '不封禁',
+    value: 0
+  },{
+    label: '1分钟',
+    value: 60
+  },{
+    label: '10分钟',
+    value: 10 * 60
+  },{
+    label: '1小时',
+    value: 1 * 60 *60
+  },{
+    label: '5小时',
+    value: 5 * 60 *60
+  },{
+    label: '永久',
+    value: -1
+  }])
   const listOptions = reactive({
     table: {
       url: '/system/online/list',
@@ -78,10 +82,10 @@
           label: '登录时间'
         }, {
           label: '操作',
-          type: 'btns',
+          type: 'buttons',
           width: 140,
           fixed: 'right',
-          btns: [
+          buttons: [
             {
               permission: 'online:logout',
               label: '踢人',
@@ -89,18 +93,20 @@
               link: true,
               icon: 'ElIconBicycle',
               click: (row) => {
-                // currRow.value = row
-                // magicDialog.value.show()
-                proxy.$alert(`确定要踢“${row.username}”下线吗？`, '提示', {
-                  confirmButtonText: '确定',
-                  callback: (action) => {
-                    if (action === 'confirm') {
-                      proxy.$get('/system/online/logout',{ token: row.token }).then(() => {
-                        magicList.value.reload()
-                      })
-                    }
-                  }
-                })
+                console.log(row)
+                currRow.value = row
+                magicDialog.value.show()
+                // $dialog.warning({
+                //   title: '提示',
+                //   content: `确定要踢“${row.username}”下线吗？`,
+                //   positiveText: '确定',
+                //   negativeText: '取消',
+                //   onPositiveClick: () => {
+                //     common.$get('/system/online/logout',{ token: row.token }).then(() => {
+                //       magicList.value.reload()
+                //     })
+                //   }
+                // })
               }
             }
           ]
@@ -108,10 +114,10 @@
       ]
     }
   })
-  // function disable(){
-  //   proxy.$get('/system/online/logout',{ id: currRow.value.id, time: time.value }).then(() => {
-  //     magicDialog.value.hide()
-  //     magicList.value.reload()
-  //   })
-  // }
+  function disable(){
+    common.$get('/system/online/logout',{ id: currRow.value.id, time: time.value }).then(() => {
+      magicDialog.value.hide()
+      magicList.value.reload()
+    })
+  }
 </script>
