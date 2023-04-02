@@ -29,6 +29,9 @@
     <template #dictType="{ row, col }">
       <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
     </template>
+    <template #dynamic="{ row, col }">
+      <slot :name="col.field" :row="row" :col="col" />
+    </template>
   </n-data-table>
 </template>
 
