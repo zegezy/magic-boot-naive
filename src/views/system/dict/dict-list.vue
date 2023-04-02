@@ -34,11 +34,11 @@
               <n-input v-model:value="temp.descRibe" />
             </n-form-item>
           </n-gi>
-          <n-grid :span="12">
+          <n-gi :span="12">
             <n-form-item label="备注" path="remarks">
               <n-input v-model:value="temp.remarks" />
             </n-form-item>
-          </n-grid>
+          </n-gi>
         </n-grid>
       </n-form>
     </mb-modal>
