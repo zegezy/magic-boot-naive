@@ -15,7 +15,7 @@
     @update:page="table.handlerPage"
   >
     <template #switch="{ row, col }">
-      <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="(!col.if && true) || (col.if && col.if(row))" />
+      <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true" />
       <span v-else>-</span>
     </template>
     <template #html="{ row, col }">
@@ -24,7 +24,7 @@
     <template #buttons="{ row, col }">
       <template v-for="it in col.buttons">
         <template v-if="it.link">
-          <a v-if="(!it.if && true) || (it.if && it.if(row))" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
+          <a v-if="it.if != undefined ? it.if(row) : true" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
         </template>
       </template>
     </template>
