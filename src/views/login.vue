@@ -24,7 +24,7 @@
                   placeholder="请输入密码"
               />
             </n-form-item>
-            <n-form-item path="code" label="验证码">
+            <n-form-item path="code" label="验证码" v-if="codeEnable == 'true'">
               <n-input
                   v-model:value="loginForm.code"
                   @keyup.enter.native="handleLogin"
@@ -60,6 +60,13 @@ const loginForm = reactive({
   code: ''
 })
 const loading = ref(false)
+const codeEnable = ref()
+function getCodeEnable(){
+  common.$get('/system/config/getCodeEnable').then(res => {
+    codeEnable.value = res.data
+  })
+}
+getCodeEnable()
 function refreshCode(){
   common.$get('/system/security/verification/code').then(res => {
     codeImg.value = 'data:image/png;base64,' + res.data.img
