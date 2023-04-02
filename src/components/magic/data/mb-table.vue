@@ -23,7 +23,9 @@
     </template>
     <template #buttons="{ row, col }">
       <template v-for="it in col.buttons">
-        <a v-if="it.link" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
+        <template v-if="it.link">
+          <a v-if="(!it.if && true) || (it.if && it.if(row))" v-permission="it.permission" class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
+        </template>
       </template>
     </template>
     <template #dictType="{ row, col }">
