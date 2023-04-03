@@ -37,7 +37,7 @@
           <n-layout-header class="h-12 p-2">
             <tabs />
           </n-layout-header>
-          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-2 router-view-content p-1">
+          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1">
             <router-view v-slot="{ Component }">
               <transition name="fade" mode="out-in" appear>
                 <keep-alive :include="keepAliveInclude">
