@@ -16,6 +16,7 @@
     @change="onChange"
     @error="onError"
     :file-list="fileList"
+    :default-upload="defaultUpload"
   >
     <n-upload-dragger v-if="directoryDnd">
       <div>可拖拽上传</div>
@@ -100,6 +101,10 @@
     directoryDnd: {
       type: Boolean,
       default: false
+    },
+    defaultUpload: {
+      type: Boolean,
+      default: true
     }
   })
 
@@ -297,7 +302,9 @@
       $message.error(`上传文件大小不能超过 ${props.maxFileSize}MB！`)
       return isLt2M
     }
-    uploadLoading.value = true
+    if(props.defaultUpload){
+      uploadLoading.value = true
+    }
   }
 
   function getAllSuffixs() {
@@ -330,6 +337,12 @@
     }
     return false
   }
+
+  function getFileList(){
+    return fileList.value
+  }
+
+  defineExpose({ getFileList })
 
 </script>
 
