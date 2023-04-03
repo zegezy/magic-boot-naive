@@ -11,7 +11,10 @@
     </div>
     <div class="mb-toolbar">
       <n-button v-permission="'role:save'" type="primary" @click="handleCreate">
-        添加
+          <n-icon>
+              <AddOutline />
+          </n-icon>
+        添加角色
       </n-button>
     </div>
     <div class="mb-table">
@@ -71,6 +74,7 @@ import { ref, reactive, watch, nextTick } from 'vue'
 import common from '@/scripts/common'
 import { push } from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
+import {AddOutline} from "@vicons/ionicons5";
 
 const permissionData = reactive([{
   label: '全部',
