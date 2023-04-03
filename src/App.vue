@@ -1,10 +1,10 @@
 <template>
 
-  <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme-overrides="lightThemeOverrides">
-    <n-theme-editor>
-      <router-view/>
-    </n-theme-editor>
-  </n-config-provider>
+    <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme-overrides="lightThemeOverrides">
+        <n-theme-editor>
+            <router-view/>
+        </n-theme-editor>
+    </n-config-provider>
 </template>
 
 <script setup>
@@ -14,5 +14,5 @@ import {lightThemeOverrides} from "@/styles";
 </script>
 
 <style lang="less">
-  @import 'styles/index.less';
+@import 'styles/index.less';
 </style>

@@ -8,6 +8,6 @@ import {CommonStyle} from "@/styles/override/commonStyle";
  */
 export const lightThemeOverrides = {
     Menu: Menu,
-    LoadingBar:LoadingBar,
+    LoadingBar: LoadingBar,
     common: CommonStyle
 }

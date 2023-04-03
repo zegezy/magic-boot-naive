@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import viteSvgIcons from 'vite-plugin-svg-icons'
@@ -16,9 +16,9 @@ export default defineConfig({
         host: '0.0.0.0'
     },
     resolve: {
-    extensions: ['.vue', '.json', '.js'],
+        extensions: ['.vue', '.json', '.js'],
         alias: {
-            '@': path.resolve(__dirname,'src')
+            '@': path.resolve(__dirname, 'src')
         }
     }
 })

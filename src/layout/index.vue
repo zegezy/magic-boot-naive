@@ -1,138 +1,147 @@
 <template>
-  <n-layout position="absolute" has-sider>
-    <n-layout-sider
-      bordered
-      collapse-mode="width"
-      :collapsed-width="64"
-      :width="200"
-      show-trigger
-      @update:collapsed="updateCollapsed"
-      @after-enter="() => isCollapsed = false"
-    >
-      <n-layout position="absolute">
-        <n-layout-header class="nav-bg">
-          <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-if="!isCollapsed">{{ $global.title }}</p>
-          <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-else>{{ $global.title.substring(0, 1) }}</p>
-        </n-layout-header>
-        <n-layout-content class="absolute top-16 right-0 bottom-0 left-0 nav-bg" :native-scrollbar="false">
-          <n-menu
-            ref="menuRef"
-            v-model:value="selectedKey"
-            :indent="24"
+    <n-layout position="absolute" has-sider>
+        <n-layout-sider
+            bordered
+            collapse-mode="width"
             :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :options="menuOptions"
-            inverted
-            accordion
-          />
-        </n-layout-content>
-      </n-layout>
-    </n-layout-sider>
-    <n-layout>
-      <n-layout-header class="h-16">
-        <layout-header />
-      </n-layout-header>
-      <n-layout-content class="absolute top-16 right-0 bottom-0 left-0">
-        <n-layout position="absolute">
-          <n-layout-header class="h-12 p-2">
-            <tabs />
-          </n-layout-header>
-          <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1">
-            <router-view v-slot="{ Component }">
-              <transition name="fade" mode="out-in" appear>
-                <keep-alive :include="keepAliveInclude">
-                  <component v-if="tabsStore.getShow" :is="Component" :key="$route.path" />
-                </keep-alive>
-              </transition>
-            </router-view>
-          </n-layout-content>
+            :width="200"
+            show-trigger
+            @update:collapsed="updateCollapsed"
+            @after-enter="() => isCollapsed = false"
+        >
+            <n-layout position="absolute">
+                <n-layout-header class="nav-bg">
+                    <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-if="!isCollapsed">{{
+                            $global.title
+                        }}</p>
+                    <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-else>
+                        {{ $global.title.substring(0, 1) }}</p>
+                </n-layout-header>
+                <n-layout-content class="absolute top-16 right-0 bottom-0 left-0 nav-bg" :native-scrollbar="false">
+                    <n-menu
+                        ref="menuRef"
+                        v-model:value="selectedKey"
+                        :indent="24"
+                        :collapsed-width="64"
+                        :collapsed-icon-size="22"
+                        :options="menuOptions"
+                        inverted
+                        accordion
+                    />
+                </n-layout-content>
+            </n-layout>
+        </n-layout-sider>
+        <n-layout>
+            <n-layout-header class="h-16">
+                <layout-header/>
+            </n-layout-header>
+            <n-layout-content class="absolute top-16 right-0 bottom-0 left-0">
+                <n-layout position="absolute">
+                    <n-layout-header class="h-12 p-2">
+                        <tabs/>
+                    </n-layout-header>
+                    <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1">
+                        <router-view v-slot="{ Component }">
+                            <transition name="fade" mode="out-in" appear>
+                                <keep-alive :include="keepAliveInclude">
+                                    <component v-if="tabsStore.getShow" :is="Component" :key="$route.path"/>
+                                </keep-alive>
+                            </transition>
+                        </router-view>
+                    </n-layout-content>
+                </n-layout>
+            </n-layout-content>
         </n-layout>
-      </n-layout-content>
     </n-layout>
-  </n-layout>
 </template>
 
 <script setup>
-  import { ref, h, watch, computed } from 'vue';
-  import tabs from './tabs.vue'
-  import { RouterLink } from 'vue-router'
-  import * as icons from "@vicons/ionicons5";
-  import { NIcon } from 'naive-ui';
-  import { useUserStore } from "@/store/modules/userStore"
-  import { useTabsStore } from "@/store/modules/tabsStore"
-  import LayoutHeader from "@/layout/layout-header.vue";
-  const tabsStore = useTabsStore()
-  const userStore = useUserStore()
-  const menuRef = ref()
-  const currentTab = tabsStore.getCurrentTab
-  const selectedKey = ref(currentTab)
-  selectMenu(currentTab)
-  watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
-  const keepAliveInclude = computed(() => tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1)))
-  function selectMenu(key){
+import {ref, h, watch, computed} from 'vue';
+import tabs from './tabs.vue'
+import {RouterLink} from 'vue-router'
+import * as icons from "@vicons/ionicons5";
+import {NIcon} from 'naive-ui';
+import {useUserStore} from "@/store/modules/userStore"
+import {useTabsStore} from "@/store/modules/tabsStore"
+import LayoutHeader from "@/layout/layout-header.vue";
+
+const tabsStore = useTabsStore()
+const userStore = useUserStore()
+const menuRef = ref()
+const currentTab = tabsStore.getCurrentTab
+const selectedKey = ref(currentTab)
+selectMenu(currentTab)
+watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
+const keepAliveInclude = computed(() => tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1)))
+
+function selectMenu(key) {
     selectedKey.value = key
     menuRef.value?.showOption(key);
-  }
-  function renderIcon(icon) {
-    return () => h(NIcon, null, { default: () => h(icon) })
-  }
-  const isCollapsed = ref(false)
-  function updateCollapsed(collapsed){
-    if(collapsed){
-      isCollapsed.value = collapsed
+}
+
+function renderIcon(icon) {
+    return () => h(NIcon, null, {default: () => h(icon)})
+}
+
+const isCollapsed = ref(false)
+
+function updateCollapsed(collapsed) {
+    if (collapsed) {
+        isCollapsed.value = collapsed
     }
-  }
+}
 
-  const menuOptions = ref(recursionRouters(userStore.getPermissionRouters))
+const menuOptions = ref(recursionRouters(userStore.getPermissionRouters))
 
-  function recursionRouters(children){
+function recursionRouters(children) {
     let menus = []
     children.forEach((chi) => {
-      let menu = {}
-      if(!$xe.isEmpty(chi.children)){
-        if(chi['alwaysShow'] === true){
-          menu.key = chi.path
-          menu.label = chi.title
-          menu.children = recursionRouters(chi.children)
-        }else{
-          menu.key = chi.children[0].path
-          menu.label = () => h(
-            RouterLink,
-            {
-              to: {
-                path: chi.children[0].path
-              }
-            },
-            { default: () => chi.children[0].title }
-          )
-        }
-      }else{
-        menu.key = chi.path
-        menu.label = () => h(
-          RouterLink,
-          {
-            to: {
-              path: chi.path
+        let menu = {}
+        if (!$xe.isEmpty(chi.children)) {
+            if (chi['alwaysShow'] === true) {
+                menu.key = chi.path
+                menu.label = chi.title
+                menu.children = recursionRouters(chi.children)
+            } else {
+                menu.key = chi.children[0].path
+                menu.label = () => h(
+                    RouterLink,
+                    {
+                        to: {
+                            path: chi.children[0].path
+                        }
+                    },
+                    {default: () => chi.children[0].title}
+                )
             }
-          },
-          { default: () => chi.title }
-        )
-      }
-      if(chi.icon && icons[chi.icon]){
-        menu.icon = renderIcon(icons[chi.icon])
-      }
-      menus.push(menu)
+        } else {
+            menu.key = chi.path
+            menu.label = () => h(
+                RouterLink,
+                {
+                    to: {
+                        path: chi.path
+                    }
+                },
+                {default: () => chi.title}
+            )
+        }
+        if (chi.icon && icons[chi.icon]) {
+            menu.icon = renderIcon(icons[chi.icon])
+        }
+        menus.push(menu)
     })
     return menus
-  }
+}
 
 </script>
 
 <style scoped>
-.nav-bg{
-  background-color: #041427;
+.nav-bg {
+    background-color: #041427;
 }
-.title{
-  font-family: PoetsenOne;
+
+.title {
+    font-family: PoetsenOne;
 }
 </style>

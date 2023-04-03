@@ -42,53 +42,53 @@ const userStore = useUserStore()
 const temp = ref(getTemp())
 
 let validatePass2 = (rule, value, callback) => {
-	if (temp.value.newPassword) {
-		if (value === '') {
-			callback(new Error('请再次输入密码'));
-		} else if (value !== temp.value.newPassword) {
-			callback(new Error('两次输入密码不一致!'));
-		} else {
-			callback();
-		}
-	} else {
-		callback();
-	}
+    if (temp.value.newPassword) {
+        if (value === '') {
+            callback(new Error('请再次输入密码'));
+        } else if (value !== temp.value.newPassword) {
+            callback(new Error('两次输入密码不一致!'));
+        } else {
+            callback();
+        }
+    } else {
+        callback();
+    }
 }
 const rules = reactive({
-	password: [{required: true, message: '请输入原密码', trigger: 'change'}, {min: 6, message: '密码不少于6位'}],
-	phone: [{min: 11, message: '请输入11位手机号', trigger: 'change'}],
-	newPassword: [{min: 6, message: '密码不少于6位'}],
-	confirmPassword: [{min: 6, message: '密码不少于6位'}, {validator: validatePass2}],
+    password: [{required: true, message: '请输入原密码', trigger: 'change'}, {min: 6, message: '密码不少于6位'}],
+    phone: [{min: 11, message: '请输入11位手机号', trigger: 'change'}],
+    newPassword: [{min: 6, message: '密码不少于6位'}],
+    confirmPassword: [{min: 6, message: '密码不少于6位'}, {validator: validatePass2}],
 })
 const dataForm = ref()
 
 function getTemp() {
-	return {
-		id: '',
-		name: '',
-		password: '',
-		phone: '',
-		headPortrait: '',
-		newPassword: '',
-		confirmPassword: ''
-	}
+    return {
+        id: '',
+        name: '',
+        password: '',
+        phone: '',
+        headPortrait: '',
+        newPassword: '',
+        confirmPassword: ''
+    }
 }
 
 function resetTemp() {
-	temp.value = getTemp()
-	nextTick(() => {
-		dataForm.value.restoreValidation()
-	})
+    temp.value = getTemp()
+    nextTick(() => {
+        dataForm.value.restoreValidation()
+    })
 }
 
 function save() {
-	dataForm.value.validate((errors) => {
-		if (!errors) {
-			common.$post('/system/user/center/update', temp.value).then(() => {
-				$message.success('修改成功')
-			})
-		}
-	})
+    dataForm.value.validate((errors) => {
+        if (!errors) {
+            common.$post('/system/user/center/update', temp.value).then(() => {
+                $message.success('修改成功')
+            })
+        }
+    })
 }
 
 common.objAssign(temp.value, userStore.getInfo, ['password'])

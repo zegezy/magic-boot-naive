@@ -1,67 +1,67 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import Layout from '@/layout'
-import { setupRouterInterceptor } from "@/scripts/router/routerInterceptor";
-import { useTabsStore } from "@/store/modules/tabsStore";
+import {setupRouterInterceptor} from "@/scripts/router/routerInterceptor";
+import {useTabsStore} from "@/store/modules/tabsStore";
 
 const routes = [
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/home',
-    children: [
-      {
-        path: '/home',
-        component: () => import('@/views/home.vue'),
-        meta: { title: '首页' }
-      }
-    ]
-  },
-  {
-    path: '/user-center',
-    redirect: '/system/user/user-center',
-    component: Layout,
-    hidden: true,
-    children: [{
-      path: '/system/user/user-center',
-      component: () => import('@/views/system/user/user-center'),
-      meta: { title: '个人中心' }
-    }]
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/login.vue'),
-    hidden: true
-  },
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
-  },
+    {
+        path: '/',
+        component: Layout,
+        redirect: '/home',
+        children: [
+            {
+                path: '/home',
+                component: () => import('@/views/home.vue'),
+                meta: {title: '首页'}
+            }
+        ]
+    },
+    {
+        path: '/user-center',
+        redirect: '/system/user/user-center',
+        component: Layout,
+        hidden: true,
+        children: [{
+            path: '/system/user/user-center',
+            component: () => import('@/views/system/user/user-center'),
+            meta: {title: '个人中心'}
+        }]
+    },
+    {
+        path: '/login',
+        component: () => import('@/views/login.vue'),
+        hidden: true
+    },
+    {
+        path: '/redirect',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: '/redirect/:path(.*)',
+                component: () => import('@/views/redirect/index')
+            }
+        ]
+    },
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
+    history: createWebHashHistory(),
+    routes
 })
 
-export function push(to){
-  const tabsStore = useTabsStore()
-  if(tabsStore.contains(to.path)){
-    tabsStore.refreshPush(to)
-  }else{
-    router.push(to)
-  }
+export function push(to) {
+    const tabsStore = useTabsStore()
+    if (tabsStore.contains(to.path)) {
+        tabsStore.refreshPush(to)
+    } else {
+        router.push(to)
+    }
 }
 
-export function setupRouter(app){
-  app.use(router)
-  setupRouterInterceptor()
+export function setupRouter(app) {
+    app.use(router)
+    setupRouterInterceptor()
 }
 
 export default router

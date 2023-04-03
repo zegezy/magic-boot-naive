@@ -1,72 +1,75 @@
 <template>
-  <n-modal
-    v-model:show="showModal"
-    preset="dialog"
-    :title="title"
-    :show-icon="false"
-    :mask-closable="maskClosable"
-    :style="{ width }"
-  >
-    <div style="margin-top:24px">
-      <slot />
-    </div>
-    <template #action>
-      <slot name="action" v-if="showFooter">
-        <n-button @click="() => showModal = false">关闭</n-button>
-        <n-button type="primary" :loading="confirmLoading" @click="confirm">
-          确定
-        </n-button>
-      </slot>
-    </template>
-  </n-modal>
+    <n-modal
+        v-model:show="showModal"
+        preset="dialog"
+        :title="title"
+        :show-icon="false"
+        :mask-closable="maskClosable"
+        :style="{ width }"
+    >
+        <div style="margin-top:24px">
+            <slot/>
+        </div>
+        <template #action>
+            <slot name="action" v-if="showFooter">
+                <n-button @click="() => showModal = false">关闭</n-button>
+                <n-button type="primary" :loading="confirmLoading" @click="confirm">
+                    确定
+                </n-button>
+            </slot>
+        </template>
+    </n-modal>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  const emit = defineEmits(['confirm'])
-  const props = defineProps({
+import {ref} from 'vue'
+
+const emit = defineEmits(['confirm'])
+const props = defineProps({
     title: {
-      type: String,
-      default: ''
+        type: String,
+        default: ''
     },
     width: {
-      type: String,
-      default: ''
+        type: String,
+        default: ''
     },
     maskClosable: {
-      type: Boolean,
-      default: true
+        type: Boolean,
+        default: true
     },
     showFooter: {
-      type: Boolean,
-      default: true
+        type: Boolean,
+        default: true
     }
-  })
-  const showModal = ref(false)
-  const confirmLoading = ref(false)
-  function show(){
+})
+const showModal = ref(false)
+const confirmLoading = ref(false)
+
+function show() {
     showModal.value = true
-  }
-  function hide(){
+}
+
+function hide() {
     showModal.value = false
-  }
+}
 
-  function loading(){
+function loading() {
     confirmLoading.value = true
-  }
+}
 
-  function hideLoading(){
+function hideLoading() {
     confirmLoading.value = false
-  }
+}
 
-  function confirm(){
+function confirm() {
     emit('confirm', {
-      loading,
-      hideLoading,
-      hide,
-      title: props.title
+        loading,
+        hideLoading,
+        hide,
+        title: props.title
     })
-  }
+}
 
-  defineExpose({ show, hide, loading, hideLoading })
+defineExpose({show, hide, loading, hideLoading})
 </script>

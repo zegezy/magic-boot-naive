@@ -1,12 +1,12 @@
 <script setup>
-  const props = defineProps({
+const props = defineProps({
     name: {
-      type: String,
-      default: ''
+        type: String,
+        default: ''
     }
-  })
+})
 </script>
 
 <template>
-  <component :is="props.name"></component>
+    <component :is="props.name"></component>
 </template>
