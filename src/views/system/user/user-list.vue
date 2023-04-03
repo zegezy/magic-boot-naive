@@ -34,6 +34,9 @@
           <mb-search :where="tableOptions.where" @search="reloadTable">
             <template #buttons>
               <n-button type="primary" @click="table.exportExcel()">
+                <n-icon>
+                  <DownloadOutline />
+                </n-icon>
                 导出
               </n-button>
             </template>
@@ -41,7 +44,12 @@
         </div>
 
         <div class="mb-toolbar">
-          <n-button v-permission="'user:save'" type="primary" @click="handleCreate">添加</n-button>
+          <n-button v-permission="'user:save'" type="primary" @click="handleCreate">
+              <n-icon>
+                  <add-outline />
+              </n-icon>
+              添加用户
+          </n-button>
 <!--          <mb-button v-permission="'user:delete'" plain :request-url="'/system/user/delete'" :btn-type="'delete'" :request-data="{ id: ids }" :after-handler="reloadTable" />-->
 <!--          <mb-upload-file ref="importUserRef" action="/system/user/import/preview" label="导入用户" :show-tip="false" :show-file-list="false" :show-remove-tip="false" :on-success="importUserSuccess" />-->
         </div>
@@ -69,6 +77,7 @@ import UserForm from './user-form.vue'
 import { ref, reactive, nextTick, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import common from '@/scripts/common'
+import {Search,TrashOutline,AddOutline,ArrowDownOutline,DownloadOutline} from "@vicons/ionicons5";
 const route = useRoute()
 
 const importUserRef = ref()
@@ -112,7 +121,10 @@ const tableOptions = reactive({
   selection: true,
   where: {
     username: {
-      label: '登录名称'
+      label: '登录名称',
+      props:{
+        width:'80px'
+      }
     },
     name: {
       label: '姓名/昵称'
