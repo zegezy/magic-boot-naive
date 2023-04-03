@@ -137,10 +137,6 @@ function renderSlot(col, type) {
     }
 }
 
-nextTick(() => {
-    fixCols()
-})
-
 const tableKey = ref('magicTable' + common.uuid())
 const table = createTable(props)
 const bindProps = table.getBindProps()
@@ -211,6 +207,7 @@ function exportExcel({fileName}) {
 }
 
 onMounted(() => {
+    fixCols()
     reload()
 })
 
