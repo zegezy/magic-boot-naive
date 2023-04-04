@@ -6,7 +6,7 @@
         :options="selectList"
         :style="{ width }"
         :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
-        clearable
+        :clearable="clearable"
         filterable
         max-tag-count="responsive"
     />
@@ -14,7 +14,7 @@
 
 <script setup>
 
-import {ref, watch, onMounted} from 'vue'
+import {ref, watch, onMounted, computed} from 'vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import common from '@/scripts/common'
 
@@ -33,6 +33,10 @@ const props = defineProps({
     options: {
         type: Array,
         default: () => []
+    },
+    optionsFilter: {
+        type: Function,
+        default: undefined
     },
     url: {
         type: String,
@@ -73,34 +77,34 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    join: {
+    clearable: {
         type: Boolean,
         default: true
-    },
-    showValue: {
-        type: Boolean,
-        default: false
     }
 })
 
+let join = false
 const selectList = ref([])
 const selectValue = ref(props.multiple ? [] : '')
+const getSelectValue = computed(() => {
+    if (join) {
+        return selectValue.value.join(',')
+    } else {
+        return selectValue.value
+    }
+})
 
 watch(() => [props.type, props.url, props.options], () => {
     loadData()
 }, {deep: true})
 
 watch(() => props.modelValue, (value) => {
-    setValue(value)
-})
-
-watch(selectValue, (value) => {
-    if (props.multiple && props.join) {
-        emit('update:modelValue', value.join(','))
-        emit('change', value.join(','))
-    } else {
-        emit('update:modelValue', value)
-        emit('change', value)
+    let _value = value
+    let sv = getSelectValue.value
+    _value = $xe.isArray(_value) ? _value.join(',') : _value.toString()
+    sv = $xe.isArray(sv) ? getSelectValue.value.join(',') : sv.toString()
+    if(_value != sv){
+        setValue(value)
     }
 })
 
@@ -108,12 +112,31 @@ onMounted(() => {
     loadData()
 })
 
+let selectValueWatch = false
+
 function setValue(value) {
-    if (props.multiple && props.join) {
-        selectValue.value = value ? value.split(',') : []
-    } else {
-        selectValue.value = value || value === 0 ? value.toString() : ''
+    if($xe.isArray(value)){
+        value = value.map(v => v.toString())
+        selectValue.value = value
+    }else if($xe.isNumber(value)){
+        join = props.multiple
+        selectValue.value = props.multiple ? value.toString().split(',') : value.toString()
+    }else if($xe.isString(value)){
+        join = props.multiple
+        selectValue.value = props.multiple ? value.split(',') : value
     }
+    if (!selectValueWatch) {
+        watch(selectValue, (value) => {
+            if (join) {
+                emit('update:modelValue', value.join(','))
+                emit('change', value.join(','))
+            } else {
+                emit('update:modelValue', value)
+                emit('change', value)
+            }
+        })
+    }
+    selectValueWatch = true
 }
 
 function loadData() {
@@ -129,6 +152,9 @@ function loadData() {
 }
 
 function listConcat(dictData) {
+    if(props.optionsFilter){
+        dictData = dictData.filter(props.optionsFilter)
+    }
     if (props.allOption) {
         selectList.value = [{
             value: '',
