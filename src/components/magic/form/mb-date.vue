@@ -1,5 +1,6 @@
 <template>
     <n-date-picker
+        :size="global.uiSize"
         v-model:formatted-value="selectValue"
         :type="type"
         :format="valueFormat"
@@ -14,6 +15,7 @@
 
 <script setup>
 import {watch, ref} from 'vue'
+import global from "@/scripts/global.js";
 
 const emit = defineEmits(['update:modelValue'])
 const selectValue = ref('')

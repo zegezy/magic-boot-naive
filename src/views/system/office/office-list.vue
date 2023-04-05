@@ -37,8 +37,8 @@
         <div class="mb-table">
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
-        <mb-modal ref="officeFormDialog" width="700px" :title="dialogTitle" @confirm="save($event)">
-            <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
+        <mb-modal :size="global.uiSize" ref="officeFormDialog" width="700px" :title="dialogTitle" @confirm="save($event)">
+            <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24" :x-gap="24">
                     <n-gi :span="12">
                         <n-form-item label="机构类型" path="type">

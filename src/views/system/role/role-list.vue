@@ -20,8 +20,8 @@
         <div class="mb-table">
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
-        <mb-modal ref="roleFormDialog" :title="dialogTitle" width="900px" @confirm="save($event)">
-            <n-form ref="dataForm" :rules="rules" label-placement="left" :model="temp" label-width="80px">
+        <mb-modal :size="global.uiSize" ref="roleFormDialog" :title="dialogTitle" width="900px" @confirm="save($event)">
+            <n-form :size="global.uiSize" ref="dataForm" :rules="rules" label-placement="left" :model="temp" label-width="80px">
                 <n-grid :cols="24" :x-gap="24">
                     <n-gi :span="12">
                         <n-form-item label="角色名称" path="name">

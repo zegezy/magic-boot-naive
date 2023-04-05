@@ -5,8 +5,11 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button v-permission="'dict:items:save'" type="primary" @click="handleCreate">
-                    添加
+                <n-button :size="global.uiSize" v-permission="'dict:items:save'" type="primary" @click="handleCreate">
+                    <n-icon>
+                        <AddOutline/>
+                    </n-icon>
+                    添加字典项
                 </n-button>
             </n-space>
         </div>
@@ -14,8 +17,8 @@
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
 
-        <mb-modal ref="formDialog" :title="dialogTitle" width="640px" @confirm="save($event)">
-            <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
+        <mb-modal :size="global.uiSize" ref="formDialog" :title="dialogTitle" width="520px" @confirm="save($event)">
+            <n-form ref="dataForm" :size="global.uiSize" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24">
                     <n-gi :span="12">
                         <n-form-item label="标签名" path="label">
@@ -51,6 +54,8 @@
 import {ref, reactive, nextTick} from 'vue'
 import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
+import global from "@/scripts/global.js";
+import {AddOutline} from "@vicons/ionicons5";
 
 const dictStore = useDictStore()
 

@@ -1,5 +1,5 @@
 <template>
-    <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
+    <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
         <n-grid :cols="24">
             <n-gi :span="12">
                 <n-form-item label="菜单类型" path="type">
@@ -78,6 +78,7 @@
 import {ref, reactive, watch, nextTick} from 'vue'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
+import global from "@/scripts/global.js";
 
 const props = defineProps({
     menuTree: {

@@ -1,5 +1,5 @@
 <template>
-    <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="90px" v-if="isForm">
+    <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="90px" v-if="isForm">
         <n-grid :cols="24" :x-gap="24">
             <n-gi :span="12">
                 <n-form-item label="登录名称" path="username">
@@ -50,6 +50,7 @@
 
 import {ref, reactive, nextTick} from 'vue'
 import common from '@/scripts/common'
+import global from "@/scripts/global.js";
 
 const emit = defineEmits(['reload-table'])
 

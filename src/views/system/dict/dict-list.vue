@@ -17,8 +17,8 @@
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
 
-        <mb-modal ref="dictDialog" :title="dialogTitle" width="640px" @confirm="save($event)">
-            <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
+        <mb-modal :size="global.uiSize" ref="dictDialog" :title="dialogTitle" width="600px" @confirm="save($event)">
+            <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24">
                     <n-gi :span="12">
                         <n-form-item label="字典类型" path="dictType">

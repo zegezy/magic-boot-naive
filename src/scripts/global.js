@@ -5,5 +5,5 @@ export default {
     filePrefix: '',
     dynamicComponentNames: [],
     config: {},
-    uiSize: 'medium'
+    uiSize: 'small'
 }

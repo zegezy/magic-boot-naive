@@ -6,19 +6,20 @@
         :show-icon="false"
         :mask-closable="maskClosable"
         :style="{ width }"
+        :size="global.uiSize"
     >
         <div style="margin-top:24px">
             <slot/>
         </div>
         <template #action>
             <slot name="action" v-if="showFooter">
-                <n-button @click="() => showModal = false">
+                <n-button :size="global.uiSize" @click="() => showModal = false">
                     <n-icon>
                         <Close />
                     </n-icon>
                     关闭
                 </n-button>
-                <n-button type="primary" :loading="confirmLoading" @click="confirm">
+                <n-button :size="global.uiSize" type="primary" :loading="confirmLoading" @click="confirm">
                     <n-icon>
                         <Checkmark />
                     </n-icon>
@@ -32,6 +33,7 @@
 <script setup>
 import {ref} from 'vue'
 import {Close,Checkmark} from '@vicons/ionicons5'
+import global from "@/scripts/global.js";
 
 const emit = defineEmits(['confirm'])
 const props = defineProps({
