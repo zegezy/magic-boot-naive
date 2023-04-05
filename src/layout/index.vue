@@ -32,15 +32,15 @@
             </n-layout>
         </n-layout-sider>
         <n-layout>
-            <n-layout-header class="h-16">
+            <n-layout-header class="h-16" style="box-shadow: 1px 1px 6px #c6c6c6">
                 <layout-header/>
             </n-layout-header>
-            <n-layout-content class="absolute top-16 right-0 bottom-0 left-0">
+            <n-layout-content class="absolute right-0 bottom-0 left-0 bg-lightgray" style="top:4.3rem;">
                 <n-layout position="absolute">
-                    <n-layout-header class="h-12 p-2">
+                    <n-layout-header class="h-12 p-2 bg-lightgray">
                         <tabs/>
                     </n-layout-header>
-                    <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1">
+                    <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1 bg-lightgray">
                         <router-view v-slot="{ Component }">
                             <transition name="fade" mode="out-in" appear>
                                 <keep-alive :include="keepAliveInclude">
@@ -143,5 +143,8 @@ function recursionRouters(children) {
 
 .title {
     font-family: PoetsenOne;
+}
+.bg-lightgray{
+    background-color: #fafafa;
 }
 </style>

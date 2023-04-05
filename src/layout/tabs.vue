@@ -1,13 +1,14 @@
 <template>
     <div class="tabs">
         <n-tag
+            :size="global.uiSize"
             @contextmenu="handleContextMenu(tab,$event)"
             v-for="tab in tabsStore.getTabs"
             :closable="tab.path!==`/home`"
             @close="handleClose(tab.path)"
             @click="jump(tab)"
             :type="tabsStore.getCurrentTab == tab.path ? 'primary' : 'default'"
-            :class="tabsStore.getCurrentTab == tab.path?'selected':''"
+            :class="[tabsStore.getCurrentTab == tab.path?'selected':'',global.uiSize]"
             :bordered="false"
         >
             {{ tab.meta.title }}
@@ -29,6 +30,7 @@
 import {useTabsStore} from '@/store/modules/tabsStore'
 import router from '@/scripts/router'
 import {ref, nextTick} from "vue";
+import global from "@/scripts/global.js";
 
 const tabsStore = useTabsStore()
 const tabs = tabsStore.getTabs
@@ -138,11 +140,34 @@ function close(type) {
 <style scoped lang="less">
 
 .n-tag {
-    padding: 17px 20px;
+    //padding: 17px 20px;
+    cursor: pointer;
+    margin-right: 12px;
+    border-radius: 4px;
+    //flex-shrink: 0;
+    transition: box-shadow;
+    transition-duration: 0.25s;
+}
+.small:hover{
+    box-shadow: 1px 1px 6px #ccc;
+}
+
+.medium:hover{
+    box-shadow: 1px 1px 3px #ccc;
+}
+
+.medium{
+    padding: 15px 20px;
     cursor: pointer;
     margin-right: 4px;
     border-radius: 4px;
-    //flex-shrink: 0;
+}
+
+.small{
+    padding: 14px 17px;
+    cursor: pointer;
+    margin-right: 4px;
+    border-radius: 4px;
 }
 
 .selected {
@@ -151,6 +176,7 @@ function close(type) {
 
 .tabs {
     width: 100%;
+    height: 100%;
     overflow-x: auto;
     white-space: nowrap;
 }

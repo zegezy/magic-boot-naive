@@ -5,6 +5,7 @@ import {setupNaive, setupNaiveDiscreteApi, setupDirectives, setupGlobalPropertie
 import {setupRouter} from '@/scripts/router'
 import {setupStore} from '@/store'
 import {setupComponents} from '@/components'
+import './styles/magic-compact-ui.less'
 
 const app = createApp(App)
 

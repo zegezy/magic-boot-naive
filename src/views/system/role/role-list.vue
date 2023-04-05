@@ -10,7 +10,7 @@
             <mb-search :where="tableOptions.where" @search="reloadTable"/>
         </div>
         <div class="mb-toolbar">
-            <n-button v-permission="'role:save'" type="primary" @click="handleCreate">
+            <n-button :size="global.uiSize"  v-permission="'role:save'" type="primary" @click="handleCreate">
                 <n-icon>
                     <AddOutline/>
                 </n-icon>
@@ -76,6 +76,7 @@
 <script setup>
 import {ref, reactive, watch, nextTick} from 'vue'
 import common from '@/scripts/common'
+import global from '@/scripts/global'
 import {push} from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
 import {AddOutline} from "@vicons/ionicons5";

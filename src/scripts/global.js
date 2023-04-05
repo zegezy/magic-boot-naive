@@ -4,5 +4,6 @@ export default {
     baseApi: baseApi,
     filePrefix: '',
     dynamicComponentNames: [],
-    config: {}
+    config: {},
+    uiSize: 'medium'
 }

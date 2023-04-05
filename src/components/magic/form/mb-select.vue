@@ -1,5 +1,6 @@
 <template>
     <n-select
+        :size="global.uiSize"
         v-bind="props.props"
         v-model:value="selectValue"
         :multiple="multiple"
@@ -17,6 +18,7 @@
 import {ref, watch, onMounted, computed} from 'vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import common from '@/scripts/common'
+import global from "@/scripts/global.js";
 
 const dictStore = useDictStore()
 

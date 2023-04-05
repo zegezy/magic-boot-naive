@@ -43,6 +43,7 @@
 <script setup>
 import {ref, onMounted, nextTick, h} from 'vue'
 import common from '@/scripts/common'
+import global from '@/scripts/global'
 import {createTable} from './mb-table.js'
 import MbSwitch from '@/components/magic/form/mb-switch.vue'
 import {useDictStore} from "@/store/modules/dictStore";
@@ -235,6 +236,7 @@ function exportExcel({fileName}) {
 onMounted(() => {
     fixCols()
     reload()
+    bindProps.size = global.uiSize;
 })
 
 defineExpose({expand, toggleExpand, reload, exportExcel})

@@ -2,15 +2,15 @@
     <div class="mb-list">
         <div class="mb-search">
             <n-space>
-                <n-input v-model:value="searchValue" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识"
+                <n-input v-model:value="searchValue" :size="global.uiSize" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识"
                          style="width: 200px"></n-input>
-                <n-button type="primary" @click="searchMenu">
+                <n-button type="primary" :size="global.uiSize" @click="searchMenu">
                     <n-icon>
                         <Search/>
                     </n-icon>
                     搜索
                 </n-button>
-                <n-button @click="() => { searchValue = ''; searchMenu() }">
+                <n-button :size="global.uiSize" @click="() => { searchValue = ''; searchMenu() }">
                     <n-icon>
                         <TrashOutline/>
                     </n-icon>
@@ -20,13 +20,13 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button type="primary" @click="addSubMenu('0')" v-permission="'menu:save'">
+                <n-button :size="global.uiSize" type="primary" @click="addSubMenu('0')" v-permission="'menu:save'">
                     <n-icon>
                         <AddOutline/>
                     </n-icon>
                     添加菜单
                 </n-button>
-                <n-button type="primary" @click="() => table.toggleExpand()">
+                <n-button :size="global.uiSize" type="primary" @click="() => table.toggleExpand()">
                     <n-icon>
                         <ArrowDownOutline/>
                     </n-icon>
@@ -47,6 +47,7 @@
 
 import {ref, reactive, onMounted, nextTick, watch, h} from 'vue'
 import MenuForm from './menu-form'
+import global from '@/scripts/global'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import * as icons from "@vicons/ionicons5";

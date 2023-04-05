@@ -5,7 +5,7 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button v-permission="'dict:save'" type="primary" @click="handleCreate">
+                <n-button :size="global.uiSize" v-permission="'dict:save'" type="primary" @click="handleCreate">
                     <n-icon>
                         <AddOutline/>
                     </n-icon>
@@ -59,6 +59,7 @@ import common from '@/scripts/common'
 import {ref, reactive, nextTick} from 'vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import {AddOutline} from "@vicons/ionicons5";
+import global from "@/scripts/global.js";
 
 const dictStore = useDictStore()
 

@@ -1,10 +1,11 @@
 <template>
-    <n-input v-model:value="selectValue" :type="type" :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
+    <n-input :size="global.uiSize"  v-model:value="selectValue" :type="type" :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
              v-bind="props.props"/>
 </template>
 
 <script setup>
 import {ref, watch} from 'vue'
+import global from "@/scripts/global.js";
 
 const emit = defineEmits(['update:modelValue'])
 const selectValue = ref('')

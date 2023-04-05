@@ -1,5 +1,6 @@
 <template>
     <n-switch
+        :size="global.uiSize"
         v-model:value="selectValue"
         :checked-value="_checkedValue"
         :unchecked-value="_uncheckedValue"
@@ -10,6 +11,7 @@
 
 <script setup>
 import {ref, watch} from 'vue'
+import global from "@/scripts/global.js";
 
 const emit = defineEmits(['update:modelValue', 'change'])
 const selectValue = ref('')

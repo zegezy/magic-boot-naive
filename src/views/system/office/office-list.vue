@@ -2,15 +2,15 @@
     <div class="mb-list">
         <div class="mb-search">
             <n-space>
-                <n-input v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识"
+                <n-input :size="global.uiSize" v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识"
                          style="width: 200px"></n-input>
-                <n-button type="primary" @click="searchOffice">
+                <n-button :size="global.uiSize" type="primary" @click="searchOffice">
                     <n-icon>
                         <Search/>
                     </n-icon>
                     搜索
                 </n-button>
-                <n-button @click="() => { searchValue = ''; searchOffice() }">
+                <n-button :size="global.uiSize" @click="() => { searchValue = ''; searchOffice() }">
                     <n-icon>
                         <TrashOutline/>
                     </n-icon>
@@ -20,13 +20,13 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button type="primary" @click="addSubOffice('0')" v-permission="'office:save'">
+                <n-button :size="global.uiSize" type="primary" @click="addSubOffice('0')" v-permission="'office:save'">
                     <n-icon>
                         <AddOutline/>
                     </n-icon>
                     添加机构
                 </n-button>
-                <n-button type="primary" @click="() => table.toggleExpand()">
+                <n-button :size="global.uiSize" type="primary" @click="() => table.toggleExpand()">
                     <n-icon>
                         <ArrowDownOutline/>
                     </n-icon>
@@ -82,6 +82,7 @@
 import {ref, reactive, onMounted, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
 import common from '@/scripts/common'
+import global from '@/scripts/global'
 import treeTable from '@/scripts/treeTable'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 

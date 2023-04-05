@@ -1,5 +1,5 @@
 <template>
-    <n-form inline label-placement="left" @keyup.enter="search" style="flex-wrap:wrap">
+    <n-form :size="global.uiSize"  inline label-placement="left" @keyup.enter="search" style="flex-wrap:wrap">
         <template v-for="(it, i) in where">
             <n-form-item v-if="it && it.label" :label="it.label" :key="i">
                 <component
@@ -16,13 +16,13 @@
         </template>
         <n-form-item>
             <n-space>
-                <n-button type="primary" @click="search">
+                <n-button :size="global.uiSize"  type="primary" @click="search">
                     <n-icon>
                         <Search/>
                     </n-icon>
                     搜索
                 </n-button>
-                <n-button @click="reset">
+                <n-button :size="global.uiSize"  @click="reset">
                     <n-icon>
                         <TrashOutline/>
                     </n-icon>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-
+import global from '@/scripts/global'
 import {nextTick} from 'vue'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
