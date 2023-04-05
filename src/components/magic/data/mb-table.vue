@@ -217,5 +217,11 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 <style scoped>
 .btn-blue {
     color: #2D8CF0;
+    transition-property: color;
+    transition-duration: .25s;
+}
+
+.btn-blue:hover{
+    color: #7eb6f3;
 }
 </style>

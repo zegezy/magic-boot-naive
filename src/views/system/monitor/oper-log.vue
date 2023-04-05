@@ -4,6 +4,9 @@
             <mb-search :where="tableOptions.where" @search="reloadTable">
                 <template #buttons>
                     <n-button type="primary" @click="table.exportExcel({fileName: '操作日志'})">
+                        <n-icon>
+                            <DownloadOutline />
+                        </n-icon>
                         导出
                     </n-button>
                 </template>
@@ -17,7 +20,7 @@
 
 <script setup>
 import {ref, reactive} from 'vue'
-
+import {DownloadOutline} from '@vicons/ionicons5'
 const table = ref()
 const tableOptions = reactive({
     url: '/system/log/oper/list',
