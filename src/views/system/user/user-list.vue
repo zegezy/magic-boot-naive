@@ -57,7 +57,7 @@
                 </div>
 
                 <div class="mb-table">
-                    <mb-table ref="table" v-bind="tableOptions" @selection-change="selectionChange">
+                    <mb-table ref="table" v-bind="tableOptions" v-model:checked-row-keys="ids">
                         <template #roles="{row,col}">
                             <n-tag style="margin-right:4px;" v-if="row.roles" :bordered="false"
                                    v-for="(it,idx) in row.roles.split(',')" type="info">
@@ -83,7 +83,7 @@
 <script setup>
 import UserForm from './user-form.vue'
 
-import {ref, reactive, nextTick, onActivated} from 'vue'
+import {ref, reactive, nextTick, onActivated, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import common from '@/scripts/common'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline, DownloadOutline} from "@vicons/ionicons5";
@@ -94,7 +94,6 @@ const importUserRef = ref()
 const previewUsersDialog = ref()
 const importUserTableOptions = reactive({})
 const sourceDatas = ref()
-
 function importUserSuccess(res, file, fileList) {
     const {datas} = res.data
     sourceDatas.value = res.data.sourceDatas
@@ -251,10 +250,6 @@ setWhere()
 function checkChange(values) {
     tableOptions.where.officeId = values
     nextTick(() => reloadTable())
-}
-
-function selectionChange(columns) {
-    ids.value = columns.map(it => it['id']).join(',')
 }
 
 function reloadTable() {

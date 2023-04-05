@@ -7,6 +7,8 @@
         :class="tableKey"
         :columns="columns"
         :virtual-scroll="virtualScroll"
+        v-model:checked-row-keys="checkedRowKeys"
+        @update:checked-row-keys="emit('update:checked-row-keys', checkedRowKeys)"
         table-layout="fixed"
         style="height: 100%"
         flex-height
@@ -15,8 +17,7 @@
         @update:page="table.handlerPage"
     >
         <template #switch="{ row, col }">
-            <mb-switch v-model="row[col.field]" @change="col.change(row)"
-                       v-if="col.if != undefined ? col.if(row) : true"/>
+            <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
             <span v-else>-</span>
         </template>
         <template #html="{ row, col }">
@@ -95,15 +96,40 @@ const props = defineProps({
     loading: {
         type: Boolean,
         default: () => false
+    },
+    showNo: {
+        type: Boolean,
+        default: true
+    },
+    selection: {
+        type: Boolean,
+        default: false
     }
 })
+const emit = defineEmits(['update:checked-row-keys'])
 const tableRef = ref()
 const tableSlots = ref()
+const checkedRowKeys = ref()
 const columns = ref([])
 
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
     const keys = Object.keys(tableSlots.value)
+    if(props.selection){
+        columns.value.push({
+            type: 'selection'
+        })
+    }
+    if(props.showNo){
+        columns.value.push({
+            title: '序号',
+            width: 70,
+            align: 'center',
+            render: (_,index) => {
+                return index + 1
+            }
+        })
+    }
     props.cols.forEach((col) => {
         let column = {}
         column.key = col.field
@@ -132,8 +158,8 @@ function fixCols() {
 }
 
 function renderSlot(col, type) {
-    col.render = (row) => {
-        return h(tableSlots.value[type], {row, col})
+    col.render = (row, index) => {
+        return h(tableSlots.value[type], {row, index, col})
     }
 }
 
