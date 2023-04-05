@@ -113,8 +113,10 @@
 <script setup>
 import {reactive, ref, watch, getCurrentInstance, onMounted, nextTick} from 'vue'
 import genCode from '@/scripts/gen/gen-mb-list.js'
-import {ElMessageBox} from 'element-plus'
+import {useDialog, useMessage} from "naive-ui";
 
+const dialog = useDialog()
+const message = useMessage()
 const {proxy} = getCurrentInstance()
 const dataForm = ref()
 const tables = ref([])
@@ -364,29 +366,30 @@ const cols = reactive([{
 function executeGen() {
     dataForm.value.validate((valid) => {
         if (valid) {
-            ElMessageBox.confirm('此操作会生成代码并覆盖, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                var formData = {...genInfo.value}
-                formData.info = JSON.stringify(genInfo.value.info)
-                formData.columns = JSON.stringify(genInfo.value.columns)
-                formData.componentScript = genCode(genInfo.value.info.modulePath + genInfo.value.info.businessPath, genInfo.value.columns)
-                formData.datasource = genInfo.value.datasource
-                proxy.$post('/system/code/gen/execute', formData).then((res) => {
-                    if (res.data == 1) {
-                        proxy.$notify({
-                            title: '成功',
-                            message: '生成成功',
-                            type: 'success',
-                            duration: 2000
-                        })
-                    }
-                })
+
+            dialog.warning({
+                title: '提示',
+                content: '此操作会生成代码并覆盖, 是否继续?',
+                positiveText: '确定',
+                negativeText: '取消',
+                onPositiveClick: () => {
+                    var formData = {...genInfo.value}
+                    formData.info = JSON.stringify(genInfo.value.info)
+                    formData.columns = JSON.stringify(genInfo.value.columns)
+                    formData.componentScript = genCode(genInfo.value.info.modulePath + genInfo.value.info.businessPath, genInfo.value.columns)
+                    formData.datasource = genInfo.value.datasource
+                    proxy.$post('/system/code/gen/execute', formData).then((res) => {
+                        if (res.data == 1) {
+                            message.success("生成成功")
+                        }
+                    })
+                },
+                onNegativeClick: () => {
+                    message.error('不确定')
+                }
             })
         } else {
-            proxy.$message.error('表单校验未通过，请重新检查提交内容')
+            message.error('表单校验未通过，请重新检查提交内容')
         }
     })
 }
@@ -400,17 +403,12 @@ function save(d) {
             d.loading()
             proxy.$post('/system/code/gen/save', formData).then(() => {
                 d.hideLoading()
-                proxy.$notify({
-                    title: '成功',
-                    message: d.title + '成功',
-                    type: 'success',
-                    duration: 2000
-                })
+                message.success("成功")
                 emit('reload')
                 d.hide()
             }).catch(() => d.hideLoading())
         } else {
-            proxy.$message.error('表单校验未通过，请重新检查提交内容')
+            message.error('表单校验未通过，请重新检查提交内容')
         }
     })
 }
