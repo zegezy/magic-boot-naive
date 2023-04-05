@@ -1,6 +1,6 @@
 <template>
     <n-select
-        :size="global.uiSize"
+        :size="$global.uiSize.value"
         v-bind="props.props"
         v-model:value="selectValue"
         :multiple="multiple"

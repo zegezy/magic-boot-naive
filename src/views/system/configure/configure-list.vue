@@ -5,7 +5,7 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button :size="global.uiSize" v-permission="'configure:save'" type="primary" @click="handleCreate">
+                <n-button :size="$global.uiSize.value" v-permission="'configure:save'" type="primary" @click="handleCreate">
                     <n-icon>
                         <AddOutline />
                     </n-icon>
@@ -17,28 +17,28 @@
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
         <mb-modal ref="roleFormDialog" :title="dialogTitle" width="900px" @confirm="save($event)">
-            <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
+            <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
                 <n-grid :cols="24">
                     <n-gi :span="12">
                         <n-form-item label="键值" path="configureKey">
-                            <mb-input :size="global.uiSize" v-model="temp.configureKey"/>
+                            <mb-input :size="$global.uiSize.value" v-model="temp.configureKey"/>
                         </n-form-item>
                     </n-gi>
                     <n-gi :span="12">
                         <n-form-item label="数据值" path="configureValue">
-                            <n-input :size="global.uiSize" v-model:value="temp.configureValue"/>
+                            <n-input :size="$global.uiSize.value" v-model:value="temp.configureValue"/>
                         </n-form-item>
                     </n-gi>
                 </n-grid>
                 <n-grid :cols="24">
                     <n-gi :span="12">
                         <n-form-item label="名称" path="configureName">
-                            <mb-input :size="global.uiSize" v-model:value="temp.configureName"/>
+                            <mb-input :size="$global.uiSize.value" v-model:value="temp.configureName"/>
                         </n-form-item>
                     </n-gi>
                     <n-gi :span="12">
                         <n-form-item label="配置类型" path="configureType">
-                            <mb-select :size="global.uiSize" v-model="temp.configureType" type="dict_type"/>
+                            <mb-select :size="$global.uiSize.value" v-model="temp.configureType" type="dict_type"/>
                         </n-form-item>
                     </n-gi>
                 </n-grid>
@@ -46,7 +46,7 @@
                     <n-gi :span="24">
                         <n-form-item label="条件筛选" path="configureCondition">
                             <n-input
-                                :size="global.uiSize"
+                                :size="$global.uiSize.value"
                                 type="textarea"
                                 :rows="4"
                                 placeholder="请输入条件筛选"
@@ -59,7 +59,7 @@
                     <n-gi :span="24">
                         <n-form-item label="配置说明" path="configureDescRibe">
                             <n-input
-                                :size="global.uiSize"
+                                :size="$global.uiSize.value"
                                 type="textarea"
                                 :rows="4"
                                 placeholder="请输入配置说明"
@@ -72,7 +72,7 @@
                     <n-gi :span="24">
                         <n-form-item label="备注" path="remarks">
                             <n-input
-                                :size="global.uiSize"
+                                :size="$global.uiSize.value"
                                 type="textarea"
                                 :rows="4"
                                 placeholder="请输入备注"

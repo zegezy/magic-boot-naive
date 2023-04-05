@@ -2,14 +2,14 @@
     <div>
         <div style="margin-bottom: 5px;" v-if="expand || checked">
             <n-space>
-                <n-button :size="global.uiSize"  v-if="expand" type="primary" @click="doExpand">展开/折叠</n-button>
-                <n-button :size="global.uiSize"  v-if="checked" type="primary"
+                <n-button :size="$global.uiSize.value"  v-if="expand" type="primary" @click="doExpand">展开/折叠</n-button>
+                <n-button :size="$global.uiSize.value"  v-if="checked" type="primary"
                           @click="() => { treeAllChecked = !treeAllChecked; checkedAll(treeAllChecked) }">全选/全不选
                 </n-button>
             </n-space>
         </div>
         <div style="margin-bottom: 5px;" v-if="search">
-            <n-input :size="global.uiSize"  v-model:value="searchValue" placeholder="输入关键字进行过滤"/>
+            <n-input :size="$global.uiSize.value"  v-model:value="searchValue" placeholder="输入关键字进行过滤"/>
         </div>
         <n-tree
             v-bind="props.props"

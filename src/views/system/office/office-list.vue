@@ -2,15 +2,15 @@
     <div class="mb-list">
         <div class="mb-search">
             <n-space>
-                <n-input :size="global.uiSize" v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识"
+                <n-input :size="$global.uiSize.value" v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识"
                          style="width: 200px"></n-input>
-                <n-button :size="global.uiSize" type="primary" @click="searchOffice">
+                <n-button :size="$global.uiSize.value" type="primary" @click="searchOffice">
                     <n-icon>
                         <Search/>
                     </n-icon>
                     搜索
                 </n-button>
-                <n-button :size="global.uiSize" @click="() => { searchValue = ''; searchOffice() }">
+                <n-button :size="$global.uiSize.value" @click="() => { searchValue = ''; searchOffice() }">
                     <n-icon>
                         <TrashOutline/>
                     </n-icon>
@@ -20,13 +20,13 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button :size="global.uiSize" type="primary" @click="addSubOffice('0')" v-permission="'office:save'">
+                <n-button :size="$global.uiSize.value" type="primary" @click="addSubOffice('0')" v-permission="'office:save'">
                     <n-icon>
                         <AddOutline/>
                     </n-icon>
                     添加机构
                 </n-button>
-                <n-button :size="global.uiSize" type="primary" @click="() => table.toggleExpand()">
+                <n-button :size="$global.uiSize.value" type="primary" @click="() => table.toggleExpand()">
                     <n-icon>
                         <ArrowDownOutline/>
                     </n-icon>
@@ -37,8 +37,8 @@
         <div class="mb-table">
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
-        <mb-modal :size="global.uiSize" ref="officeFormDialog" width="700px" :title="dialogTitle" @confirm="save($event)">
-            <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
+        <mb-modal :size="$global.uiSize.value" ref="officeFormDialog" width="700px" :title="dialogTitle" @confirm="save($event)">
+            <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24" :x-gap="24">
                     <n-gi :span="12">
                         <n-form-item label="机构类型" path="type">

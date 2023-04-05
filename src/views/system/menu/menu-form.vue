@@ -1,5 +1,5 @@
 <template>
-    <n-form :size="global.uiSize" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
+    <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
         <n-grid :cols="24">
             <n-gi :span="12">
                 <n-form-item label="菜单类型" path="type">

@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="mb-toolbar">
-                    <n-button :size="global.uiSize"  v-permission="'user:save'" type="primary" @click="handleCreate">
+                    <n-button :size="$global.uiSize.value"  v-permission="'user:save'" type="primary" @click="handleCreate">
                         <n-icon>
                             <add-outline/>
                         </n-icon>
@@ -59,7 +59,7 @@
                 <div class="mb-table">
                     <mb-table ref="table" v-bind="tableOptions" v-model:checked-row-keys="ids">
                         <template #roles="{row,col}">
-                            <n-tag :size="global.uiSize"  style="margin-right:4px;" v-if="row.roles" :bordered="false"
+                            <n-tag :size="$global.uiSize.value"  style="margin-right:4px;" v-if="row.roles" :bordered="false"
                                    v-for="(it,idx) in row.roles.split(',')" type="info">
                                 {{ it }}
                             </n-tag>

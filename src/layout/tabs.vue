@@ -1,7 +1,7 @@
 <template>
     <div class="tabs">
         <n-tag
-            :size="global.uiSize"
+            :size="$global.uiSize.value"
             @contextmenu="handleContextMenu(tab,$event)"
             v-for="tab in tabsStore.getTabs"
             :closable="tab.path!==`/home`"

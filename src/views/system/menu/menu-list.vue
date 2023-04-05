@@ -2,15 +2,15 @@
     <div class="mb-list">
         <div class="mb-search">
             <n-space>
-                <n-input v-model:value="searchValue" :size="global.uiSize" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识"
+                <n-input v-model:value="searchValue" :size="$global.uiSize.value" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识"
                          style="width: 200px"></n-input>
-                <n-button type="primary" :size="global.uiSize" @click="searchMenu">
+                <n-button type="primary" :size="$global.uiSize.value" @click="searchMenu">
                     <n-icon>
                         <Search/>
                     </n-icon>
                     搜索
                 </n-button>
-                <n-button :size="global.uiSize" @click="() => { searchValue = ''; searchMenu() }">
+                <n-button :size="$global.uiSize.value" @click="() => { searchValue = ''; searchMenu() }">
                     <n-icon>
                         <TrashOutline/>
                     </n-icon>
@@ -20,13 +20,13 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button :size="global.uiSize" type="primary" @click="addSubMenu('0')" v-permission="'menu:save'">
+                <n-button :size="$global.uiSize.value" type="primary" @click="addSubMenu('0')" v-permission="'menu:save'">
                     <n-icon>
                         <AddOutline/>
                     </n-icon>
                     添加菜单
                 </n-button>
-                <n-button :size="global.uiSize" type="primary" @click="() => table.toggleExpand()">
+                <n-button :size="$global.uiSize.value" type="primary" @click="() => table.toggleExpand()">
                     <n-icon>
                         <ArrowDownOutline/>
                     </n-icon>

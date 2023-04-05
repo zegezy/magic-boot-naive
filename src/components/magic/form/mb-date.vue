@@ -1,6 +1,6 @@
 <template>
     <n-date-picker
-        :size="global.uiSize"
+        :size="$global.uiSize.value"
         v-model:formatted-value="selectValue"
         :type="type"
         :format="valueFormat"

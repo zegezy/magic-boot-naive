@@ -6,20 +6,20 @@
         :show-icon="false"
         :mask-closable="maskClosable"
         :style="{ width }"
-        :size="global.uiSize"
+        :size="$global.uiSize.value"
     >
         <div style="margin-top:24px">
             <slot/>
         </div>
         <template #action>
             <slot name="action" v-if="showFooter">
-                <n-button :size="global.uiSize" @click="() => showModal = false">
+                <n-button :size="$global.uiSize.value" @click="() => showModal = false">
                     <n-icon>
                         <Close />
                     </n-icon>
                     关闭
                 </n-button>
-                <n-button :size="global.uiSize" type="primary" :loading="confirmLoading" @click="confirm">
+                <n-button :size="$global.uiSize.value" type="primary" :loading="confirmLoading" @click="confirm">
                     <n-icon>
                         <Checkmark />
                     </n-icon>

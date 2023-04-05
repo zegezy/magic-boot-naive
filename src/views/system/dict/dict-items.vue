@@ -5,7 +5,7 @@
         </div>
         <div class="mb-toolbar">
             <n-space>
-                <n-button :size="global.uiSize" v-permission="'dict:items:save'" type="primary" @click="handleCreate">
+                <n-button :size="$global.uiSize.value" v-permission="'dict:items:save'" type="primary" @click="handleCreate">
                     <n-icon>
                         <AddOutline/>
                     </n-icon>
@@ -17,8 +17,8 @@
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
 
-        <mb-modal :size="global.uiSize" ref="formDialog" :title="dialogTitle" width="520px" @confirm="save($event)">
-            <n-form ref="dataForm" :size="global.uiSize" :rules="rules" :model="temp" label-placement="left" label-width="80px">
+        <mb-modal :size="$global.uiSize.value" ref="formDialog" :title="dialogTitle" width="520px" @confirm="save($event)">
+            <n-form ref="dataForm" :size="$global.uiSize.value" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24">
                     <n-gi :span="12">
                         <n-form-item label="标签名" path="label">

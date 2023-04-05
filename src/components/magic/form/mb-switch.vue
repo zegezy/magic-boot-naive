@@ -1,6 +1,6 @@
 <template>
     <n-switch
-        :size="global.uiSize"
+        :size="$global.uiSize.value"
         v-model:value="selectValue"
         :checked-value="_checkedValue"
         :unchecked-value="_uncheckedValue"

@@ -1,3 +1,5 @@
+import {ref} from "vue";
+
 const baseApi = import.meta.env.VITE_APP_BASE_API;
 export default {
     title: 'Magic Boot',
@@ -5,5 +7,5 @@ export default {
     filePrefix: '',
     dynamicComponentNames: [],
     config: {},
-    uiSize: 'small'
+    uiSize: ref('small')
 }
