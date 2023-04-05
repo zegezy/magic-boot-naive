@@ -26,7 +26,7 @@
                         round
                         :size="40"
                 >
-                    {{ userStore.getInfo.name.substring(0, 1) }}
+                    {{ userStore.getInfo.name?.substring(0, 1) }}
                 </n-avatar>
             </div>
             <div>

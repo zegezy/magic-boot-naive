@@ -27,10 +27,9 @@ export function setupRouterInterceptor() {
                         await loadData(userStore)
                         next({...to, replace: true})
                     } catch (error) {
-                        console.log(error)
-                        $message.error(error.data || 'Error')
-                        userStore.logout()
-                        $loading.finish()
+                        next()
+                        userStore.removeToken()
+                        location.reload()
                     }
                 }
             }
