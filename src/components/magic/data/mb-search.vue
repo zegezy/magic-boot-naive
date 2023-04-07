@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import global from '@/scripts/global'
 import {nextTick} from 'vue'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 

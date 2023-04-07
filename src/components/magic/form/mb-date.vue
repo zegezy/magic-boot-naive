@@ -15,7 +15,6 @@
 
 <script setup>
 import {watch, ref} from 'vue'
-import global from "@/scripts/global.js";
 
 const emit = defineEmits(['update:modelValue'])
 const selectValue = ref('')

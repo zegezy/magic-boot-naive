@@ -33,7 +33,6 @@
 <script setup>
 import {ref} from 'vue'
 import {Close,Checkmark} from '@vicons/ionicons5'
-import global from "@/scripts/global.js";
 
 const emit = defineEmits(['confirm'])
 const props = defineProps({

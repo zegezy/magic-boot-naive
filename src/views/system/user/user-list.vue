@@ -87,7 +87,6 @@ import {ref, reactive, nextTick, onActivated, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import common from '@/scripts/common'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline, DownloadOutline} from "@vicons/ionicons5";
-import global from "@/scripts/global.js";
 
 const route = useRoute()
 

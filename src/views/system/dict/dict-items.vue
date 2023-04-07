@@ -54,7 +54,6 @@
 import {ref, reactive, nextTick} from 'vue'
 import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
-import global from "@/scripts/global.js";
 import {AddOutline} from "@vicons/ionicons5";
 
 const dictStore = useDictStore()

@@ -50,7 +50,6 @@
 
 import {ref, reactive, nextTick} from 'vue'
 import common from '@/scripts/common'
-import global from "@/scripts/global.js";
 
 const emit = defineEmits(['reload-table'])
 

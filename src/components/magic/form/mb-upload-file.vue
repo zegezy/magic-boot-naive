@@ -51,7 +51,6 @@ import {ref, watch, onMounted} from 'vue'
 import {useUserStore} from "@/store/modules/userStore";
 import global from '@/scripts/global'
 import common from '@/scripts/common'
-import request from "@/scripts/request";
 
 const userStore = useUserStore()
 const emit = defineEmits(['change', 'update:modelValue'])

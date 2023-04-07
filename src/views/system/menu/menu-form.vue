@@ -78,7 +78,6 @@
 import {ref, reactive, watch, nextTick} from 'vue'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
-import global from "@/scripts/global.js";
 
 const props = defineProps({
     menuTree: {

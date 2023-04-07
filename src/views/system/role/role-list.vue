@@ -76,7 +76,6 @@
 <script setup>
 import {ref, reactive, watch, nextTick} from 'vue'
 import common from '@/scripts/common'
-import global from '@/scripts/global'
 import {push} from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
 import {AddOutline} from "@vicons/ionicons5";

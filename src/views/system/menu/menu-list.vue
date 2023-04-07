@@ -47,7 +47,6 @@
 
 import {ref, reactive, onMounted, nextTick, watch, h} from 'vue'
 import MenuForm from './menu-form'
-import global from '@/scripts/global'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import * as icons from "@vicons/ionicons5";

@@ -82,7 +82,6 @@
 import {ref, reactive, onMounted, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
 import common from '@/scripts/common'
-import global from '@/scripts/global'
 import treeTable from '@/scripts/treeTable'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 

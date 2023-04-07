@@ -36,7 +36,6 @@
 import {watch, ref, reactive, nextTick, onBeforeMount} from 'vue'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
-import global from "@/scripts/global.js";
 
 const emit = defineEmits(['update:modelValue', 'check-change', 'node-click'])
 
