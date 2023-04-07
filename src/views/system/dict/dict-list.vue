@@ -150,7 +150,7 @@ const dictId = ref('')
 const temp = ref(getTemp())
 const dialogTitle = ref('')
 const rules = reactive({
-    dictType: {required: true, message: '请输入标签', trigger: 'change'},
+    dictType: {required: true, message: '请选择字典类型', trigger: 'change'},
     type: {required: true, message: '请输入类型', trigger: 'change'},
     descRibe: {required: true, message: '请输入描述', trigger: 'change'}
 })
