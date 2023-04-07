@@ -182,9 +182,6 @@ const tableOptions = reactive({
                     label: '删除',
                     link: true,
                     permission: 'office:delete',
-                    if: (row) => {
-                        return row.pid != '0';
-                    },
                     click: (row) => {
                         common.handleDelete({
                             url: '/system/office/delete',
