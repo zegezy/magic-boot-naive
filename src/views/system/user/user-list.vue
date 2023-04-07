@@ -35,7 +35,7 @@
                 <div class="mb-search">
                     <mb-search :where="tableOptions.where" @search="reloadTable">
                         <template #buttons>
-                            <n-button type="primary" @click="table.exportExcel()">
+                            <n-button type="primary" @click="table.exportExcel({ fileName: '用户数据' })">
                                 <n-icon>
                                     <DownloadOutline/>
                                 </n-icon>
