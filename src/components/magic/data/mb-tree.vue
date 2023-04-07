@@ -97,6 +97,7 @@ function updateCheckedKeys(keys, option, meta) {
         }
     } else {
         let selectedKeys = getIds(children)
+        selectedKeys.push(id)
         if (action == 'check') {
             checkedKeys.value.push(...selectedKeys)
         } else {
