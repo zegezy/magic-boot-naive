@@ -21,7 +21,7 @@
             <span v-else>-</span>
         </template>
         <template #html="{ row, col }">
-            <span v-html="row[col.field]"></span>
+            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
         </template>
         <template #buttons="{ row, col }">
             <template v-for="it in col.buttons">
@@ -148,6 +148,10 @@ function fixCols() {
         }
         if (col.render) {
             column.render = col.render
+        }else{
+            column.render = (row) => {
+                return row[col.field] ? row[col.field] : col.defaultValue || ''
+            }
         }
         if (col.props) {
             for (let key in col.props) {
