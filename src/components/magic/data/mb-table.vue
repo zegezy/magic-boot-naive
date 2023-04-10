@@ -1,53 +1,94 @@
 <template>
-    <n-data-table
-        v-if="showTable"
-        v-bind="bindProps"
-        ref="tableRef"
-        :key="tableKey"
-        :class="tableKey"
-        :columns="columns"
-        :virtual-scroll="virtualScroll"
-        v-model:checked-row-keys="checkedRowKeys"
-        @update:checked-row-keys="emit('update:checked-row-keys', checkedRowKeys)"
-        table-layout="fixed"
-        style="height: 100%"
-        flex-height
-        :row-key="it => it.id"
-        :default-expand-all="defaultExpandAll"
-        @update:page="table.handlerPage"
-    >
-        <template #switch="{ row, col }">
-            <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
-            <span v-else>-</span>
-        </template>
-        <template #html="{ row, col }">
-            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
-        </template>
-        <template #buttons="{ row, col }">
-            <template v-for="it in col.buttons">
-                <template v-if="it.link">
-                    <a v-if="it.if != undefined ? it.if(row) : true" v-permission="it.permission"
-                       class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
+    <div style="width: 100%; height: 100%;">
+        <n-data-table
+            v-if="showTable"
+            v-bind="bindProps"
+            ref="tableRef"
+            :key="tableKey"
+            :class="tableKey"
+            :columns="showColumns"
+            :virtual-scroll="virtualScroll"
+            v-model:checked-row-keys="checkedRowKeys"
+            @update:checked-row-keys="emit('update:checked-row-keys', checkedRowKeys)"
+            table-layout="fixed"
+            style="height: 100%"
+            :scroll-x="scrollX"
+            flex-height
+            :row-key="it => it.id"
+            :default-expand-all="defaultExpandAll"
+            @unstable-column-resize="unstableColumnResize"
+        >
+            <template #switch="{ row, col }">
+                <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
+                <span v-else>-</span>
+            </template>
+            <template #html="{ row, col }">
+                <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+            </template>
+            <template #buttons="{ row, col }">
+                <template v-for="it in col.buttons">
+                    <template v-if="it.link">
+                        <a v-if="it.if != undefined ? it.if(row) : true" v-permission="it.permission"
+                           class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
+                    </template>
                 </template>
             </template>
-        </template>
-        <template #dictType="{ row, col }">
-            <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
-        </template>
-        <template #dynamic="{ row, col }">
-            <slot :name="col.field" :row="row" :col="col"/>
-        </template>
-    </n-data-table>
+            <template #dictType="{ row, col }">
+                <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+            </template>
+            <template #dynamic="{ row, col }">
+                <slot :name="col.field" :row="row" :col="col"/>
+            </template>
+            <template #title="{ col }">
+                <div @click="dataSort(col)">
+                    <label>{{ col.label }}</label>
+                    <n-icon v-if="col.dataSortRule">
+                        <CaretUpOutline />
+                    </n-icon>
+                    <n-icon v-if="col.dataSortRule == false">
+                        <CaretDownOutline />
+                    </n-icon>
+                    <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
+                        <ArrowSort16Filled />
+                    </n-icon>
+                    <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
+                        <ArrowSortUp16Filled />
+                    </n-icon>
+                    <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
+                        <ArrowSortDown16Filled />
+                    </n-icon>
+                </div>
+                <n-icon class="down-menus" @click="headerClick($event, col)">
+                    <ChevronDown />
+                </n-icon>
+            </template>
+        </n-data-table>
+        <div class="table-menus" :class="tableMenusClass" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
+            <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click" :key="i">
+                {{ menu.label }}
+                <div class="items" :style="{ top: itemsTop, left: itemsLeft, width: itemsWidth + 'px' }"
+                     v-if="menu.children && menu.children.length > 0">
+                    <div class="item" v-for="item in menu.children" :key="item.value" @click="menu.click(item, $event)">
+                        <n-checkbox v-model:checked="item.show" style="vertical-align: top;margin-right: 5px;" />{{ item.type == 'selection' ? '多选' : item.label }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
-import {ref, onMounted, nextTick, h} from 'vue'
+import Sortable from 'sortablejs'
+import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, getCurrentInstance} from 'vue'
+import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
+import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
 import common from '@/scripts/common'
 import global from '@/scripts/global'
-import {createTable} from './mb-table.js'
 import MbSwitch from '@/components/magic/form/mb-switch.vue'
 import {useDictStore} from "@/store/modules/dictStore";
+import componentProperties from '@/components/magic-component-properties'
 
+const { proxy } = getCurrentInstance()
 const dictStore = useDictStore()
 
 const props = defineProps({
@@ -55,6 +96,10 @@ const props = defineProps({
         type: Object,
         default: () => {
         }
+    },
+    id: {
+        type: String,
+        default: ''
     },
     virtualScroll: {
         type: Boolean,
@@ -112,20 +157,99 @@ const tableRef = ref()
 const tableSlots = ref()
 const checkedRowKeys = ref()
 const columns = ref([])
+const showColumns = ref([])
+const bindProps = reactive(props.props || {})
+const scrollX = ref()
+
+function createTable() {
+    if (props.page) {
+        bindProps.pagination = {
+            page: 1,
+            pageCount: 1,
+            pageSize: props.limit,
+            showSizePicker: true,
+            pageSizes: [10, 20, 50, 100, 200, 500, 1000],
+            onChange: (page) => {
+                bindProps.pagination.page = page
+                loadData()
+            },
+            onUpdatePageSize: (pageSize) => {
+                bindProps.pagination.pageSize = pageSize
+                bindProps.pagination.page = 1
+                loadData()
+            }
+        }
+    }
+    bindProps.remote = !!props.url
+    bindProps.loading = false
+    watch(() => props.data, () => {
+        if (props.page) {
+            bindProps.pagination.page = 1
+        }
+        bindProps.data = props.data
+    }, {deep: true})
+    watch(() => props.loading, value => bindProps.loading = value)
+}
+
+function loadData() {
+    if (props.url) {
+        let where = common.renderWhere(props.where)
+        requestData(where)
+    }
+    if (props.data) {
+        bindProps.data = props.data
+    }
+}
+
+function requestData(where) {
+    bindProps.loading = true
+    if (props.page) {
+        where.current = bindProps.pagination.page
+        where.size = bindProps.pagination.pageSize
+    } else {
+        where.size = 99999999
+    }
+    let processData = (res) => {
+        const {data} = res
+        bindProps.data = data.list || []
+        bindProps.loading = false
+        if (props.page) {
+            bindProps.pagination.pageCount = Math.ceil(data.total / where.size)
+            bindProps.pagination.itemCount = data.total
+        }
+        props.done()
+    }
+    if (props.method.toLowerCase() == 'post') {
+        common.$post(props.url, where).then(processData)
+    } else {
+        common.$get(props.url, where).then(processData)
+    }
+}
+createTable()
+
+function calcScrollX(){
+    scrollX.value = showColumns.value.reduce((total, it) => total + it.width, 0)
+}
 
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
     const keys = Object.keys(tableSlots.value)
     if(props.selection){
         columns.value.push({
-            type: 'selection'
+            type: 'selection',
+            show: true,
+            width: 70,
+            fixed: 'left'
         })
     }
     if(props.showNo){
         columns.value.push({
+            label: '序号',
             title: '序号',
             width: 70,
             align: 'center',
+            show: true,
+            fixed: 'left',
             render: (_,index) => {
                 return index + 1
             }
@@ -133,11 +257,20 @@ function fixCols() {
     }
     props.cols.forEach((col) => {
         let column = {}
+        column.field = col.field
         column.key = col.field
-        column.title = col.label
+        column.label = col.label
+        column.title = (col) => {
+            return h(tableSlots.value['title'], {col})
+        }
         column.align = col.align
-        column.width = col.width
+        column.width = col.width || 200
+        column.minWidth = col.minWidth
+        column.maxWidth = col.maxWidth
         column.fixed = col.fixed
+        column.show = true
+        column.realSort = col.realSort
+        column.resizable = true
         let type = col.type
         if (!col.render && type && keys.indexOf(type) != -1) {
             renderSlot(col, type)
@@ -160,6 +293,21 @@ function fixCols() {
         }
         columns.value.push(column)
     })
+    let renderShowColumns = () => {
+        showColumns.value = columns.value.filter(it => it.show)
+        calcScrollX()
+    }
+    if(componentProperties?.table?.remoteLoadColumn){
+        componentProperties.table?.remoteLoadColumn(props.id, columns.value).then(value => {
+            columns.value = value
+            renderShowColumns()
+        })
+    }else{
+        renderShowColumns()
+    }
+    watch(() => columns, () => {
+        renderShowColumns()
+    }, { deep: true })
 }
 
 function renderSlot(col, type) {
@@ -169,8 +317,6 @@ function renderSlot(col, type) {
 }
 
 const tableKey = ref('magicTable' + common.uuid())
-const table = createTable(props)
-const bindProps = table.getBindProps()
 const showTable = ref(true)
 const defaultExpandAll = ref(false)
 
@@ -187,7 +333,7 @@ function toggleExpand() {
 }
 
 function reload() {
-    table.loadData()
+    loadData()
 }
 
 function renderExportData(sourceData) {
@@ -237,10 +383,267 @@ function exportExcel({fileName}) {
     }
 }
 
+function unstableColumnResize(widthAfterResize, limitWidth, column){
+    column.width = limitWidth
+    calcScrollX()
+}
+
+const tableMenusClass = 'tableMenus' + common.uuid()
+const menusWidth = ref(158)
+const itemsWidth = ref(140)
+const menusLeft = ref('')
+const menusTop = ref('')
+const itemsLeft = ref('')
+const itemsTop = ref('')
+const showMenus = ref(false)
+let currentCol = null
+const dropMenus = reactive([{
+    value: 'asc',
+    label: '升序排序',
+    click: () => {
+        dataSort(currentCol, '0')
+        showMenus.value = false
+    }
+}, {
+    value: 'desc',
+    label: '降序排序',
+    click: () => {
+        dataSort(currentCol, '1')
+        showMenus.value = false
+    }
+}, {
+    value: 'lock-column',
+    label: '锁定到此列',
+    click: () => {
+        fixedColumn(columns.value.map(it => it.field).indexOf(currentCol.field))
+        showMenus.value = false
+    }
+}, {
+    value: 'undo-lock',
+    label: '撤销锁定',
+    click: () => {
+        unFixedColumn()
+        showMenus.value = false
+    }
+}, {
+    value: 'columns',
+    label: '表格列',
+    children: columns,
+    click: (col, e) => {
+        if (e && e.target.className.indexOf('n-checkbox-box') == -1) {
+            col.show = !col.show
+        }
+    }
+}])
+function getMousePos(event) {
+    let e = event || window.event;
+    let scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+    let scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+    let x = e.pageX || e.clientX + scrollX;
+    let y = e.pageY || e.clientY + scrollY;
+    return { 'x': x, 'y': y };
+}
+function headerClick(e, col) {
+    currentCol = col
+    let clientWidth = document.body.clientWidth;
+    let clientHeight = document.body.clientHeight;
+    let coord = getMousePos(e)
+    if ((clientWidth - menusWidth.value - coord.x) < 0) {
+        menusLeft.value = (clientWidth - menusWidth.value) + 'px'
+        if ((clientWidth - menusWidth.value - itemsWidth.value - coord.x) < 0) {
+            itemsLeft.value = (clientWidth - menusWidth.value - itemsWidth.value) + 'px'
+        }
+    } else {
+        menusLeft.value = coord.x + 'px'
+        itemsLeft.value = (coord.x + menusWidth.value) + 'px'
+    }
+    menusTop.value = coord.y + 'px'
+    showMenus.value = true
+    nextTick(() => {
+        let itemsHeight = document.querySelectorAll('.table-menus.' + tableMenusClass + ' .items .item').length * 30 + 8
+        itemsHeight = itemsHeight > 500 ? 500 : itemsHeight
+        let tableMenus = document.querySelector('.table-menus.' + tableMenusClass).getBoundingClientRect()
+        if ((clientHeight - tableMenus.bottom) < itemsHeight) {
+            itemsTop.value = (tableMenus.bottom - itemsHeight - 8)
+        } else {
+            itemsTop.value = tableMenus.bottom - 28
+        }
+        if(itemsTop.value < 0 ){
+            itemsTop.value = 0  + 'px'
+        }else{
+            itemsTop.value = itemsTop.value  + 'px'
+        }
+    })
+}
+function dataSort(col, rule) {
+    columns.value.forEach(it => {
+        if (it.field != col.field) {
+            it.dataSortRule = undefined
+        }
+    })
+    columns.value.forEach(it => {
+        if (it.realSort && it.field != col.field) {
+            it.realSortRule = undefined
+        }
+    })
+    if (col.realSort) {
+        if(rule){
+            col.realSortRule = rule
+        }else{
+            if (!col.realSortRule) {
+                col.realSortRule = '0' // asc
+            } else {
+                col.realSortRule = col.realSortRule == '0' ? '1' : '0'
+            }
+        }
+        props.where.orderByColumn = col.field.replace(/([A-Z])/g, "_$1").toLowerCase()
+        props.where.direction = col.realSortRule
+        reload()
+    } else {
+        if(rule){
+            col.dataSortRule = ('0' == rule ? true : false)
+        }else{
+            if (!col.dataSortRule) {
+                col.dataSortRule = true
+            } else {
+                col.dataSortRule = !col.dataSortRule
+            }
+        }
+        bindProps.data.sort((a, b) => {
+            if (typeof (a[col.field]) == 'number') {
+                if (col.dataSortRule) {
+                    return a[col.field] - (b[col.field] || 0)
+                }
+                return (b[col.field] || 0) - a[col.field]
+            } else {
+                if (col.dataSortRule) {
+                    return (a[col.field] || '').localeCompare(b[col.field] || '')
+                }
+                return (b[col.field] || '').localeCompare(a[col.field] || '')
+            }
+        })
+    }
+}
+
+let fixed = false
+function fixedColumn(index) {
+    unFixedColumn()
+    columns.value.forEach((it, i) => {
+        if (i <= index) {
+            it.fixed = 'left'
+        }
+    })
+    fixed = true
+}
+function unFixedColumn() {
+    fixed = false
+    columns.value.forEach((it) => {
+        if(it.fixed != 'right'){
+            it.fixed = false
+        }
+    })
+    if (props.selection) {
+        nextTick(() => {
+            if (!fixed) {
+                document.querySelectorAll(`.${tableKey.value} .n-data-table-th--fixed-left`).forEach(it => {
+                    it.classList.remove('n-data-table-th--fixed-left')
+                })
+                document.querySelectorAll(`.${tableKey.value} .n-data-table-td--fixed-left`).forEach(it => {
+                    it.classList.remove('n-data-table-td--fixed-left')
+                })
+            }
+        })
+    }
+}
+
+function getFixedCount() {
+    let index = 0;
+    if (props.showNo) {
+        index++
+    }
+    if (props.selection) {
+        index++
+    }
+    return index
+}
+
+function arrIndexExchange(array, x, y) {
+    let arr_temp = [].concat(array);
+    arr_temp.splice(x, 0, arr_temp.splice(y, 1)[0]);
+    return arr_temp;
+}
+
+let sortableTh = null
+function columnDrop() {
+    const wrapperTr = document.querySelector(`.${tableKey.value} .n-data-table-base-table-header thead tr`)
+    sortableTh = Sortable.create(wrapperTr, {
+        animation: 180,
+        delay: 0,
+        handle: '.n-data-table-th__title-wrapper',
+        onEnd: evt => {
+            nextTick(() => {
+                let _oldIndex = evt.oldIndex, _newIndex = evt.newIndex;
+                let fixedIndex = 0
+                for(let i =0; i<columns.value.length; i++){
+                    let it = columns.value[i];
+                    if(it.fixed == 'left'){
+                        fixedIndex = i;
+                    }
+                }
+                if(evt.newIndex > fixedIndex){
+                    fixedIndex = fixedIndex - 1
+                }else{
+                    if(columns.value[_oldIndex].fixed != columns.value[_newIndex].fixed){
+                        fixedIndex = fixedIndex + 1
+                    }
+                }
+                let newIndexLabel = columns.value.filter(it => it.show).filter((it, j) => j == evt.newIndex)[0].label
+                columns.value.slice(0,columns.value.findIndex(it => it.label == newIndexLabel)).forEach(it => !it.show && _newIndex++)
+                columns.value.slice(0,columns.value.findIndex(it => it.label == evt.clone.innerText)).forEach(it => !it.show && _oldIndex++)
+                columns.value = arrIndexExchange(columns.value, _newIndex, _oldIndex)
+                if (columns.value.filter((it, i) => i <= _newIndex).some(it => it.fixed && it.fixed === 'left')) {
+                    unFixedColumn()
+                    fixedColumn(fixedIndex)
+                }
+            })
+        },
+        onMove: evt => {
+            if (evt.related.cellIndex < getFixedCount()) {
+                return false
+            }
+            return true
+        }
+    })
+}
+function hideMenus(e){
+    if (document.getElementsByClassName('table-menus') && document.getElementsByClassName('table-menus').length > 0 && !document.getElementsByClassName('table-menus')[0].contains(e.srcElement) && e.target.nodeName != 'svg' && e.target.nodeName != 'path') {
+        showMenus.value = false
+    }
+}
+
+function addEventListener() {
+    document.body.addEventListener('click', hideMenus)
+}
+
+function removeListener() {
+    document.body.removeEventListener('click', hideMenus)
+}
+
 onMounted(() => {
     fixCols()
     reload()
     bindProps.size = global.uiSize;
+    nextTick(() => {
+        addEventListener()
+        columnDrop()
+    })
+})
+
+onBeforeUnmount(() => {
+    try{
+        sortableTh.destroy()
+    }catch(ignore){}
+    removeListener()
 })
 
 defineExpose({expand, toggleExpand, reload, exportExcel})
@@ -255,5 +658,76 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 
 .btn-blue:hover{
     color: #7eb6f3;
+}
+.table-menus {
+    color: black;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    position: fixed;
+    z-index: 99999;
+    background: white;
+    box-shadow: 0 8px 16px 0 rgb(0 0 0 / 80%);
+    border-radius: 3px;
+}
+
+.table-menus>.menu {
+    font-size: 13px;
+    padding: 0 8px 0 16px;
+    height: 28px;
+    line-height: 28px;
+    cursor: pointer;
+    position: relative;
+    flex: 1;
+    flex-direction: column;
+}
+
+.table-menus>.menu>.items {
+    display: none;
+    position: fixed;
+    top: 50px;
+    z-index: 99999;
+    background: white;
+    color: black;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.table-menus>.menu>.items {
+    padding: 4px 0;
+    box-shadow: 0 0 20px rgb(0 0 0 / 20%);
+}
+
+.table-menus>.menu:hover>.items {
+    display: block;
+}
+
+.items .item {
+    font-size: 12px;
+    width: 100%;
+    height: 30px;
+    padding-left: 24px;
+    line-height: 30px;
+    float: left;
+    box-sizing: border-box;
+}
+
+.items .item:hover,
+.table-menus .menu:hover {
+    background-color: #e0f0fe;
+}
+.down-menus {
+    float: right;
+    position: absolute;
+    right: 12px;
+    top: 0.6em;
+    width: 0.6em;
+    height: 0.6em;
+    cursor: pointer;
+    display: none;
+}
+.n-data-table-tr th:hover .down-menus,
+.n-data-table-tr th .down-menus:hover {
+    display: block;
 }
 </style>
