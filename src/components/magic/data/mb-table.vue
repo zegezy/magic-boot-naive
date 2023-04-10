@@ -5,7 +5,6 @@
             v-bind="bindProps"
             ref="tableRef"
             :key="tableKey"
-            :class="tableKey"
             :columns="showColumns"
             :virtual-scroll="virtualScroll"
             v-model:checked-row-keys="checkedRowKeys"
@@ -63,7 +62,7 @@
                 </n-icon>
             </template>
         </n-data-table>
-        <div class="table-menus" :class="tableMenusClass" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
+        <div ref="tableMenusRef" class="table-menus" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
             <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click" :key="i">
                 {{ menu.label }}
                 <div class="items" :style="{ top: itemsTop, left: itemsLeft, width: itemsWidth + 'px' }"
@@ -79,7 +78,7 @@
 
 <script setup>
 import Sortable from 'sortablejs'
-import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, getCurrentInstance} from 'vue'
+import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount} from 'vue'
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
 import common from '@/scripts/common'
@@ -88,7 +87,6 @@ import MbSwitch from '@/components/magic/form/mb-switch.vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
 
-const { proxy } = getCurrentInstance()
 const dictStore = useDictStore()
 
 const props = defineProps({
@@ -217,7 +215,7 @@ function requestData(where) {
             bindProps.pagination.pageCount = Math.ceil(data.total / where.size)
             bindProps.pagination.itemCount = data.total
         }
-        props.done()
+        props.done(bindProps.data)
     }
     if (props.method.toLowerCase() == 'post') {
         common.$post(props.url, where).then(processData)
@@ -388,7 +386,7 @@ function unstableColumnResize(widthAfterResize, limitWidth, column){
     calcScrollX()
 }
 
-const tableMenusClass = 'tableMenus' + common.uuid()
+const tableMenusRef = ref()
 const menusWidth = ref(158)
 const itemsWidth = ref(140)
 const menusLeft = ref('')
@@ -460,9 +458,9 @@ function headerClick(e, col) {
     menusTop.value = coord.y + 'px'
     showMenus.value = true
     nextTick(() => {
-        let itemsHeight = document.querySelectorAll('.table-menus.' + tableMenusClass + ' .items .item').length * 30 + 8
+        let itemsHeight = tableMenusRef.value.querySelectorAll('.items .item').length * 30 + 8
         itemsHeight = itemsHeight > 500 ? 500 : itemsHeight
-        let tableMenus = document.querySelector('.table-menus.' + tableMenusClass).getBoundingClientRect()
+        let tableMenus = tableMenusRef.value.getBoundingClientRect()
         if ((clientHeight - tableMenus.bottom) < itemsHeight) {
             itemsTop.value = (tableMenus.bottom - itemsHeight - 8)
         } else {
@@ -476,15 +474,11 @@ function headerClick(e, col) {
     })
 }
 function dataSort(col, rule) {
-    columns.value.forEach(it => {
-        if (it.field != col.field) {
-            it.dataSortRule = undefined
-        }
+    columns.value.filter(it => it.field != col.field).forEach(it => {
+        it.dataSortRule = undefined
     })
-    columns.value.forEach(it => {
-        if (it.realSort && it.field != col.field) {
-            it.realSortRule = undefined
-        }
+    columns.value.filter(it => it.realSort && it.field != col.field).forEach(it => {
+        it.realSortRule = undefined
     })
     if (col.realSort) {
         if(rule){
@@ -542,18 +536,6 @@ function unFixedColumn() {
             it.fixed = false
         }
     })
-    if (props.selection) {
-        nextTick(() => {
-            if (!fixed) {
-                document.querySelectorAll(`.${tableKey.value} .n-data-table-th--fixed-left`).forEach(it => {
-                    it.classList.remove('n-data-table-th--fixed-left')
-                })
-                document.querySelectorAll(`.${tableKey.value} .n-data-table-td--fixed-left`).forEach(it => {
-                    it.classList.remove('n-data-table-td--fixed-left')
-                })
-            }
-        })
-    }
 }
 
 function getFixedCount() {
@@ -575,7 +557,7 @@ function arrIndexExchange(array, x, y) {
 
 let sortableTh = null
 function columnDrop() {
-    const wrapperTr = document.querySelector(`.${tableKey.value} .n-data-table-base-table-header thead tr`)
+    const wrapperTr = tableRef.value.$el.querySelector(`.n-data-table-base-table-header thead tr`)
     sortableTh = Sortable.create(wrapperTr, {
         animation: 180,
         delay: 0,
