@@ -303,11 +303,18 @@ function fixCols() {
         componentProperties.table?.remoteLoadColumn(props.id, columns.value).then(value => {
             columns.value = value
             renderShowColumns()
+        }).catch(() => {
+            renderShowColumns()
         })
     }else{
         renderShowColumns()
     }
+    let columnResizeTimeout = null
     watch(() => columns, () => {
+        clearTimeout(columnResizeTimeout)
+        columnResizeTimeout = setTimeout(() => {
+            componentProperties?.table?.saveCols(props.id, columns.value)
+        }, 500)
         renderShowColumns()
     }, { deep: true })
 }
