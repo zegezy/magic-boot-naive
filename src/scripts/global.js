@@ -7,5 +7,5 @@ export default {
     filePrefix: '',
     dynamicComponentNames: [],
     config: {},
-    uiSize: ref('small')
+    uiSize: ref('medium')
 }
