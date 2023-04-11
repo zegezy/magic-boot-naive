@@ -226,7 +226,11 @@ function requestData(where) {
 createTable()
 
 function calcScrollX(){
-    scrollX.value = showColumns.value.reduce((total, it) => total + it.width, 0)
+    scrollX.value = showColumns.value.reduce((total, it) => total + Number(
+            typeof(it.width) == 'number' ? it.width :
+                typeof(it.width) == 'string' ? it.width.replace('px', '') : 200
+        )
+        , 0)
 }
 
 function fixCols() {
@@ -618,6 +622,13 @@ onMounted(() => {
     nextTick(() => {
         addEventListener()
         columnDrop()
+        watch(showTable, (value) => {
+            if(value){
+                nextTick(() => {
+                    columnDrop()
+                })
+            }
+        })
     })
 })
 
