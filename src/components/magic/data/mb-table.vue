@@ -130,7 +130,7 @@ const props = defineProps({
     },
     data: {
         type: Array,
-        default: () => []
+        default: () => null
     },
     done: {
         type: Function,
@@ -189,18 +189,21 @@ function createTable() {
     watch(() => props.loading, value => bindProps.loading = value)
 }
 
-function loadData() {
+function loadData(options) {
     if (props.url) {
         let where = common.renderWhere(props.where)
-        requestData(where)
+        requestData({ where, loading: options && options.loading })
     }
     if (props.data) {
         bindProps.data = props.data
     }
 }
 
-function requestData(where) {
-    bindProps.loading = true
+function requestData({ where, loading }) {
+    loading = loading == undefined ? true : loading
+    if(loading){
+        bindProps.loading = true
+    }
     if (props.page) {
         where.current = bindProps.pagination.page
         where.size = bindProps.pagination.pageSize
@@ -210,7 +213,9 @@ function requestData(where) {
     let processData = (res) => {
         const {data} = res
         bindProps.data = data.list || []
-        bindProps.loading = false
+        if(loading){
+            bindProps.loading = false
+        }
         if (props.page) {
             bindProps.pagination.pageCount = Math.ceil(data.total / where.size)
             bindProps.pagination.itemCount = data.total
@@ -341,8 +346,8 @@ function toggleExpand() {
     nextTick(() => showTable.value = true)
 }
 
-function reload() {
-    loadData()
+function reload(options) {
+    loadData(options)
 }
 
 function renderExportData(sourceData) {
