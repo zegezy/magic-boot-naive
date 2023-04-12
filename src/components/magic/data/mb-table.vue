@@ -5,6 +5,7 @@
             v-bind="bindProps"
             ref="tableRef"
             :key="tableKey"
+            tabindex="-1"
             :columns="showColumns"
             :virtual-scroll="virtualScroll"
             v-model:checked-row-keys="checkedRowKeys"
@@ -150,13 +151,35 @@ const props = defineProps({
         default: false
     }
 })
-const emit = defineEmits(['update:checked-row-keys'])
+const emit = defineEmits(['update:checked-row-keys', 'selected-row'])
 const tableRef = ref()
 const tableSlots = ref()
 const checkedRowKeys = ref()
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
+let currentRowDom = null
+bindProps.rowProps = (row) => {
+    return {
+        style: 'cursor: pointer;',
+        onClick: (e) => {
+            let setBackgroundColor = (dom, color) => {
+                dom.forEach(d => {
+                    d && d.querySelectorAll('td').forEach(it => {
+                        it.style['background-color'] = color
+                    })
+                })
+            }
+            currentRowIndex.value = bindProps.data.findIndex(it => it.id == row.id)
+            if(currentRowDom){
+                setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling], 'var(--n-merged-td-color)')
+            }
+            currentRowDom = e.currentTarget
+            setBackgroundColor([currentRowDom], componentProperties.table.selectedRowColor)
+            emit('selected-row', row)
+        }
+    }
+}
 const scrollX = ref()
 
 function createTable() {
@@ -318,7 +341,9 @@ function fixCols() {
     watch(() => columns, () => {
         clearTimeout(columnResizeTimeout)
         columnResizeTimeout = setTimeout(() => {
-            componentProperties?.table?.saveCols(props.id, columns.value)
+            if(componentProperties?.table?.saveCols){
+                componentProperties?.table?.saveCols(props.id, columns.value)
+            }
         }, 500)
         renderShowColumns()
     }, { deep: true })
@@ -619,12 +644,48 @@ function hideMenus(e){
     }
 }
 
+const currentRowIndex = ref(0)
+function directionOperation(e) {
+    e.preventDefault()
+    if (e.target.nodeName != 'INPUT') {
+        let updateRowDom = null
+        if (e && e.keyCode == 38) {// 上
+            if (currentRowIndex.value == 0) {
+                currentRowIndex.value = 0
+            } else {
+                currentRowIndex.value--
+            }
+            if(currentRowDom.previousElementSibling){
+                updateRowDom = currentRowDom.previousElementSibling
+                currentRowDom.previousElementSibling.click()
+            }
+        } else if (e && e.keyCode == 40) {// 下
+            if (currentRowIndex.value == bindProps.data.length - 1) {
+                currentRowIndex.value = bindProps.data.length - 1
+            } else {
+                currentRowIndex.value++
+            }
+            if(currentRowDom.nextElementSibling){
+                updateRowDom = currentRowDom.nextElementSibling
+                currentRowDom.nextElementSibling.click()
+            }
+        }
+        if(props.virtualScroll){
+            tableRef.value.scrollTo({index: currentRowIndex.value})
+        }else{
+            tableRef.value.scrollTo({el: updateRowDom})
+        }
+    }
+}
+
 function addEventListener() {
     document.body.addEventListener('click', hideMenus)
+    tableRef.value.$el.addEventListener('keydown', directionOperation)
 }
 
 function removeListener() {
     document.body.removeEventListener('click', hideMenus)
+    tableRef.value.$el.removeEventListener('keydown', directionOperation)
 }
 
 onMounted(() => {
@@ -734,5 +795,8 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 .n-data-table-tr th:hover .down-menus,
 .n-data-table-tr th .down-menus:hover {
     display: block;
+}
+.n-data-table{
+    outline: none;
 }
 </style>
