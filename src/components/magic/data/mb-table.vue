@@ -125,7 +125,7 @@ const props = defineProps({
     },
     rowKey: {
         type: String,
-        default: ''
+        default: 'id'
     },
     virtualScroll: {
         type: Boolean,
