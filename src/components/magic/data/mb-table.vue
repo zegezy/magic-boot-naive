@@ -14,7 +14,7 @@
             style="height: 100%"
             :scroll-x="scrollX"
             flex-height
-            :row-key="it => it.id"
+            :row-key="it => it[rowKey]"
             :default-expand-all="defaultExpandAll"
             @unstable-column-resize="unstableColumnResize"
         >
@@ -24,6 +24,9 @@
             </template>
             <template #html="{ row, col }">
                 <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+            </template>
+            <template #templet="{ row, col, index }">
+                <span v-html="col.templet(row, col, index)"></span>
             </template>
             <template #buttons="{ row, col }">
                 <n-space>
@@ -120,6 +123,10 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    rowKey: {
+        type: String,
+        default: ''
+    },
     virtualScroll: {
         type: Boolean,
         default: true
@@ -190,7 +197,7 @@ bindProps.rowProps = (row) => {
                     })
                 })
             }
-            currentRowIndex.value = bindProps.data.findIndex(it => it.id == row.id)
+            currentRowIndex.value = bindProps.data.findIndex(it => it[rowKey] == row[rowKey])
             if(currentRowDom){
                 setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling], 'var(--n-merged-td-color)')
             }
@@ -327,6 +334,9 @@ function fixCols() {
         } else {
             if (col.dictType) {
                 renderSlot(col, 'dictType')
+            }
+            if(col.templet){
+                renderSlot(col, 'templet')
             }
         }
         if (col.render) {
