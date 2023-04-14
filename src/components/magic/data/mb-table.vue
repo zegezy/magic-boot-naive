@@ -26,12 +26,30 @@
                 <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
             </template>
             <template #buttons="{ row, col }">
-                <template v-for="it in col.buttons">
-                    <template v-if="it.link">
-                        <a v-if="it.if != undefined ? it.if(row) : true" v-permission="it.permission"
-                           class="mx-1 cursor-pointer btn-blue" @click="it.click(row)">{{ it.label }}</a>
+                <n-space>
+                    <template v-for="it in col.buttons">
+                        <n-button
+                            v-if="it.if != undefined ? it.if(row) : true"
+                            v-permission="it.permission"
+                            :type="it.type"
+                            :text="it.link"
+                            :dashed="it.dashed"
+                            :href="it.href"
+                            :color="it.color"
+                            :target="it.target"
+                            :tag="it.tag || (it.link ? 'a' : 'button')"
+                            :text-color="it.textColor || '#2D8CF0'"
+                            @click="it.click(row)"
+                        >
+                            <template #icon v-if="it.icon">
+                                <n-icon>
+                                    <component :is="icons5[it.icon] || fluent[it.icon]" />
+                                </n-icon>
+                            </template>
+                            {{ it.label }}
+                        </n-button>
                     </template>
-                </template>
+                </n-space>
             </template>
             <template #dictType="{ row, col }">
                 <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
@@ -81,7 +99,9 @@
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount} from 'vue'
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
+import * as icons5 from '@vicons/ionicons5'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
+import * as fluent from '@vicons/fluent'
 import common from '@/scripts/common'
 import global from '@/scripts/global'
 import MbSwitch from '@/components/magic/form/mb-switch.vue'
