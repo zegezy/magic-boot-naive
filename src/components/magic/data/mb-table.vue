@@ -197,7 +197,7 @@ const checkedRowKeys = ref()
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
-const getNowrap = computed(() => componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : props.nowrap != undefined ? props.nowrap : false)
+const getNowrap = computed(() => props.nowrap != undefined ? props.nowrap : componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : false)
 let currentRowDom = null
 bindProps.rowProps = (row) => {
     return {
