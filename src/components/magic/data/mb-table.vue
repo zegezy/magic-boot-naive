@@ -137,7 +137,7 @@ const props = defineProps({
     },
     nowrap: {
         type: Boolean,
-        default: false
+        default: undefined
     },
     virtualScroll: {
         type: Boolean,
