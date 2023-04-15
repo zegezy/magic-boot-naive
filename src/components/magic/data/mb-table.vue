@@ -10,7 +10,7 @@
             :columns="showColumns"
             :virtual-scroll="virtualScroll"
             v-model:checked-row-keys="checkedRowKeys"
-            @update:checked-row-keys="emit('update:checked-row-keys', checkedRowKeys)"
+            @update:checked-row-keys="updateCheckedRowKeys"
             table-layout="fixed"
             style="height: 100%"
             :scroll-x="scrollX"
@@ -400,6 +400,11 @@ function renderSlot(col, type) {
     col.render = (row, index) => {
         return h(tableSlots.value[type], {row, index, col})
     }
+}
+
+function updateCheckedRowKeys(){
+    emit('update:checked-row-keys', checkedRowKeys.value)
+    emit('update:checked-row-datas', bindProps.data.filter(it => checkedRowKeys.value.indexOf(it[props.rowKey]) != -1))
 }
 
 const tableKey = ref('magicTable' + common.uuid())
