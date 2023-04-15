@@ -5,7 +5,7 @@
             v-bind="bindProps"
             ref="tableRef"
             :key="tableKey"
-            :class="{ 'nowrap': nowrap }"
+            :class="{ nowrap: getNowrap }"
             tabindex="-1"
             :columns="showColumns"
             :virtual-scroll="virtualScroll"
@@ -108,7 +108,7 @@
 
 <script setup>
 import Sortable from 'sortablejs'
-import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount} from 'vue'
+import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed} from 'vue'
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
 import * as icons5 from '@vicons/ionicons5'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
@@ -197,6 +197,7 @@ const checkedRowKeys = ref()
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
+const getNowrap = computed(() => componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : props.nowrap != undefined ? props.nowrap : false)
 let currentRowDom = null
 bindProps.rowProps = (row) => {
     return {
@@ -339,8 +340,10 @@ function fixCols() {
         column.fixed = col.fixed
         column.show = true
         column.realSort = col.realSort
-        column.ellipsis = {
-            tooltip: true
+        if(getNowrap.value){
+            column.ellipsis = {
+                tooltip: true
+            }
         }
         column.resizable = true
         let type = col.type
