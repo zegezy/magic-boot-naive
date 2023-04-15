@@ -702,21 +702,13 @@ function directionOperation(e) {
     if (e.target.nodeName != 'INPUT') {
         let updateRowDom = null
         if (e && e.keyCode == 38) {// 上
-            if (currentRowIndex.value == 0) {
-                currentRowIndex.value = 0
-            } else {
-                currentRowIndex.value--
-            }
+            currentRowIndex.value = Math.max(0, currentRowIndex.value - 1)
             if(currentRowDom.previousElementSibling){
                 updateRowDom = currentRowDom.previousElementSibling
                 currentRowDom.previousElementSibling.click()
             }
         } else if (e && e.keyCode == 40) {// 下
-            if (currentRowIndex.value == bindProps.data.length - 1) {
-                currentRowIndex.value = bindProps.data.length - 1
-            } else {
-                currentRowIndex.value++
-            }
+            currentRowIndex.value = Math.min(bindProps.data.length - 1, currentRowIndex.value + 1)
             if(currentRowDom.nextElementSibling){
                 updateRowDom = currentRowDom.nextElementSibling
                 currentRowDom.nextElementSibling.click()
