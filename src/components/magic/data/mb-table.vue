@@ -201,7 +201,6 @@ const getNowrap = computed(() => props.nowrap != undefined ? props.nowrap : comp
 let currentRowDom = null
 bindProps.rowProps = (row) => {
     return {
-        style: 'cursor: pointer;',
         onClick: (e) => {
             let setBackgroundColor = (dom, color) => {
                 dom.forEach(d => {
