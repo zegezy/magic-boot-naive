@@ -5,6 +5,7 @@
             v-bind="bindProps"
             ref="tableRef"
             :key="tableKey"
+            :class="{ 'nowrap': nowrap }"
             tabindex="-1"
             :columns="showColumns"
             :virtual-scroll="virtualScroll"
@@ -83,6 +84,13 @@
                     <ChevronDown />
                 </n-icon>
             </template>
+            <template #image="{ row, col }">
+                <n-image-group v-if="row[col.field]">
+                    <n-space>
+                        <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="$global.filePrefix + it" />
+                    </n-space>
+                </n-image-group>
+            </template>
         </n-data-table>
         <div ref="tableMenusRef" class="table-menus" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
             <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click" :key="i">
@@ -126,6 +134,10 @@ const props = defineProps({
     rowKey: {
         type: String,
         default: 'id'
+    },
+    nowrap: {
+        type: Boolean,
+        default: false
     },
     virtualScroll: {
         type: Boolean,
@@ -197,7 +209,7 @@ bindProps.rowProps = (row) => {
                     })
                 })
             }
-            currentRowIndex.value = bindProps.data.findIndex(it => it[rowKey] == row[rowKey])
+            currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
             if(currentRowDom){
                 setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling], 'var(--n-merged-td-color)')
             }
@@ -327,6 +339,9 @@ function fixCols() {
         column.fixed = col.fixed
         column.show = true
         column.realSort = col.realSort
+        column.ellipsis = {
+            tooltip: true
+        }
         column.resizable = true
         let type = col.type
         if (!col.render && type && keys.indexOf(type) != -1) {
@@ -828,5 +843,13 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 }
 .n-data-table{
     outline: none;
+}
+.nowrap :deep(td),
+.nowrap :deep(th){
+    white-space: nowrap;
+    overflow: hidden;
+}
+.nowrap :deep(.n-space){
+    flex-wrap: nowrap!important;
 }
 </style>
