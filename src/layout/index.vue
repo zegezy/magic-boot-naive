@@ -44,7 +44,9 @@
                         <router-view v-slot="{ Component }">
                             <transition name="fade" mode="out-in" appear>
                                 <keep-alive :include="keepAliveInclude">
-                                    <component v-if="tabsStore.getShow" :is="Component" :key="$route.path"/>
+                                    <div style="width: 100%;height: 100%">
+                                        <component v-if="tabsStore.getShow" :is="Component" :key="$route.path"/>
+                                    </div>
                                 </keep-alive>
                             </transition>
                         </router-view>
