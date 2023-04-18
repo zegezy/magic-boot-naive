@@ -59,6 +59,7 @@ const menuData = ref([])
 let searchValue = ref('')
 const table = ref()
 const tableOptions = reactive({
+    virtualScroll: true,
     loading: false,
     showNo: false,
     page: false,

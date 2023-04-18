@@ -14,6 +14,7 @@
             table-layout="fixed"
             style="height: 100%"
             :scroll-x="scrollX"
+            :striped="striped"
             flex-height
             :row-key="it => it[rowKey]"
             :default-expand-all="defaultExpandAll"
@@ -141,7 +142,7 @@ const props = defineProps({
     },
     virtualScroll: {
         type: Boolean,
-        default: true
+        default: false
     },
     url: {
         type: String,
@@ -188,6 +189,10 @@ const props = defineProps({
     selection: {
         type: Boolean,
         default: false
+    },
+    striped: {
+        type: Boolean,
+        default: true
     }
 })
 const emit = defineEmits(['update:checked-row-keys', 'selected-row'])
