@@ -209,14 +209,24 @@ bindProps.rowProps = (row) => {
         onClick: (e) => {
             let setBackgroundColor = (dom, color) => {
                 dom.forEach(d => {
-                    d && d.querySelectorAll('td').forEach(it => {
-                        it.style['background-color'] = color
-                    })
+                    let _color = color
+                    if(d){
+                        if(!_color){
+                            if(d.className.indexOf('n-data-table-tr--striped') != -1){
+                                _color = 'var(--n-merged-td-color-striped)'
+                            }else{
+                                _color = 'var(--n-merged-td-color)'
+                            }
+                        }
+                        d.querySelectorAll('td').forEach(it => {
+                            it.style['background-color'] = _color
+                        })
+                    }
                 })
             }
             currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
             if(currentRowDom){
-                setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling], 'var(--n-merged-td-color)')
+                setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling])
             }
             currentRowDom = e.currentTarget
             setBackgroundColor([currentRowDom], componentProperties.table.selectedRowColor)
