@@ -6,7 +6,7 @@ import {useTabsStore} from '@/store/modules/tabsStore'
 import common from "@/scripts/common";
 
 const whiteList = ['/login']
-let loadInfo = false
+const dontOpenTabs = ['/redirect', '/login', '/404']
 
 export function setupRouterInterceptor() {
     router.beforeEach(async (to, from, next) => {
@@ -16,31 +16,15 @@ export function setupRouterInterceptor() {
         if (token) {
             if (to.path === '/login') {
                 next({path: '/'})
-                $loading.finish()
             } else {
-                if (loadInfo) {
-                    tabHandler(to)
-                    next()
-                } else {
-                    loadInfo = true
-                    try {
-                        await loadData(userStore)
-                        next({...to, replace: true})
-                    } catch (error) {
-                        next()
-                        userStore.removeToken()
-                        location.reload()
-                    }
-                }
+                tabHandler(to)
             }
         } else {
-            if (whiteList.indexOf(to.path) !== -1) {
-                next()
-            } else {
+            if (whiteList.indexOf(to.path) === -1) {
                 next(`/login`)
-                $loading.finish()
             }
         }
+        next()
     })
 
     router.afterEach(() => {
@@ -52,7 +36,7 @@ function tabHandler(to) {
     const tabsStore = useTabsStore()
     tabsStore.setCurrentTab(to.path)
     const tabs = tabsStore.getTabs
-    if ((to.name && tabs.length === 0 || tabs.every(it => it.path !== to.path)) && !to.path.startsWith('/redirect') && !to.path.startsWith('/login')) {
+    if ((to.name && tabs.length === 0 || tabs.every(it => it.path !== to.path)) && dontOpenTabs.filter(it => to.path.startsWith(it)).length == 0) {
         tabsStore.pushTab(to)
     }
     tabs.forEach((it, i) => {
@@ -62,8 +46,9 @@ function tabHandler(to) {
     })
 }
 
-async function loadData(userStore) {
+export async function loadData() {
 
+    const userStore = useUserStore()
     const dictStore = useDictStore()
 
     await userStore.getUserInfo()

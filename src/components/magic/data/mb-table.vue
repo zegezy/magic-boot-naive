@@ -665,9 +665,7 @@ function arrIndexExchange(array, x, y) {
 
 let sortableTh = null
 function columnDrop() {
-    // if(sortableTh){
-    //     sortableTh.destroy()
-    // }
+    sortableTh && sortableTh.destroy()
     const wrapperTr = tableRef.value.$el.querySelector(`.n-data-table-base-table-header thead tr`)
     sortableTh = Sortable.create(wrapperTr, {
         animation: 180,
@@ -768,7 +766,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-    sortableTh.destroy()
+    sortableTh && sortableTh.destroy()
     removeListener()
 })
 

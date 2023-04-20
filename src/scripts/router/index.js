@@ -1,7 +1,8 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
 import Layout from '@/layout'
-import {setupRouterInterceptor} from "@/scripts/router/routerInterceptor";
+import {setupRouterInterceptor, loadData} from "@/scripts/router/routerInterceptor";
 import {useTabsStore} from "@/store/modules/tabsStore";
+import {useUserStore} from "@/store/modules/userStore";
 
 const routes = [
     {
@@ -43,6 +44,23 @@ const routes = [
             }
         ]
     },
+    {
+        path: '/404/index',
+        redirect: '/404',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: '/404',
+                component: () => import('@/layout/empty')
+            }
+        ]
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        redirect: '/404/index',
+        hidden: true
+    }
 ]
 
 const router = createRouter({
@@ -59,9 +77,16 @@ export function push(to) {
     }
 }
 
-export function setupRouter(app) {
-    app.use(router)
+export async function setupRouter(app) {
+    const userStore = useUserStore()
+    try {
+        await loadData()
+    } catch (error) {
+        userStore.removeToken()
+        location.reload()
+    }
     setupRouterInterceptor()
+    app.use(router)
 }
 
 export default router

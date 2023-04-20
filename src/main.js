@@ -15,7 +15,7 @@ async function start() {
     setupNaiveDiscreteApi()
     setupDirectives(app)
     setupGlobalProperties(app)
-    setupRouter(app)
+    await setupRouter(app)
     setupComponents(app)
     app.mount('#app')
 }
