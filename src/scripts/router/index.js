@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
 import Layout from '@/layout'
-import {setupRouterInterceptor, loadData} from "@/scripts/router/routerInterceptor";
+import {setupRouterInterceptor} from "@/scripts/router/routerInterceptor";
 import {useTabsStore} from "@/store/modules/tabsStore";
 import {useUserStore} from "@/store/modules/userStore";
 
@@ -79,11 +79,9 @@ export function push(to) {
 
 export async function setupRouter(app) {
     const userStore = useUserStore()
-    try {
-        await loadData()
-    } catch (error) {
-        userStore.removeToken()
-        location.reload()
+    const token = userStore.getToken()
+    if (token) {
+        await userStore.loadData()
     }
     setupRouterInterceptor()
     app.use(router)

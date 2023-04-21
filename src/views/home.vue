@@ -14,7 +14,6 @@ const store = useUserStore()
 
 function settingAuths() {
     if (store.getAuths.length > 0) {
-        alert(1)
         store.getAuths.push(9)
     }
     store.setAuths(['1', '2', '3', '4'])

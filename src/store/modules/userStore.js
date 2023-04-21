@@ -2,6 +2,9 @@ import {defineStore} from 'pinia'
 import {ref, computed} from 'vue'
 import {sha256} from "js-sha256"
 import common from '@/scripts/common'
+import {useDictStore} from "@/store/modules/dictStore";
+import {generateHiddenRoutes, generateRoutes} from "@/scripts/router/loadRouter";
+import router from "@/scripts/router";
 
 export const useUserStore = defineStore('user', () => {
     const tokenKey = 'magic_boot_token'
@@ -62,6 +65,27 @@ export const useUserStore = defineStore('user', () => {
         })
     }
 
+    async function loadData() {
+        const userStore = useUserStore()
+        const dictStore = useDictStore()
+
+        await userStore.getUserInfo()
+        await dictStore.getDictData()
+        await common.loadConfig()
+
+        await generateRoutes().then(accessRoutes => {
+            userStore.pushPermissionRouter(accessRoutes)
+            accessRoutes.forEach(it => {
+                router.addRoute(it)
+            })
+        })
+        await generateHiddenRoutes().then(accessRoutes => {
+            accessRoutes.forEach(it => {
+                router.addRoute(it)
+            })
+        })
+    }
+
     function login(data) {
         return new Promise((resolve, reject) => {
             common.$postJson('/system/security/login', {
@@ -69,9 +93,10 @@ export const useUserStore = defineStore('user', () => {
                 password: sha256(data.password),
                 code: data.code,
                 uuid: data.uuid
-            }).then(res => {
+            }).then(async res => {
                 let token = res.data
                 setToken(token)
+                await loadData()
                 resolve(token)
             }).catch((e) => {
                 reject(e)
@@ -96,6 +121,7 @@ export const useUserStore = defineStore('user', () => {
         getUserInfo,
         login,
         logout,
+        loadData,
         removeToken
     }
 
