@@ -25,10 +25,14 @@
                 <span v-else>-</span>
             </template>
             <template #html="{ row, col }">
-                <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                <ShowOrTooltip>
+                    <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                </ShowOrTooltip>
             </template>
             <template #templet="{ row, col, index }">
-                <span v-html="col.templet(row, col, index)"></span>
+                <ShowOrTooltip>
+                    <span v-html="col.templet(row, col, index)"></span>
+                </ShowOrTooltip>
             </template>
             <template #buttons="{ row, col }">
                 <n-space>
@@ -57,7 +61,9 @@
                 </n-space>
             </template>
             <template #dictType="{ row, col }">
-                <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+                <ShowOrTooltip>
+                    <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+                </ShowOrTooltip>
             </template>
             <template #dynamic="{ row, col }">
                 <slot :name="col.field" :row="row" :col="col"/>
@@ -109,7 +115,7 @@
 
 <script setup>
 import Sortable from 'sortablejs'
-import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed} from 'vue'
+import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
 import * as icons5 from '@vicons/ionicons5'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
@@ -119,6 +125,8 @@ import global from '@/scripts/global'
 import MbSwitch from '@/components/magic/form/mb-switch.vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
+import { NEllipsis } from 'naive-ui'
+import { cloneDeep } from 'lodash-es'
 
 const dictStore = useDictStore()
 
@@ -193,6 +201,58 @@ const props = defineProps({
     striped: {
         type: Boolean,
         default: true
+    }
+})
+const ShowOrTooltip = defineComponent({
+    setup (props, { slots }) {
+        const tooltip = ref()
+        tooltip.value = false
+        let timers
+        let duration
+        if (typeof props.tooltip === 'object') {
+            duration = props.tooltip.duration
+        }
+        return () =>
+            h(
+                'span',
+                {
+                    onMouseover: () => {
+                        clearTimeout(timers)
+                        const onUpdateShow = (value) => {
+                            if (!value) {
+                                timers = setTimeout(() => {
+                                    tooltip.value = false
+                                }, (duration ?? 100) + 1000)
+                            }
+                        }
+                        let tooltipProps = cloneDeep(props.tooltip)
+                        if (typeof tooltipProps === 'object') {
+                            if (tooltipProps.onUpdateShow) {
+                                const _onUpdateShow = tooltipProps.onUpdateShow
+                                tooltipProps.onUpdateShow = (value) => {
+                                    call(_onUpdateShow, value)
+                                    call(onUpdateShow, value)
+                                }
+                            } else {
+                                tooltipProps.onUpdateShow = onUpdateShow
+                            }
+                        } else {
+                            if (props.tooltip === true) {
+                                tooltipProps = { onUpdateShow }
+                            }
+                        }
+                        tooltip.value = tooltipProps
+                    }
+                },
+                h(
+                    NEllipsis,
+                    {
+                        ...props,
+                        tooltip: tooltip.value
+                    },
+                    { default: slots.default }
+                )
+            )
     }
 })
 const emit = defineEmits(['update:checked-row-keys', 'selected-row'])
@@ -354,11 +414,6 @@ function fixCols() {
         column.fixed = col.fixed
         column.show = true
         column.realSort = col.realSort
-        if(getNowrap.value){
-            column.ellipsis = {
-                tooltip: true
-            }
-        }
         column.resizable = true
         let type = col.type
         if (!col.render && type && keys.indexOf(type) != -1) {
@@ -374,8 +429,16 @@ function fixCols() {
         if (col.render) {
             column.render = col.render
         }else{
-            column.render = (row) => {
-                return row[col.field] ? row[col.field] : col.defaultValue || ''
+            if(getNowrap.value){
+                column.render = (row) => {
+                    return h(ShowOrTooltip,{},{
+                        default: () => row[col.field]
+                    })
+                }
+            }else{
+                column.render = (row) => {
+                    return row[col.field] ? row[col.field] : col.defaultValue || ''
+                }
             }
         }
         if (col.props) {
