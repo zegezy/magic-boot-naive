@@ -377,20 +377,42 @@ function calcScrollX(){
 
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
+    let tableWidth = tableRef.value.$el.offsetWidth
+    let totalWidth = 0
+    let widths = 0
+    let noWidth = 50
+    props.cols.forEach((it, i) => {
+        let width = it.width
+        if(width){
+            if(typeof width == 'string'){
+                width = width.replace(' ','')
+                if(width.indexOf('%') != -1){
+                    width = width.replace('%','')
+                    width = parseFloat(width)
+                    width = tableWidth * (width / 100)
+                }else{
+                    width = parseFloat(width)
+                }
+            }
+            totalWidth += width
+            widths++
+        }
+    })
     const keys = Object.keys(tableSlots.value)
     if(props.selection){
         columns.value.push({
             type: 'selection',
             show: true,
-            width: 70,
+            width: noWidth,
             fixed: 'left'
         })
+        tableWidth -= noWidth
     }
     if(props.showNo){
         columns.value.push({
             label: '序号',
             title: '序号',
-            width: 70,
+            width: noWidth,
             align: 'center',
             show: true,
             fixed: 'left',
@@ -398,19 +420,20 @@ function fixCols() {
                 return index + 1
             }
         })
+        tableWidth -= noWidth
     }
+    let colWidth = ((tableWidth - totalWidth) / (props.cols.length - widths)) - 1
     props.cols.forEach((col) => {
         let column = {}
-        column.field = col.field
-        column.key = col.field
+        column.field = col.field || common.uuid()
+        column.key = column.field
         column.label = col.label
         column.title = (col) => {
             return h(tableSlots.value['title'], {col})
         }
         column.align = col.align
-        column.width = col.width || 200
-        column.minWidth = col.minWidth
-        column.maxWidth = col.maxWidth
+        column.width = col.width || colWidth
+        column.minWidth = col.minWidth || column.width
         column.fixed = col.fixed
         column.show = true
         column.realSort = col.realSort
