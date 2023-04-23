@@ -1,13 +1,16 @@
 <template>
-    <n-input :size="$global.uiSize.value"  v-model:value="selectValue" :type="type" :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
-             v-bind="props.props"/>
+    <n-input
+        :size="$global.uiSize.value"
+        v-model:value="selectValue"
+        :type="type"
+        :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
+        v-bind="props.props"
+    />
 </template>
 
 <script setup>
-import {ref, watch} from 'vue'
-
+import { useVModel } from "@vueuse/core";
 const emit = defineEmits(['update:modelValue'])
-const selectValue = ref('')
 const props = defineProps({
     modelValue: String,
     itemLabel: String,
@@ -15,11 +18,5 @@ const props = defineProps({
     type: String,
     props: Object
 })
-selectValue.value = props.modelValue
-watch(() => props.modelValue, (value) => {
-    selectValue.value = value
-})
-watch(selectValue, (value) => {
-    emit('update:modelValue', value)
-})
+const selectValue = useVModel(props, 'modelValue', emit)
 </script>

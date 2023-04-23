@@ -422,7 +422,7 @@ function fixCols() {
         })
         tableWidth -= noWidth
     }
-    let colWidth = ((tableWidth - totalWidth) / (props.cols.length - widths)) - 1
+    let colWidth = ((tableWidth - totalWidth) / (props.cols.length - widths)) - 2
     props.cols.forEach((col) => {
         let column = {}
         column.field = col.field || common.uuid()
