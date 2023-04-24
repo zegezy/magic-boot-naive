@@ -122,11 +122,11 @@ import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@
 import * as fluent from '@vicons/fluent'
 import common from '@/scripts/common'
 import global from '@/scripts/global'
-import MbSwitch from '@/components/magic/form/mb-switch.vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
 import { NEllipsis } from 'naive-ui'
 import { cloneDeep } from 'lodash-es'
+import { useMouse, onClickOutside } from "@vueuse/core";
 
 const dictStore = useDictStore()
 
@@ -627,19 +627,12 @@ const dropMenus = reactive([{
         }
     }
 }])
-function getMousePos(event) {
-    let e = event || window.event;
-    let scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
-    let scrollY = document.documentElement.scrollTop || document.body.scrollTop;
-    let x = e.pageX || e.clientX + scrollX;
-    let y = e.pageY || e.clientY + scrollY;
-    return { 'x': x, 'y': y };
-}
+let mouse = useMouse()
 function headerClick(e, col) {
     currentCol = col
     let clientWidth = document.body.clientWidth;
     let clientHeight = document.body.clientHeight;
-    let coord = getMousePos(e)
+    let coord = { x: mouse.x.value, y: mouse.y.value }
     if ((clientWidth - menusWidth.value - coord.x) < 0) {
         menusLeft.value = (clientWidth - menusWidth.value) + 'px'
         if ((clientWidth - menusWidth.value - itemsWidth.value - coord.x) < 0) {
@@ -792,12 +785,6 @@ function columnDrop() {
         }
     })
 }
-function hideMenus(e){
-    if (document.getElementsByClassName('table-menus') && document.getElementsByClassName('table-menus').length > 0 && !document.getElementsByClassName('table-menus')[0].contains(e.srcElement) && e.target.nodeName != 'svg' && e.target.nodeName != 'path') {
-        showMenus.value = false
-    }
-}
-
 const currentRowIndex = ref(0)
 function directionOperation(e) {
     e.preventDefault()
@@ -825,12 +812,10 @@ function directionOperation(e) {
 }
 
 function addEventListener() {
-    document.body.addEventListener('click', hideMenus)
     tableRef.value.$el.addEventListener('keydown', directionOperation)
 }
 
 function removeListener() {
-    document.body.removeEventListener('click', hideMenus)
     tableRef.value.$el.removeEventListener('keydown', directionOperation)
 }
 
@@ -841,6 +826,7 @@ onMounted(() => {
     nextTick(() => {
         addEventListener()
         columnDrop()
+        onClickOutside(tableMenusRef, () => showMenus.value = false)
         watch(showTable, (value) => {
             if(value){
                 nextTick(() => {
