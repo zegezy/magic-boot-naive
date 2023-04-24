@@ -73,7 +73,7 @@ export function push(to) {
     if (tabsStore.contains(to.path)) {
         tabsStore.refreshPush(to)
     } else {
-        router.push(to)
+        void router.push(to)
     }
 }
 
@@ -81,7 +81,12 @@ export async function setupRouter(app) {
     const userStore = useUserStore()
     const token = userStore.getToken()
     if (token) {
-        await userStore.loadData()
+        try {
+            await userStore.loadData()
+        } catch (error) {
+            await router.push({ path: '/login' })
+            userStore.removeToken()
+        }
     }
     setupRouterInterceptor()
     app.use(router)
