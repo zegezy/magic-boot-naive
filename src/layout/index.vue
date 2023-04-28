@@ -118,15 +118,27 @@ function recursionRouters(children) {
             }
         } else {
             menu.key = chi.path
-            menu.label = () => h(
-                RouterLink,
-                {
-                    to: {
-                        path: chi.path
-                    }
-                },
-                {default: () => chi.title}
-            )
+            if(chi.openMode == '1'){
+                let path = chi.path.startsWith('http') ? chi.path : location.href.substring(0, location.href.indexOf('/', location.href.indexOf('/', location.href.indexOf('/') + 1) + 1)) + '#' + chi.path
+                menu.label = () => h(
+                    'a',
+                    {
+                        href: path,
+                        target: '_blank'
+                    },
+                    chi.title
+                )
+            }else{
+                menu.label = () => h(
+                    RouterLink,
+                    {
+                        to: {
+                            path: chi.path
+                        }
+                    },
+                    {default: () => chi.title}
+                )
+            }
         }
         if (chi.icon && icons[chi.icon]) {
             menu.icon = renderIcon(icons[chi.icon])

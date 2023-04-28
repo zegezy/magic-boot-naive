@@ -1,5 +1,6 @@
 import common from '@/scripts/common'
 import {sha256} from 'js-sha256'
+import { clone } from "lodash-es";
 
 const relativePath = '/src'
 const viewModules = import.meta.glob('@/views/**/**.vue')
@@ -28,13 +29,15 @@ export const filterAsyncRouter = (routers, level) => {
                 router.component = loadView(`/common/show-component`)
                 router.props = {name: router.componentName}
             } else if (router.component) {
-                const component = router.component
-                if (component === 'Layout') {
-                    router.path = "/" + common.uuid()
-                    router.component = level > 0 ? layoutModules[`${relativePath}/layout/none.vue`] : loadLayoutView(component)
-                } else {
-                    router.path = router.path.startsWith('/') ? router.path : '/' + router.path
-                    router.component = loadView(component) || layoutModules[`${relativePath}/layout/empty.vue`]
+                if(router.openMode != '1'){
+                    const component = router.component
+                    if (component === 'Layout') {
+                        router.path = "/" + common.uuid()
+                        router.component = level > 0 ? layoutModules[`${relativePath}/layout/none.vue`] : loadLayoutView(component)
+                    } else {
+                        router.path = router.path.startsWith('/') ? router.path : '/' + router.path
+                        router.component = loadView(component) || layoutModules[`${relativePath}/layout/empty.vue`]
+                    }
                 }
             }
             if (router.children && router.children.length) {
@@ -88,8 +91,25 @@ export function generateRoutes() {
     return new Promise((resolve, reject) => {
         common.$post('/system/menu/current/menus').then(response => {
             const {data} = response
-            const asyncRouter = filterAsyncRouter(data)
-            resolve(asyncRouter)
+            const newTags = []
+            const recursionData = (children) => {
+                children.forEach((it, i) => {
+                    if(it.openMode == '1' && it.url && !it.url.startsWith('http')){
+                        delete children[i]
+                        newTags.push(clone(it))
+                    }
+                    if(it.children && it.children.length > 0){
+                        recursionData(it.children)
+                    }
+                })
+            }
+            recursionData(data)
+            const accessRoutes = filterAsyncRouter(data)
+            newTags.forEach((it) => {
+                it.hidden = true
+                it.component = loadView(it.url) || layoutModules[`${relativePath}/layout/empty.vue`]
+            })
+            resolve({ accessRoutes, newTags })
         })
     })
 }

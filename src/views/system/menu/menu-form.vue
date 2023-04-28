@@ -25,9 +25,9 @@
             <n-input v-model:value="temp.url"/>
         </n-form-item>
         <n-form-item label="打开方式" path="openMode"
-                     v-if="menuType == 'menu' && (temp.url.startsWith('http') || (temp.url.startsWith('/') && temp.url.indexOf('.htm') != -1))">
+                     v-if="menuType == 'menu'">
             <n-radio-group v-model:value="openModeRef">
-                <n-radio-button key="0" value="0" label="iframe"/>
+                <n-radio-button key="0" value="0" label="页签"/>
                 <n-radio-button key="1" value="1" label="新标签页"/>
             </n-radio-group>
         </n-form-item>

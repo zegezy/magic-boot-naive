@@ -5,6 +5,7 @@ import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
 import {generateHiddenRoutes, generateRoutes} from "@/scripts/router/loadRouter";
 import router from "@/scripts/router";
+import { cloneDeep } from 'lodash-es'
 
 export const useUserStore = defineStore('user', () => {
     const tokenKey = 'magic_boot_token'
@@ -73,9 +74,23 @@ export const useUserStore = defineStore('user', () => {
         await dictStore.getDictData()
         await common.loadConfig()
 
-        await generateRoutes().then(accessRoutes => {
-            userStore.pushPermissionRouter(accessRoutes)
-            accessRoutes.forEach(it => {
+        await generateRoutes().then(({ accessRoutes, newTags }) => {
+            let _accessRoutes = cloneDeep(accessRoutes)
+            let recursionRoutes = (children) => {
+                children.forEach(it => {
+                    newTags.forEach(tag => {
+                        if(it.id == tag.pid){
+                            it.children.push(tag)
+                        }
+                    })
+                    if(it.children && it.children.length > 0){
+                        recursionRoutes(it.children)
+                    }
+                })
+            }
+            recursionRoutes(_accessRoutes)
+            userStore.pushPermissionRouter(_accessRoutes)
+            accessRoutes.concat(newTags).forEach(it => {
                 router.addRoute(it)
             })
         })
