@@ -81,6 +81,7 @@ export const useUserStore = defineStore('user', () => {
                     newTags.forEach(tag => {
                         if(it.id == tag.pid){
                             it.children.push(tag)
+                            it.children.sort((a, b) => a.sort - b.sort)
                         }
                     })
                     if(it.children && it.children.length > 0){
