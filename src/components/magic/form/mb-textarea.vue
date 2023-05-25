@@ -1,11 +1,12 @@
 <template>
     <n-input
-        ref="magicInput"
+        ref="magicTextarea"
         :size="$global.uiSize.value"
         v-model:value="selectValue"
-        :type="type"
+        type="textarea"
         :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
         v-bind="props.props"
+        :rows="rows"
     />
 </template>
 
@@ -14,10 +15,10 @@ import { useVModel } from "@vueuse/core";
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
     modelValue: String,
+    props: Object,
     itemLabel: String,
     placeholder: String,
-    type: String,
-    props: Object
+    rows: Number
 })
 const selectValue = useVModel(props, 'modelValue', emit)
 </script>

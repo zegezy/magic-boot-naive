@@ -1,5 +1,6 @@
 <template>
     <n-switch
+        ref="magicSwitch"
         :size="$global.uiSize.value"
         v-model:value="selectValue"
         :checked-value="_checkedValue"
