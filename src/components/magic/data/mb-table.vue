@@ -65,12 +65,15 @@
                     <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
                 </ShowOrTooltip>
             </template>
-            <template #dynamic="{ row, col }">
-                <slot :name="col.field" :row="row" :col="col"/>
+            <template #dynamic="{ row, col, index }">
+                <slot :name="col.field" :row="row" :col="col" :index="index" />
             </template>
             <template #title="{ col }">
                 <div @click="dataSort(col)">
                     <label>{{ col.label }}</label>
+                    <n-icon v-if="col.editIcon">
+                        <EditFilled />
+                    </n-icon>
                     <n-icon v-if="col.dataSortRule">
                         <CaretUpOutline />
                     </n-icon>
@@ -119,6 +122,7 @@ import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineCom
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
 import * as icons5 from '@vicons/ionicons5'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
+import { EditFilled } from '@vicons/antd'
 import * as fluent from '@vicons/fluent'
 import common from '@/scripts/common'
 import global from '@/scripts/global'
@@ -201,6 +205,10 @@ const props = defineProps({
     striped: {
         type: Boolean,
         default: true
+    },
+    selectedRowEnable: {
+        type: Boolean,
+        default: true
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -264,33 +272,35 @@ const showColumns = ref([])
 const bindProps = reactive(props.props || {})
 const getNowrap = computed(() => props.nowrap != undefined ? props.nowrap : componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : false)
 let currentRowDom = null
-bindProps.rowProps = (row) => {
-    return {
-        onClick: (e) => {
-            let setBackgroundColor = (dom, color) => {
-                dom.forEach(d => {
-                    let _color = color
-                    if(d){
-                        if(!_color){
-                            if(d.className.indexOf('n-data-table-tr--striped') != -1){
-                                _color = 'var(--n-merged-td-color-striped)'
-                            }else{
-                                _color = 'var(--n-merged-td-color)'
+if(props.selectedRowEnable){
+    bindProps.rowProps = (row) => {
+        return {
+            onClick: (e) => {
+                let setBackgroundColor = (dom, color) => {
+                    dom.forEach(d => {
+                        let _color = color
+                        if(d){
+                            if(!_color){
+                                if(d.className.indexOf('n-data-table-tr--striped') != -1){
+                                    _color = 'var(--n-merged-td-color-striped)'
+                                }else{
+                                    _color = 'var(--n-merged-td-color)'
+                                }
                             }
+                            d.querySelectorAll('td').forEach(it => {
+                                it.style['background-color'] = _color
+                            })
                         }
-                        d.querySelectorAll('td').forEach(it => {
-                            it.style['background-color'] = _color
-                        })
-                    }
-                })
+                    })
+                }
+                currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
+                if(currentRowDom){
+                    setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling])
+                }
+                currentRowDom = e.currentTarget
+                setBackgroundColor([currentRowDom], componentProperties.table.selectedRowColor)
+                emit('selected-row', row)
             }
-            currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
-            if(currentRowDom){
-                setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling])
-            }
-            currentRowDom = e.currentTarget
-            setBackgroundColor([currentRowDom], componentProperties.table.selectedRowColor)
-            emit('selected-row', row)
         }
     }
 }
@@ -417,6 +427,7 @@ function fixCols() {
             show: true,
             fixed: 'left',
             render: (_,index) => {
+                console.log(_, index)
                 return index + 1
             }
         })
@@ -438,6 +449,7 @@ function fixCols() {
         column.show = true
         column.realSort = col.realSort
         column.resizable = true
+        column.editIcon = col.editIcon
         let type = col.type
         if (!col.render && type && keys.indexOf(type) != -1) {
             renderSlot(col, type)
@@ -787,8 +799,8 @@ function columnDrop() {
 }
 const currentRowIndex = ref(0)
 function directionOperation(e) {
-    e.preventDefault()
-    if (e.target.nodeName != 'INPUT') {
+    if(e && (e.keyCode == 38 || e.keyCode == 40)){
+        e.preventDefault();
         let updateRowDom = null
         if (e && e.keyCode == 38) {// 上
             currentRowIndex.value = Math.max(0, currentRowIndex.value - 1)
