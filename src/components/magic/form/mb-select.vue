@@ -1,5 +1,6 @@
 <template>
     <n-select
+        ref="magicSelect"
         :size="$global.uiSize.value"
         v-bind="props.props"
         v-model:value="selectValue"
@@ -20,9 +21,8 @@ import {useDictStore} from "@/store/modules/dictStore";
 import common from '@/scripts/common'
 
 const dictStore = useDictStore()
-
+const magicSelect = ref()
 const emit = defineEmits(['update:modelValue', 'change'])
-
 const props = defineProps({
     modelValue: {
         required: true
@@ -178,5 +178,15 @@ function handlerData(data) {
     })
     return newData
 }
+
+function getOptions(){
+    return selectList.value
+}
+
+function expand(){
+    magicSelect.value.$el.querySelector('.n-select > div').click()
+}
+
+defineExpose({ getOptions, expand })
 
 </script>
