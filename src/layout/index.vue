@@ -41,15 +41,15 @@
                         <tabs/>
                     </n-layout-header>
                     <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1 bg-lightgray">
-                        <router-view v-slot="{ Component }">
-                            <transition name="fade" mode="out-in" appear>
-                                <keep-alive :include="keepAliveInclude">
-                                    <div style="width: 100%;height: 100%">
+                        <div style="width: 100%;height: 100%">
+                            <router-view v-slot="{ Component }">
+                                <transition name="fade" mode="out-in" appear>
+                                    <keep-alive :include="keepAliveInclude">
                                         <component v-if="tabsStore.getShow" :is="Component" :key="$route.path"/>
-                                    </div>
-                                </keep-alive>
-                            </transition>
-                        </router-view>
+                                    </keep-alive>
+                                </transition>
+                            </router-view>
+                        </div>
                     </n-layout-content>
                 </n-layout>
             </n-layout-content>
