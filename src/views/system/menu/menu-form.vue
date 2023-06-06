@@ -29,6 +29,7 @@
             <n-radio-group v-model:value="openModeRef">
                 <n-radio-button key="0" value="0" label="页签"/>
                 <n-radio-button key="1" value="1" label="新标签页"/>
+                <n-radio-button key="2" value="2" label="iframe"/>
             </n-radio-group>
         </n-form-item>
         <n-form-item label="关联组件" path="componentName"
@@ -119,15 +120,22 @@ common.$get('/system/component/select').then(res => {
 const temp = ref(getTemp())
 
 let validateUrl = (rule, value, callback) => {
-    console.log(callback)
     if (menuType.value == 'menu') {
         if (!value) {
             callback(new Error('请输入菜单链接'))
         } else {
-            callback()
+            if(value.startsWith('http') || value.startsWith('/')){
+                callback()
+            }else{
+                callback(new Error('菜单链接只能以"http"或"/"开头'))
+            }
         }
     } else {
-        callback()
+        if(value.startsWith('http') || value.startsWith('/')){
+            callback()
+        }else{
+            callback(new Error('菜单链接只能以"http"或"/"开头'))
+        }
     }
 }
 

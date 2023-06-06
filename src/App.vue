@@ -1,11 +1,10 @@
 <template>
-
     <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme-overrides="lightThemeOverrides">
         <n-message-provider>
             <n-dialog-provider>
-                <n-theme-editor>
+<!--                <n-theme-editor>-->
                     <router-view/>
-                </n-theme-editor>
+<!--                </n-theme-editor>-->
             </n-dialog-provider>
         </n-message-provider>
     </n-config-provider>
@@ -19,4 +18,7 @@ import {lightThemeOverrides} from "@/styles";
 
 <style lang="less">
 @import 'styles/index.less';
+.n-config-provider{
+    height: 100%;
+}
 </style>

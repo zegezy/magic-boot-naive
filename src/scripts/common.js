@@ -206,4 +206,30 @@ common.objectAssign = (target, source) => {
     return Object.assign({}, JSON.parse(JSON.stringify(target)), JSON.parse(JSON.stringify(source)))
 }
 
+common.getUrlType = (url) => {
+    if(!url){
+        return -1
+    }
+    if(url.startsWith('http')){
+        return 0
+    }else if(url.indexOf('.htm') != -1){
+        return 1
+    }
+    return 2
+}
+
+common.getLocationHref = () => {
+    return location.href.substring(0, location.href.indexOf('/', location.href.indexOf('/', location.href.indexOf('/') + 1) + 1))
+}
+
+common.handlerUrlPage = (url) => {
+    let urlType = common.getUrlType(url)
+    if(urlType == 1){
+        return common.getLocationHref() + url
+    }else if(urlType == 2){
+        return common.getLocationHref() + '/#' + url
+    }
+    return url
+}
+
 export default common

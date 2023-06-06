@@ -1,53 +1,74 @@
 import common from '@/scripts/common'
 import {sha256} from 'js-sha256'
-import { clone } from "lodash-es";
+import { cloneDeep } from 'lodash-es'
 
 const relativePath = '/src'
 const viewModules = import.meta.glob('@/views/**/**.vue')
 const layoutModules = import.meta.glob('@/layout/**.vue')
 
-export const filterAsyncRouter = (routers, level) => {
+function setIframe(menu) {
+    // 页签 | iframe
+    if(menu.openMode === '0' || menu.openMode === '2'){
+        menu.component = loadView(`/common/iframe`)
+        menu.props = {url: menu.url}
+        menu.path = "/" + sha256(menu.url)
+    }
+}
+
+export const handlerLayoutMenus = (menus, level) => {
     level = level || 0
-    const accessedRouters = routers.filter(router => {
-        if (router.isShow === 1) {
-            let setIframe = () => {
-                router.component = loadView(`/common/iframe`)
-                router.props = {url: router.url}
-                router.path = "/" + sha256(router.url)
-            }
-            if (router.url && router.url.startsWith('http')) {
-                if (router.openMode === '0') {
-                    setIframe()
-                }
-            } else if (router.url && router.url.startsWith('/') && router.url.indexOf('.htm') != -1) {
-                if (router.openMode === '0') {
-                    setIframe()
-                } else {
-                    router.path = location.href.substring(0, location.href.indexOf('/', location.href.indexOf('/', location.href.indexOf('/') + 1) + 1)) + router.path
-                }
-            } else if (router.componentName) {
-                router.component = loadView(`/common/show-component`)
-                router.props = {name: router.componentName}
-            } else if (router.component) {
-                if(router.openMode != '1'){
-                    const component = router.component
+    const layoutMenus = menus.filter(menu => {
+        if (menu.isShow === 1) {
+            let urlType = common.getUrlType(menu.url)
+            if (urlType == 0 || urlType == 1) {// http地址 || 项目内静态页面
+                setIframe(menu)
+            } else if (menu.url && menu.url.startsWith('/') && menu.openMode == '2') {// 项目内页面并且打开方式为 iframe
+                menu.component = loadView(`/common/iframe`)
+                menu.props = { url: '/#' + menu.url }
+                // 地址栏显示地址 + '-i'
+                menu.path = menu.url + '-i'
+            } else if (menu.componentName) {// 关联组件
+                menu.component = loadView(`/common/show-component`)
+                menu.props = {name: menu.componentName}
+            } else if (menu.component) {
+                if(menu.openMode != '1'){
+                    const component = menu.component
                     if (component === 'Layout') {
-                        router.path = "/" + common.uuid()
-                        router.component = level > 0 ? layoutModules[`${relativePath}/layout/none.vue`] : loadLayoutView(component)
+                        menu.path = "/" + common.uuid()
+                        menu.component = level > 0 ? layoutModules[`${relativePath}/layout/none.vue`] : loadLayoutView(component)
                     } else {
-                        router.path = router.path.startsWith('/') ? router.path : '/' + router.path
-                        router.component = loadView(component) || layoutModules[`${relativePath}/layout/empty.vue`]
+                        menu.path = menu.path.startsWith('/') ? menu.path : '/' + menu.path
+                        menu.component = loadView(component) || layoutModules[`${relativePath}/layout/empty.vue`]
                     }
                 }
             }
-            if (router.children && router.children.length) {
-                router.children = filterAsyncRouter(router.children, level + 1)
+            if (menu.children && menu.children.length) {
+                menu.children = handlerLayoutMenus(menu.children, level + 1)
             }
             return true
         }
         return false
     })
-    return accessedRouters
+    return layoutMenus
+}
+
+// 删除不需要加载的路由
+const deleteNewTabMenu = (menus, level) => {
+    level = level || 0
+    const layoutMenus = menus.filter(menu => {
+        if (menu.isShow === 1) {
+            let urlType = common.getUrlType(menu.url)
+            if (urlType == 2 && menu.openMode == '1') {
+                return false
+            }
+            if (menu.children && menu.children.length) {
+                menu.children = deleteNewTabMenu(menu.children, level + 1)
+            }
+            return true
+        }
+        return false
+    })
+    return layoutMenus
 }
 
 export const loadLayoutView = () => {
@@ -59,67 +80,48 @@ export const loadView = (view) => {
     return viewModules[`${relativePath}/views${view}.vue`]
 }
 
-function loadComponent(router) {
+function loadComponent(menu) {
     let result = {
-        path: router.path,
+        path: menu.path,
         meta: {
-            title: router.name,
-            keepAlive: router.keepAlive
+            title: menu.name,
+            keepAlive: menu.keepAlive
         }
     }
-    if (router.componentName) {
+    if (menu.componentName) {
         result.component = loadView(`/common/show-component`)
-        result.props = {name: router.componentName}
-    } else if (router.path) {
-        result.component = loadView(router.path) || layoutModules[`${relativePath}/layout/empty.vue`]
+        result.props = {name: menu.componentName}
+    } else if (menu.path) {
+        result.component = loadView(menu.path) || layoutModules[`${relativePath}/layout/empty.vue`]
     }
     return result
 }
 
-export function loadHiddenRouter(routers) {
-    return routers.filter(router => {
-        router.path = router.path.startsWith('/') ? router.path : '/' + router.path
-        router.redirect = router.path
-        router.component = loadLayoutView()
-        router.hidden = true
-        router.children = [loadComponent(router)]
-        return true
+export function handlerNotLayoutMenus(menus) {
+    menus.forEach((menu, i) => {
+        if(menu.openMode == '0'){// 页签
+            menu.path = menu.path.startsWith('/') ? menu.path : '/' + menu.path
+            menu.redirect = menu.path
+            menu.component = loadLayoutView()
+            menu.hidden = true
+            menu.children = [loadComponent(menu)]
+        }else{
+            menus[i] = loadComponent(menu)
+        }
     })
 }
 
 export function generateRoutes() {
-    return new Promise((resolve, reject) => {
-        common.$post('/system/menu/current/menus').then(response => {
-            const {data} = response
-            const newTags = []
-            const recursionData = (children) => {
-                children.forEach((it, i) => {
-                    if(it.openMode == '1' && it.url && !it.url.startsWith('http')){
-                        delete children[i]
-                        newTags.push(clone(it))
-                    }
-                    if(it.children && it.children.length > 0){
-                        recursionData(it.children)
-                    }
-                })
-            }
-            recursionData(data)
-            const accessRoutes = filterAsyncRouter(data)
-            newTags.forEach((it) => {
-                it.hidden = true
-                it.component = loadView(it.url) || layoutModules[`${relativePath}/layout/empty.vue`]
+    return new Promise((resolve) => {
+        common.$post('/system/menu/current/menus').then(res => {
+            const { notLayoutMenus, layoutMenus } = res.data
+            handlerLayoutMenus(layoutMenus)
+            handlerNotLayoutMenus(notLayoutMenus)
+            resolve({
+                layoutMenus: deleteNewTabMenu(cloneDeep(layoutMenus)),
+                notLayoutMenus,
+                showMenus: layoutMenus
             })
-            resolve({ accessRoutes, newTags })
-        })
-    })
-}
-
-export function generateHiddenRoutes() {
-    return new Promise((resolve, reject) => {
-        common.$post('/system/menu/current/hidden/menus').then(response => {
-            const {data} = response
-            const asyncRouter = loadHiddenRouter(data)
-            resolve(asyncRouter)
         })
     })
 }

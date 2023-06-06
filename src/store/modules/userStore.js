@@ -3,9 +3,8 @@ import {ref, computed} from 'vue'
 import {sha256} from "js-sha256"
 import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
-import {generateHiddenRoutes, generateRoutes} from "@/scripts/router/loadRouter";
-import router from "@/scripts/router";
-import { cloneDeep } from 'lodash-es'
+import {generateRoutes} from "@/scripts/router/loadRouter";
+import router from "@/scripts/router"
 
 export const useUserStore = defineStore('user', () => {
     const tokenKey = 'magic_boot_token'
@@ -74,29 +73,9 @@ export const useUserStore = defineStore('user', () => {
         await dictStore.getDictData()
         await common.loadConfig()
 
-        await generateRoutes().then(({ accessRoutes, newTags }) => {
-            let _accessRoutes = cloneDeep(accessRoutes)
-            let recursionRoutes = (children) => {
-                children.forEach(it => {
-                    newTags.forEach(tag => {
-                        if(it.id == tag.pid){
-                            it.children.push(tag)
-                            it.children.sort((a, b) => a.sort - b.sort)
-                        }
-                    })
-                    if(it.children && it.children.length > 0){
-                        recursionRoutes(it.children)
-                    }
-                })
-            }
-            recursionRoutes(_accessRoutes)
-            userStore.pushPermissionRouter(_accessRoutes)
-            accessRoutes.concat(newTags).forEach(it => {
-                router.addRoute(it)
-            })
-        })
-        await generateHiddenRoutes().then(accessRoutes => {
-            accessRoutes.forEach(it => {
+        await generateRoutes().then(({ layoutMenus, notLayoutMenus, showMenus }) => {
+            userStore.pushPermissionRouter(showMenus)
+            layoutMenus.concat(notLayoutMenus).forEach(it => {
                 router.addRoute(it)
             })
         })

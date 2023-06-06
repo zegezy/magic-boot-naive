@@ -313,7 +313,7 @@ function createTable() {
             pageCount: 1,
             pageSize: props.limit,
             showSizePicker: true,
-            pageSizes: [10, 20, 50, 100, 200, 500, 1000],
+            pageSizes: [10, 20, 50, 100, 200],
             onChange: (page) => {
                 bindProps.pagination.page = page
                 loadData()
@@ -427,7 +427,6 @@ function fixCols() {
             show: true,
             fixed: 'left',
             render: (_,index) => {
-                console.log(_, index)
                 return index + 1
             }
         })
