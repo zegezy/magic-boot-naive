@@ -12,7 +12,7 @@
             v-model:checked-row-keys="checkedRowKeys"
             @update:checked-row-keys="updateCheckedRowKeys"
             table-layout="fixed"
-            style="height: 100%"
+            :style="tableStyle"
             :scroll-x="scrollX"
             :striped="striped"
             flex-height
@@ -102,6 +102,7 @@
                 </n-image-group>
             </template>
         </n-data-table>
+        <mb-pagination ref="paginationRef" @mounted="paginationMounted" style="float: right" v-bind="paginationParams" @updatePage="paginationUpdatePage" @updatePageSize="paginationUpdatePageSize" />
         <div ref="tableMenusRef" class="table-menus" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
             <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click" :key="i">
                 {{ menu.label }}
@@ -209,6 +210,10 @@ const props = defineProps({
     selectedRowEnable: {
         type: Boolean,
         default: true
+    },
+    defaultSelectedRow: {
+        type: Boolean,
+        default: false
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -305,31 +310,34 @@ if(props.selectedRowEnable){
     }
 }
 const scrollX = ref()
+const paginationParams = reactive({
+    page: 1,
+    pageSize: props.limit
+})
+const tableStyle = ref()
+const paginationRef = ref()
+
+function paginationMounted(){
+    tableStyle.value = `height: calc(100% - ${paginationRef.value.getHeight()}px)`
+}
+
+function paginationUpdatePage(page){
+    paginationParams.page = page
+    loadData()
+}
+
+function paginationUpdatePageSize(pageSize){
+    paginationParams.pageSize = pageSize
+    paginationParams.page = 1
+    loadData()
+}
 
 function createTable() {
-    if (props.page) {
-        bindProps.pagination = {
-            page: 1,
-            pageCount: 1,
-            pageSize: props.limit,
-            showSizePicker: true,
-            pageSizes: [10, 20, 50, 100, 200],
-            onChange: (page) => {
-                bindProps.pagination.page = page
-                loadData()
-            },
-            onUpdatePageSize: (pageSize) => {
-                bindProps.pagination.pageSize = pageSize
-                bindProps.pagination.page = 1
-                loadData()
-            }
-        }
-    }
     bindProps.remote = !!props.url
     bindProps.loading = false
     watch(() => props.data, () => {
         if (props.page) {
-            bindProps.pagination.page = 1
+            paginationParams.page = 1
         }
         bindProps.data = props.data
     }, {deep: true})
@@ -343,6 +351,16 @@ function loadData(options) {
     }
     if (props.data) {
         bindProps.data = props.data
+        dataDone()
+    }
+}
+
+function dataDone(){
+    props.done(bindProps.data)
+    if(props.defaultSelectedRow && props.selectedRowEnable){
+        nextTick(() => {
+            tableRef.value.$el.querySelector('.n-data-table-base-table-body tr').click()
+        })
     }
 }
 
@@ -352,8 +370,8 @@ function requestData({ where, loading }) {
         bindProps.loading = true
     }
     if (props.page) {
-        where.current = bindProps.pagination.page
-        where.size = bindProps.pagination.pageSize
+        where.current = paginationParams.page
+        where.size = paginationParams.pageSize
     } else {
         where.size = 99999999
     }
@@ -364,10 +382,9 @@ function requestData({ where, loading }) {
             bindProps.loading = false
         }
         if (props.page) {
-            bindProps.pagination.pageCount = Math.ceil(data.total / where.size)
-            bindProps.pagination.itemCount = data.total
+            paginationParams.itemCount = data.total
         }
-        props.done(bindProps.data)
+        dataDone()
     }
     if (props.method.toLowerCase() == 'post') {
         common.$post(props.url, where).then(processData)
