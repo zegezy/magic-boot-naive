@@ -5,8 +5,8 @@
             :page-size="pageSize"
             :item-count="itemCount"
             :page-sizes="[10, 20, 50, 100, 200]"
-            @updatePage="emit('change')"
-            @updatePageSize="emit('update-page-size')"
+            @updatePage="emit('update-page', $event)"
+            @updatePageSize="emit('update-page-size', $event)"
             show-quick-jumper
             style="margin: 0 auto;"
         />
@@ -29,7 +29,7 @@ const props = defineProps({
         default: undefined
     }
 })
-const emit = defineEmits(['change', 'update-page-size', 'mounted'])
+const emit = defineEmits(['update-page', 'update-page-size', 'mounted'])
 onMounted(() => {
     emit('mounted')
 })
