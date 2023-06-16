@@ -347,6 +347,14 @@ function createTable() {
 function loadData(options) {
     if (props.url) {
         let where = common.renderWhere(props.where)
+        if(options){
+            if(options.reload && !options.keepCurrentPage){
+                paginationParams.page = 1
+            }
+            if(options.page){
+                paginationParams.page = options.page
+            }
+        }
         requestData({ where, loading: options && options.loading })
     }
     if (props.data) {
@@ -553,6 +561,8 @@ function toggleExpand() {
 }
 
 function reload(options) {
+    options = options || {}
+    options.reload = true
     loadData(options)
 }
 
