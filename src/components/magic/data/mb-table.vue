@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="body-container">
         <div class="table-container">
             <div style="height: 100%">
                 <n-data-table
@@ -884,9 +884,10 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 
 </script>
 <style scoped>
-.container{
+.body-container{
     width: 100%;
     height: 100%;
+    position: relative;
 }
 .table-container{
     display: flex;
