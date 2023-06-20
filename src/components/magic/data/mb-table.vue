@@ -220,6 +220,10 @@ const props = defineProps({
     defaultSelectedRow: {
         type: Boolean,
         default: false
+    },
+    defaultColWidth: {
+        type: Number,
+        default: 100
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -410,8 +414,8 @@ function calcScrollX(){
         , 0)
 }
 
-function fixCols() {
-    tableSlots.value = tableRef.value.$slots
+function getColWidth(){
+    let minWidth = props.defaultColWidth
     let tableWidth = tableRef.value.$el.offsetWidth
     let totalWidth = 0
     let widths = 0
@@ -433,7 +437,6 @@ function fixCols() {
             widths++
         }
     })
-    const keys = Object.keys(tableSlots.value)
     if(props.selection){
         columns.value.push({
             type: 'selection',
@@ -457,7 +460,16 @@ function fixCols() {
         })
         tableWidth -= noWidth
     }
-    let colWidth = ((tableWidth - totalWidth) / (props.cols.length - widths)) - 2
+    if(props.cols.length * minWidth > tableWidth){
+        return minWidth
+    }
+    return ((tableWidth - totalWidth) / (props.cols.length - widths)) - 2
+}
+
+function fixCols() {
+    tableSlots.value = tableRef.value.$slots
+    const keys = Object.keys(tableSlots.value)
+    let colWidth = getColWidth()
     props.cols.forEach((col) => {
         let column = {}
         column.field = col.field || common.uuid()
