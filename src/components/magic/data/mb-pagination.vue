@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; align-items: center;" :style="{ height: height + 'px' }">
+    <div class="pagination-container" style="height: 50px">
         <n-pagination
             :page="page"
             :page-size="pageSize"
@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 const props = defineProps({
     page: {
         type: Number,
@@ -29,14 +28,12 @@ const props = defineProps({
         default: undefined
     }
 })
-const emit = defineEmits(['update-page', 'update-page-size', 'mounted'])
-onMounted(() => {
-    emit('mounted')
-})
-const height = ref(50)
-defineExpose({
-    getHeight() {
-        return height.value;
-    }
-})
+const emit = defineEmits(['update-page', 'update-page-size'])
 </script>
+
+<style scoped>
+.pagination-container{
+    display: flex;
+    align-items: center;
+}
+</style>

@@ -1,108 +1,114 @@
 <template>
-    <div style="width: 100%; height: 100%;">
-        <n-data-table
-            v-if="showTable"
-            v-bind="bindProps"
-            ref="tableRef"
-            :key="tableKey"
-            :class="{ nowrap: getNowrap }"
-            tabindex="-1"
-            :columns="showColumns"
-            :virtual-scroll="virtualScroll"
-            v-model:checked-row-keys="checkedRowKeys"
-            @update:checked-row-keys="updateCheckedRowKeys"
-            table-layout="fixed"
-            :style="tableStyle"
-            :scroll-x="scrollX"
-            :striped="striped"
-            flex-height
-            :row-key="it => it[rowKey]"
-            :default-expand-all="defaultExpandAll"
-            @unstable-column-resize="unstableColumnResize"
-        >
-            <template #switch="{ row, col }">
-                <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
-                <span v-else>-</span>
-            </template>
-            <template #html="{ row, col }">
-                <ShowOrTooltip>
-                    <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
-                </ShowOrTooltip>
-            </template>
-            <template #templet="{ row, col, index }">
-                <ShowOrTooltip>
-                    <span v-html="col.templet(row, col, index)"></span>
-                </ShowOrTooltip>
-            </template>
-            <template #buttons="{ row, col }">
-                <n-space>
-                    <template v-for="it in col.buttons">
-                        <n-button
-                            v-if="it.if != undefined ? it.if(row) : true"
-                            v-permission="it.permission"
-                            :type="it.type"
-                            :text="it.link"
-                            :dashed="it.dashed"
-                            :href="it.href"
-                            :color="it.color"
-                            :target="it.target"
-                            :tag="it.tag || (it.link ? 'a' : 'button')"
-                            :text-color="it.textColor || '#2D8CF0'"
-                            @click="it.click(row)"
-                        >
-                            <template #icon v-if="it.icon">
-                                <n-icon>
-                                    <component :is="icons5[it.icon] || fluent[it.icon]" />
-                                </n-icon>
-                            </template>
-                            {{ it.label }}
-                        </n-button>
+    <div class="container">
+        <div class="table-container">
+            <div style="height: 100%">
+                <n-data-table
+                    v-if="showTable"
+                    v-bind="bindProps"
+                    ref="tableRef"
+                    :key="tableKey"
+                    :class="{ nowrap: getNowrap }"
+                    tabindex="-1"
+                    :columns="showColumns"
+                    :virtual-scroll="virtualScroll"
+                    v-model:checked-row-keys="checkedRowKeys"
+                    @update:checked-row-keys="updateCheckedRowKeys"
+                    table-layout="fixed"
+                    style="height: 100%"
+                    :scroll-x="scrollX"
+                    :striped="striped"
+                    flex-height
+                    :row-key="it => it[rowKey]"
+                    :default-expand-all="defaultExpandAll"
+                    @unstable-column-resize="unstableColumnResize"
+                >
+                    <template #switch="{ row, col }">
+                        <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
+                        <span v-else>-</span>
                     </template>
-                </n-space>
-            </template>
-            <template #dictType="{ row, col }">
-                <ShowOrTooltip>
-                    <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
-                </ShowOrTooltip>
-            </template>
-            <template #dynamic="{ row, col, index }">
-                <slot :name="col.field" :row="row" :col="col" :index="index" />
-            </template>
-            <template #title="{ col }">
-                <div @click="dataSort(col)">
-                    <label>{{ col.label }}</label>
-                    <n-icon v-if="col.editIcon">
-                        <EditFilled />
-                    </n-icon>
-                    <n-icon v-if="col.dataSortRule">
-                        <CaretUpOutline />
-                    </n-icon>
-                    <n-icon v-if="col.dataSortRule == false">
-                        <CaretDownOutline />
-                    </n-icon>
-                    <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
-                        <ArrowSort16Filled />
-                    </n-icon>
-                    <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
-                        <ArrowSortUp16Filled />
-                    </n-icon>
-                    <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
-                        <ArrowSortDown16Filled />
-                    </n-icon>
-                </div>
-                <n-icon class="down-menus" @click="headerClick($event, col)">
-                    <ChevronDown />
-                </n-icon>
-            </template>
-            <template #image="{ row, col }">
-                <n-image-group v-if="row[col.field]">
-                    <n-space>
-                        <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="$global.filePrefix + it" />
-                    </n-space>
-                </n-image-group>
-            </template>
-        </n-data-table>
-        <mb-pagination ref="paginationRef" @mounted="paginationMounted" style="float: right" v-bind="paginationParams" @updatePage="paginationUpdatePage" @updatePageSize="paginationUpdatePageSize" />
+                    <template #html="{ row, col }">
+                        <ShowOrTooltip>
+                            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                        </ShowOrTooltip>
+                    </template>
+                    <template #templet="{ row, col, index }">
+                        <ShowOrTooltip>
+                            <span v-html="col.templet(row, col, index)"></span>
+                        </ShowOrTooltip>
+                    </template>
+                    <template #buttons="{ row, col }">
+                        <n-space>
+                            <template v-for="it in col.buttons">
+                                <n-button
+                                    v-if="it.if != undefined ? it.if(row) : true"
+                                    v-permission="it.permission"
+                                    :type="it.type"
+                                    :text="it.link"
+                                    :dashed="it.dashed"
+                                    :href="it.href"
+                                    :color="it.color"
+                                    :target="it.target"
+                                    :tag="it.tag || (it.link ? 'a' : 'button')"
+                                    :text-color="it.textColor || '#2D8CF0'"
+                                    @click="it.click(row)"
+                                >
+                                    <template #icon v-if="it.icon">
+                                        <n-icon>
+                                            <component :is="icons5[it.icon] || fluent[it.icon]" />
+                                        </n-icon>
+                                    </template>
+                                    {{ it.label }}
+                                </n-button>
+                            </template>
+                        </n-space>
+                    </template>
+                    <template #dictType="{ row, col }">
+                        <ShowOrTooltip>
+                            <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+                        </ShowOrTooltip>
+                    </template>
+                    <template #dynamic="{ row, col, index }">
+                        <slot :name="col.field" :row="row" :col="col" :index="index" />
+                    </template>
+                    <template #title="{ col }">
+                        <div @click="dataSort(col)">
+                            <label>{{ col.label }}</label>
+                            <n-icon v-if="col.editIcon">
+                                <EditFilled />
+                            </n-icon>
+                            <n-icon v-if="col.dataSortRule">
+                                <CaretUpOutline />
+                            </n-icon>
+                            <n-icon v-if="col.dataSortRule == false">
+                                <CaretDownOutline />
+                            </n-icon>
+                            <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
+                                <ArrowSort16Filled />
+                            </n-icon>
+                            <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
+                                <ArrowSortUp16Filled />
+                            </n-icon>
+                            <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
+                                <ArrowSortDown16Filled />
+                            </n-icon>
+                        </div>
+                        <n-icon class="down-menus" @click="headerClick($event, col)">
+                            <ChevronDown />
+                        </n-icon>
+                    </template>
+                    <template #image="{ row, col }">
+                        <n-image-group v-if="row[col.field]">
+                            <n-space>
+                                <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="$global.filePrefix + it" />
+                            </n-space>
+                        </n-image-group>
+                    </template>
+                </n-data-table>
+            </div>
+            <div style="flex: 1">
+                <mb-pagination style="float: right" v-bind="paginationParams" @updatePage="paginationUpdatePage" @updatePageSize="paginationUpdatePageSize" />
+            </div>
+        </div>
         <div ref="tableMenusRef" class="table-menus" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
             <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click" :key="i">
                 {{ menu.label }}
@@ -314,12 +320,6 @@ const paginationParams = reactive({
     page: 1,
     pageSize: props.limit
 })
-const tableStyle = ref()
-const paginationRef = ref()
-
-function paginationMounted(){
-    tableStyle.value = `height: calc(100% - ${paginationRef.value.getHeight()}px)`
-}
 
 function paginationUpdatePage(page){
     paginationParams.page = page
@@ -884,6 +884,15 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 
 </script>
 <style scoped>
+.container{
+    width: 100%;
+    height: 100%;
+}
+.table-container{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
 .btn-blue {
     color: #2D8CF0;
     transition-property: color;
