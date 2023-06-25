@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="height: 100%">
         <mb-list ref="magicList" v-bind="listOptions"/>
         <mb-modal ref="magicDialog" title="提示" width="600px" @confirm="disable">
             <n-grid :cols="24">
