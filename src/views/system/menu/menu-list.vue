@@ -50,6 +50,7 @@ import MenuForm from './menu-form'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import * as icons from "@vicons/ionicons5";
+import * as fluent from '@vicons/fluent'
 import {NIcon} from 'naive-ui';
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
@@ -84,8 +85,11 @@ const tableOptions = reactive({
             field: 'icon',
             label: '图标',
             render(row) {
-                if (row.icon && icons[row.icon]) {
-                    return h(NIcon, null, {default: () => h(icons[row.icon])})
+                let getIcon = (row) => {
+                    return icons[row.icon] || fluent[row.icon]
+                }
+                if (row.icon && getIcon(row)) {
+                    return h(NIcon, null, {default: () => h(getIcon(row))})
                 }
             }
         },

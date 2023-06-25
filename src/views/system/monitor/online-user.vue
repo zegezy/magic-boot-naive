@@ -1,21 +1,23 @@
 <template>
-    <mb-list ref="magicList" v-bind="listOptions"/>
-    <mb-modal ref="magicDialog" title="提示" width="600px" @confirm="disable">
-        <n-grid :cols="24">
-            <n-gi :span="24">
-                确定要踢“{{ currRow.username }}”下线并临时封禁吗？
-            </n-gi>
-            <n-gi :span="24">
-                <n-radio-group v-model:value="time">
-                    <n-space>
-                        <n-radio v-for="option in options" :key="option.value" :value="option.value">
-                            {{ option.label }}
-                        </n-radio>
-                    </n-space>
-                </n-radio-group>
-            </n-gi>
-        </n-grid>
-    </mb-modal>
+    <div>
+        <mb-list ref="magicList" v-bind="listOptions"/>
+        <mb-modal ref="magicDialog" title="提示" width="600px" @confirm="disable">
+            <n-grid :cols="24">
+                <n-gi :span="24">
+                    确定要踢“{{ currRow.username }}”下线并临时封禁吗？
+                </n-gi>
+                <n-gi :span="24">
+                    <n-radio-group v-model:value="time">
+                        <n-space>
+                            <n-radio v-for="option in options" :key="option.value" :value="option.value">
+                                {{ option.label }}
+                            </n-radio>
+                        </n-space>
+                    </n-radio-group>
+                </n-gi>
+            </n-grid>
+        </mb-modal>
+    </div>
 </template>
 
 <script setup>
