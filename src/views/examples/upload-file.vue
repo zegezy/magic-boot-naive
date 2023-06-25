@@ -4,10 +4,10 @@
         <mb-upload-file v-model="fileUrl" @change="fileChange"/>
         <h2>上传文件（多文件）</h2>
         <mb-upload-file v-model="fileUrls" @change="multipleFileChange" multiple directory-dnd/>
-        <h2>上传图片（id）</h2>
-        <mb-upload-image :external-id="externalId" multiple :external-type="externalType"/>
-        <h2>上传图片（url、单图）</h2>
-        <mb-upload-image v-model="imgUrl" @change="imgChange" tip="建议上传尺寸：710*345"/>
+<!--        <h2>上传图片（id）</h2>-->
+<!--        <mb-upload-image :external-id="externalId" multiple :external-type="externalType"/>-->
+<!--        <h2>上传图片（url、单图）</h2>-->
+<!--        <mb-upload-image v-model="imgUrl" @change="imgChange" tip="建议上传尺寸：710*345"/>-->
         <h2>上传图片（url、多图）</h2>
         <mb-upload-image v-model="multipleImgUrl" :width="120" :height="120" multiple :limit="3"
                          @change="multipleImgChange"/>
@@ -50,9 +50,14 @@ export default {
         }
     },
     created() {
-        // setTimeout(() => {
-        //   this.ossUrls = 'dev/userfiles/2022-11-12/5382dc0f1c4644ad97ff02ae2047b74c/黑加仑.jpg'
-        // },3000)
+        setTimeout(() => {
+          // this.ossUrls = 'dev/userfiles/2022-11-12/5382dc0f1c4644ad97ff02ae2047b74c/黑加仑.jpg'
+            this.multipleImgUrl = 'userfiles/2023-04-23/9813b1d645ba492a8863248b1941984c/图片的副本3.png'
+        },1000)
+        setTimeout(() => {
+            // this.ossUrls = 'dev/userfiles/2022-11-12/5382dc0f1c4644ad97ff02ae2047b74c/黑加仑.jpg'
+            this.multipleImgUrl = 'userfiles/2023-04-23/9813b1d645ba492a8863248b1941984c/图片的副本3.png,userfiles/2023-04-23/ef6861a0b5a341e29546e8fba30fc2e9/图片的副本8.png'
+        },2000)
     }
 }
 </script>
