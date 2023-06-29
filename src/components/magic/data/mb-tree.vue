@@ -137,13 +137,7 @@ function updateCheckedKeys(keys, option, meta) {
     }
     // 去重
     checkedAllKeys.value = uniq(checkedAllKeys.value)
-    if(props.keyAll){
-        emit('update:modelValue', checkedAllKeys.value.join(','))
-        emit('check-change', checkedAllKeys.value.join(','))
-    }else{
-        emit('update:modelValue', checkedKeys.value.join(','))
-        emit('check-change', checkedKeys.value.join(','))
-    }
+    updateKeys()
 }
 
 function upRecursionCheck(pid){
@@ -221,6 +215,16 @@ onBeforeMount(async () => {
     await loadTreeData()
 })
 
+function updateKeys(){
+    if(props.keyAll){
+        emit('update:modelValue', checkedAllKeys.value.join(','))
+        emit('check-change', checkedAllKeys.value.join(','))
+    }else{
+        emit('update:modelValue', checkedKeys.value.join(','))
+        emit('check-change', checkedKeys.value.join(','))
+    }
+}
+
 function selectIds(value) {
     if(value){
         let ids = []
@@ -277,6 +281,7 @@ function checkedAll(checked) {
         checkedKeys.value = []
         checkedAllKeys.value = []
     }
+    updateKeys()
 }
 
 defineExpose({getTree})
