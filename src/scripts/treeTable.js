@@ -1,11 +1,9 @@
-import common from "@/scripts/common";
-
 const treeTable = {}
 
 treeTable.isChildren = (children, id) => {
-    var result = false
-    for (var i in children) {
-        var chi = children[i]
+    let result = false
+    for (let i in children) {
+        let chi = children[i]
         if (chi.id == id) {
             result = true
         }
@@ -19,15 +17,15 @@ treeTable.isChildren = (children, id) => {
 }
 
 treeTable.queryChildren = (children, id) => {
-    var result = []
-    for (var i in children) {
-        var chi = children[i]
+    let result = []
+    for (let i in children) {
+        let chi = children[i]
         if (chi.id == id) {
             if (chi.children && chi.children.length > 0) {
                 result = chi.children
             }
         } else {
-            var qc = treeTable.queryChildren(chi.children, id)
+            let qc = treeTable.queryChildren(chi.children, id)
             if (qc.length > 0) {
                 result = qc
             }
@@ -37,9 +35,9 @@ treeTable.queryChildren = (children, id) => {
 }
 
 treeTable.genTree = (children) => {
-    var treeData = []
-    for (var i in children) {
-        var chi = {}
+    let treeData = []
+    for (let i in children) {
+        let chi = {}
         chi.label = children[i].name
         chi.key = children[i].id
         if (children[i].children && children[i].children.length > 0) {
@@ -63,12 +61,12 @@ treeTable.deleteEmptyChildren = (children) => {
 
 treeTable.recursionSearch = (fields, data, text, html) => {
     html = html != undefined ? html : true
-    var searchData = []
-    for (var i in data) {
-        var treeNode = data[i]
-        var children = treeNode.children
+    let searchData = []
+    for (let i in data) {
+        let treeNode = data[i]
+        let children = treeNode.children
         if (children && children.length > 0) {
-            var childrenSearch = treeTable.recursionSearch(fields, children, text, html)
+            let childrenSearch = treeTable.recursionSearch(fields, children, text, html)
             treeNode.children = childrenSearch && childrenSearch.length > 0 ? childrenSearch : treeNode.children
             treeTable.treeNodeReplace(fields, searchData, treeNode, text, childrenSearch, html)
         } else {
@@ -79,7 +77,7 @@ treeTable.recursionSearch = (fields, data, text, html) => {
 }
 
 treeTable.treeNodeReplace = (fields, searchData, treeNode, text, childrenSearch, html) => {
-    var exist = false
+    let exist = false
     fields.forEach((f) => {
         if (treeNode[f] && treeNode[f].indexOf(text) != -1) {
             if (html) {
