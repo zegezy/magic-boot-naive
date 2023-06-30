@@ -25,6 +25,7 @@ const naive = NaiveUI.create({
         NaiveUI.NButton,
         NaiveUI.NForm,
         NaiveUI.NFormItem,
+        NaiveUI.NFormItemGi,
         NaiveUI.NCheckboxGroup,
         NaiveUI.NCheckbox,
         NaiveUI.NIcon,

@@ -78,13 +78,17 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    join: {
+        type: Boolean,
+        default: true
+    },
     clearable: {
         type: Boolean,
         default: true
     }
 })
 
-let join = false
+let join = props.join
 const selectList = ref([])
 const selectValue = ref(props.multiple ? [] : '')
 const getSelectValue = computed(() => {

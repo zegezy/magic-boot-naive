@@ -1,5 +1,5 @@
 <template>
-    <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="90px" v-if="isForm">
+    <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="90px">
         <n-grid :cols="24" :x-gap="24">
             <n-gi :span="12">
                 <n-form-item label="登录名称" path="username">
@@ -56,11 +56,10 @@ const emit = defineEmits(['reload-table'])
 const rules = reactive({
     name: {required: true, message: '请输入姓名/昵称', trigger: 'change'},
     username: {required: true, message: '请输入登录名称', trigger: 'change'},
-    roles: {required: true, message: '请选择角色', trigger: 'change'},
+    roles: {required: true, message: '请选择角色', trigger: 'blur'},
     officeId: {required: true, message: '请选择组织机构', trigger: 'change'}
 })
 const temp = ref(getTemp())
-const isForm = ref(true)
 const dataForm = ref()
 
 function getTemp() {
@@ -77,11 +76,9 @@ function getTemp() {
 }
 
 function resetTemp() {
-    isForm.value = false
     rules.password = [{required: true, message: '请输入密码', trigger: 'change'}]
     temp.value = getTemp()
     nextTick(() => {
-        isForm.value = true
         nextTick(() => {
             dataForm.value.restoreValidation()
         })
@@ -102,11 +99,7 @@ function save(d) {
 }
 
 function getInfo(row) {
-    isForm.value = false
     delete rules.password
-    nextTick(() => {
-        isForm.value = true
-    })
     for (let t in temp.value) {
         if (t !== 'roles') {
             temp.value[t] = row[t]
