@@ -89,8 +89,11 @@ const props = defineProps({
 })
 
 let join = props.join
+if(!props.multiple){
+    join = false
+}
 const selectList = ref([])
-const selectValue = ref(props.multiple ? [] : '')
+const selectValue = ref(props.multiple ? [] : null)
 const getSelectValue = computed(() => {
     if (join) {
         return selectValue.value.join(',')
@@ -106,8 +109,9 @@ watch(() => [props.type, props.url, props.options], () => {
 watch(() => props.modelValue, (value) => {
     let _value = value
     let sv = getSelectValue.value
-    _value = $xe.isArray(_value) ? _value.join(',') : _value.toString()
-    sv = $xe.isArray(sv) ? getSelectValue.value.join(',') : sv.toString()
+    _value = $xe.isArray(_value) ? _value.join(',') : _value && _value.toString()
+    sv = $xe.isArray(sv) ? getSelectValue.value.join(',') : sv && sv.toString()
+    // 如果传过来的值和选择的值不一样则更新
     if(_value != sv){
         setValue(value)
     }

@@ -1,41 +1,29 @@
 <template>
     <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="90px">
         <n-grid :cols="24" :x-gap="24">
-            <n-gi :span="12">
-                <n-form-item label="登录名称" path="username">
-                    <n-input v-model:value="temp.username" autocomplete="new-password"/>
-                </n-form-item>
-            </n-gi>
-            <n-gi :span="12">
-                <n-form-item label="密码" path="password">
-                    <n-input v-model:value="temp.password" type="password" autocomplete="new-password"/>
-                </n-form-item>
-            </n-gi>
+            <n-form-item-gi :span="12" label="登录名称" path="username">
+                <n-input v-model:value="temp.username" autocomplete="new-password"/>
+            </n-form-item-gi>
+            <n-form-item-gi :span="12" label="密码" path="password">
+                <n-input v-model:value="temp.password" type="password" autocomplete="new-password"/>
+            </n-form-item-gi>
         </n-grid>
         <n-grid :cols="24" :x-gap="24">
-            <n-gi :span="12">
-                <n-form-item label="姓名/昵称" path="name">
-                    <n-input v-model:value="temp.name" autocomplete="new-password"/>
-                </n-form-item>
-            </n-gi>
-            <n-gi :span="12">
-                <n-form-item label="手机号" path="phone">
-                    <n-input v-model:value="temp.phone"/>
-                </n-form-item>
-            </n-gi>
+            <n-form-item-gi :span="12" label="姓名/昵称" path="name">
+                <n-input v-model:value="temp.name" autocomplete="new-password"/>
+            </n-form-item-gi>
+            <n-form-item-gi :span="12" label="手机号" path="phone">
+                <n-input v-model:value="temp.phone"/>
+            </n-form-item-gi>
         </n-grid>
         <n-grid :cols="24" :x-gap="24">
-            <n-gi :span="12">
-                <n-form-item label="组织机构" path="officeId">
-                    <mb-tree-select url="/system/user/offices" v-model="temp.officeId" :key="temp.officeId"
-                                    placeholder="请选择组织机构"/>
-                </n-form-item>
-            </n-gi>
-            <n-gi :span="12">
-                <n-form-item label="选择角色" path="roles">
-                    <mb-select v-model="temp.roles" url="/system/role/all" placeholder="请选择角色" multiple/>
-                </n-form-item>
-            </n-gi>
+            <n-form-item-gi :span="12" label="组织机构" path="officeId">
+                <mb-tree-select url="/system/user/offices" v-model="temp.officeId" :key="temp.officeId"
+                                placeholder="请选择组织机构"/>
+            </n-form-item-gi>
+            <n-form-item-gi :span="12" label="选择角色" path="roles">
+                <mb-select v-model="temp.roles" url="/system/role/all" placeholder="请选择角色" multiple />
+            </n-form-item-gi>
         </n-grid>
         <n-form-item label="登录状态" path="isLogin" v-if="temp.id != '1'">
             <n-radio-group v-model:value="temp.isLogin">
@@ -57,7 +45,7 @@ const rules = reactive({
     name: {required: true, message: '请输入姓名/昵称', trigger: 'change'},
     username: {required: true, message: '请输入登录名称', trigger: 'change'},
     roles: {required: true, message: '请选择角色', trigger: 'blur'},
-    officeId: {required: true, message: '请选择组织机构', trigger: 'change'}
+    officeId: {required: true, message: '请选择组织机构', trigger: 'blur'}
 })
 const temp = ref(getTemp())
 const dataForm = ref()
