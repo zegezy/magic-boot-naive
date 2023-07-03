@@ -11,7 +11,6 @@
                     tabindex="-1"
                     :columns="showColumns"
                     :virtual-scroll="virtualScroll"
-                    v-model:checked-row-keys="checkedRowKeys"
                     @update:checked-row-keys="updateCheckedRowKeys"
                     table-layout="fixed"
                     style="height: 100%"
@@ -551,7 +550,8 @@ function renderSlot(col, type) {
     }
 }
 
-function updateCheckedRowKeys(){
+function updateCheckedRowKeys(keys){
+    checkedRowKeys.value = keys
     emit('update:checked-row-keys', checkedRowKeys.value)
     emit('update:checked-row-datas', bindProps.data.filter(it => checkedRowKeys.value.indexOf(it[props.rowKey]) != -1))
 }
