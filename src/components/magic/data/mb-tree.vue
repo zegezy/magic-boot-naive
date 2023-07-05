@@ -15,7 +15,7 @@
             v-bind="props.props"
             virtual-scroll
             block-line
-            cascade
+            :cascade="cascade"
             checkable
             :style="style"
             key-field="id"
@@ -83,6 +83,10 @@ const props = defineProps({
     keyAll: {
         type: Boolean,
         default: true
+    },
+    cascade: {
+        type: Boolean,
+        default: true
     }
 })
 
@@ -90,53 +94,57 @@ const checkedAllKeys = ref([])
 const checkedKeys = ref([])
 
 function updateCheckedKeys(keys, option, meta) {
-    let action = meta.action
-    let node = meta.node
-    let id = node.id
-    let pid = node.pid
-    let children = node.children
-    // 去重
-    checkedAllKeys.value = uniq(checkedAllKeys.value)
-    if ($xe.isEmpty(children)) {
-        if (action == 'check') {
-            // 添加"当前节点"
-            checkedKeys.value.push(id)
+    if(!props.cascade){
+        checkedKeys.value = keys
+    }else{
+        let action = meta.action
+        let node = meta.node
+        let id = node.id
+        let pid = node.pid
+        let children = node.children
+        // 去重
+        checkedAllKeys.value = uniq(checkedAllKeys.value)
+        if ($xe.isEmpty(children)) {
+            if (action == 'check') {
+                // 添加"当前节点"
+                checkedKeys.value.push(id)
 
-            // 添加"所有父级"和"当前节点"
-            checkedAllKeys.value.push(...getParentIds(id))
-            checkedAllKeys.value.push(id)
+                // 添加"所有父级"和"当前节点"
+                checkedAllKeys.value.push(...getParentIds(id))
+                checkedAllKeys.value.push(id)
+            } else {
+                // 删除"当前节点"
+                pull(checkedKeys.value, id)
+
+                // 删除"当前节点"和"所有子级未全选的父级"
+                pull(checkedAllKeys.value, id)
+                upRecursionCheck(pid)
+            }
         } else {
-            // 删除"当前节点"
-            pull(checkedKeys.value, id)
+            // 获取所有子级（不包含任何父级）
+            let selectedKeys = getIds(children)
+            // 获取所有子级（包含所有父级）
+            let selectedAllKeys = getIds(children, true)
+            if (action == 'check') {
+                // 添加当前节点下所有的子级（不包含任何父级）
+                checkedKeys.value.push(...selectedKeys)
 
-            // 删除"当前节点"和"所有子级未全选的父级"
-            pull(checkedAllKeys.value, id)
-            upRecursionCheck(pid)
+                // 添加"当前节点"和"所有子级"和"所有父级"
+                checkedAllKeys.value.push(id)
+                checkedAllKeys.value.push(...getParentIds(id))
+                checkedAllKeys.value.push(...selectedAllKeys)
+            } else {
+                // 删除当前节点下所有的子级（不包含任何父级）
+                pullAll(checkedKeys.value, selectedKeys)
+                // 删除"当前节点"和"所有子级"和"所有父级"
+                pullAll(checkedAllKeys.value, selectedAllKeys)
+                pull(checkedAllKeys.value, id)
+                upRecursionCheck(pid)
+            }
         }
-    } else {
-        // 获取所有子级（不包含任何父级）
-        let selectedKeys = getIds(children)
-        // 获取所有子级（包含所有父级）
-        let selectedAllKeys = getIds(children, true)
-        if (action == 'check') {
-            // 添加当前节点下所有的子级（不包含任何父级）
-            checkedKeys.value.push(...selectedKeys)
-
-            // 添加"当前节点"和"所有子级"和"所有父级"
-            checkedAllKeys.value.push(id)
-            checkedAllKeys.value.push(...getParentIds(id))
-            checkedAllKeys.value.push(...selectedAllKeys)
-        } else {
-            // 删除当前节点下所有的子级（不包含任何父级）
-            pullAll(checkedKeys.value, selectedKeys)
-            // 删除"当前节点"和"所有子级"和"所有父级"
-            pullAll(checkedAllKeys.value, selectedAllKeys)
-            pull(checkedAllKeys.value, id)
-            upRecursionCheck(pid)
-        }
+        // 去重
+        checkedAllKeys.value = uniq(checkedAllKeys.value)
     }
-    // 去重
-    checkedAllKeys.value = uniq(checkedAllKeys.value)
     updateKeys()
 }
 
@@ -216,7 +224,8 @@ onBeforeMount(async () => {
 })
 
 function updateKeys(){
-    if(props.keyAll){
+    // 如果开启级联 并且需要返回带父级的值
+    if(props.cascade && props.keyAll){
         emit('update:modelValue', checkedAllKeys.value.join(','))
         emit('check-change', checkedAllKeys.value.join(','))
     }else{
@@ -236,7 +245,11 @@ function selectIds(value) {
                 ids.push(id)
             }
         })
-        checkedKeys.value = ids
+        if(props.cascade){
+            checkedKeys.value = ids
+        }else{
+            checkedKeys.value = values
+        }
     }
 }
 
