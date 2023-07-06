@@ -104,7 +104,7 @@
                     </template>
                 </n-data-table>
             </div>
-            <div style="flex: 1">
+            <div style="flex: 1" v-if="props.page">
                 <mb-pagination style="float: right" v-bind="paginationParams" @updatePage="paginationUpdatePage" @updatePageSize="paginationUpdatePageSize" />
             </div>
         </div>
