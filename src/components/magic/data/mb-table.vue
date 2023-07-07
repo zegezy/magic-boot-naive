@@ -198,7 +198,7 @@ const props = defineProps({
     },
     loading: {
         type: Boolean,
-        default: () => false
+        default: () => true
     },
     showNo: {
         type: Boolean,
@@ -337,12 +337,13 @@ function paginationUpdatePageSize(pageSize){
 
 function createTable() {
     bindProps.remote = !!props.url
-    bindProps.loading = false
+    bindProps.loading = props.loading
     watch(() => props.data, () => {
         if (props.page) {
             paginationParams.page = 1
         }
         bindProps.data = props.data
+        bindProps.loading = false
     }, {deep: true})
     watch(() => props.loading, value => bindProps.loading = value)
 }
