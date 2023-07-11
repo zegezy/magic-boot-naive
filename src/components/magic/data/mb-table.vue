@@ -363,6 +363,7 @@ function loadData(options) {
     }
     if (props.data) {
         bindProps.data = props.data
+        bindProps.loading = false
         dataDone()
     }
 }
