@@ -11,6 +11,7 @@
                     tabindex="-1"
                     :columns="showColumns"
                     :virtual-scroll="virtualScroll"
+                    v-model:checked-row-keys="checkedRowKeys"
                     @update:checked-row-keys="updateCheckedRowKeys"
                     table-layout="fixed"
                     style="height: 100%"
@@ -277,7 +278,7 @@ const ShowOrTooltip = defineComponent({
             )
     }
 })
-const emit = defineEmits(['update:checked-row-keys', 'selected-row'])
+const emit = defineEmits(['update:checked-row-keys', 'selected-row', 'update:checked-row-datas'])
 const tableRef = ref()
 const tableSlots = ref()
 const checkedRowKeys = ref()
@@ -366,6 +367,11 @@ function loadData(options) {
         bindProps.loading = false
         dataDone()
     }
+    if(options){
+        if(!options.notClearChecked){
+            checkedRowKeys.value = []
+        }
+    }
 }
 
 function dataDone(){
@@ -443,7 +449,26 @@ function getColWidth(){
             type: 'selection',
             show: true,
             width: noWidth,
-            fixed: 'left'
+            fixed: 'left',
+            options: [{
+                label: '全选',
+                key: 'all',
+                onSelect: (pageData) => {
+                    checkedRowKeys.value = pageData.map(it => it[props.rowKey])
+                }
+            }, {
+                label: '全不选',
+                key: 'none',
+                onSelect: () => {
+                    checkedRowKeys.value = []
+                }
+            }, {
+                label: '反选',
+                key: 'invert',
+                onSelect: (pageData) => {
+                    checkedRowKeys.value = pageData.filter(it => checkedRowKeys.value.indexOf(it[props.rowKey]) == -1).map(it => it[props.rowKey])
+                }
+            }]
         })
         tableWidth -= noWidth
     }
@@ -977,8 +1002,8 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 .down-menus {
     float: right;
     position: absolute;
-    right: 12px;
-    top: 0.6em;
+    right: 20px;
+    top: 1.2em;
     width: 0.6em;
     height: 0.6em;
     cursor: pointer;
@@ -998,5 +1023,8 @@ defineExpose({expand, toggleExpand, reload, exportExcel})
 }
 .nowrap :deep(.n-space){
     flex-wrap: nowrap!important;
+}
+:deep(.n-data-table .n-data-table-check-extra){
+    right: 0px;
 }
 </style>
