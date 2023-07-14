@@ -49,13 +49,7 @@
                                 :url="common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
                                 v-show="com.path == $route.path"
                             />
-                            <router-view v-slot="{ Component }">
-                                <transition name="fade" mode="out-in" appear>
-                                    <keep-alive :include="keepAliveInclude">
-                                        <component v-if="tabsStore.getShow && !keepaliveIframes.some(it => it.path == $route.path)" :is="Component" :key="$route.path"/>
-                                    </keep-alive>
-                                </transition>
-                            </router-view>
+                            <none />
                         </div>
                     </n-layout-content>
                 </n-layout>
@@ -67,6 +61,7 @@
 <script setup>
 import {ref, h, watch, computed} from 'vue';
 import tabs from './tabs.vue'
+import none from './none.vue'
 import {RouterLink} from 'vue-router'
 import * as icons from "@vicons/ionicons5";
 import * as fluent from '@vicons/fluent'
@@ -84,17 +79,8 @@ const currentTab = tabsStore.getCurrentTab
 const selectedKey = ref(currentTab)
 selectMenu(currentTab)
 watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
-const keepAliveInclude = computed(() => tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1)))
 // 单独处理 "iframe" 并且开启缓存的页面
-const keepaliveIframes = computed(() =>
-    tabsStore.getTabs.filter(it => it.meta.keepAlive && it.meta.path && (
-        (it.meta.path.startsWith('http') && (it.meta.openMode == '0' || it.meta.openMode == '2'))
-        ||
-        (it.meta.path.indexOf('.htm') != -1 && (it.meta.openMode == '0' || it.meta.openMode == '2'))
-        ||
-        it.meta.openMode == '2'
-    ))
-)
+const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => common.filterIframeTabs(it)))
 
 function selectMenu(key) {
     selectedKey.value = key

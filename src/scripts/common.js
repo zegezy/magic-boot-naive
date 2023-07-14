@@ -232,4 +232,14 @@ common.handlerUrlPage = (url) => {
     return url
 }
 
+common.filterIframeTabs = (it) => {
+    return it.meta.keepAlive && it.meta.path && (
+        (it.meta.path.startsWith('http') && (it.meta.openMode == '0' || it.meta.openMode == '2'))
+        ||
+        (it.meta.path.indexOf('.htm') != -1 && (it.meta.openMode == '0' || it.meta.openMode == '2'))
+        ||
+        it.meta.openMode == '2'
+    )
+}
+
 export default common
