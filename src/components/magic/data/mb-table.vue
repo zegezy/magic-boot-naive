@@ -896,6 +896,10 @@ function removeListener() {
     tableRef.value.$el.removeEventListener('keydown', directionOperation)
 }
 
+function getData(){
+    return bindProps.data
+}
+
 onMounted(() => {
     fixCols()
     reload()
@@ -919,7 +923,7 @@ onBeforeUnmount(() => {
     removeListener()
 })
 
-defineExpose({expand, toggleExpand, reload, exportExcel})
+defineExpose({expand, toggleExpand, reload, exportExcel, getData})
 
 </script>
 <style scoped>
