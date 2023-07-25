@@ -224,6 +224,10 @@ const props = defineProps({
     defaultColWidth: {
         type: Number,
         default: 100
+    },
+    checkedRowKeys: {
+        type: Array,
+        default: () => []
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -281,7 +285,7 @@ const ShowOrTooltip = defineComponent({
 const emit = defineEmits(['update:checked-row-keys', 'selected-row', 'update:checked-row-datas'])
 const tableRef = ref()
 const tableSlots = ref()
-const checkedRowKeys = ref()
+const checkedRowKeys = ref(props.checkedRowKeys)
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
@@ -347,6 +351,9 @@ function createTable() {
         bindProps.loading = false
     }, {deep: true})
     watch(() => props.loading, value => bindProps.loading = value)
+    watch(() => props.checkedRowKeys, (value) => {
+        checkedRowKeys.value = value
+    })
 }
 
 function loadData(options) {
