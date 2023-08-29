@@ -13,6 +13,7 @@
                     :virtual-scroll="virtualScroll"
                     v-model:checked-row-keys="checkedRowKeys"
                     @update:checked-row-keys="updateCheckedRowKeys"
+                    v-model:expanded-row-keys="expandedRowKeys"
                     table-layout="fixed"
                     style="height: 100%"
                     :scroll-x="scrollX"
@@ -286,6 +287,7 @@ const emit = defineEmits(['update:checked-row-keys', 'selected-row', 'update:che
 const tableRef = ref()
 const tableSlots = ref()
 const checkedRowKeys = ref(props.checkedRowKeys)
+const expandedRowKeys = ref([])
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
@@ -323,6 +325,16 @@ if(props.selectedRowEnable){
         }
     }
 }
+
+function expandByKeys(keys){
+    if(typeof(keys) == 'string'){
+        expandedRowKeys.value.push(keys)
+    }
+    if(keys instanceof Array){
+        expandedRowKeys.value.push(...keys)
+    }
+}
+
 const scrollX = ref()
 const paginationParams = reactive({
     page: 1,
@@ -930,7 +942,7 @@ onBeforeUnmount(() => {
     removeListener()
 })
 
-defineExpose({expand, toggleExpand, reload, exportExcel, getData})
+defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
 
 </script>
 <style scoped>
