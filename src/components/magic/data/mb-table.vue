@@ -352,6 +352,24 @@ function paginationUpdatePageSize(pageSize){
     loadData()
 }
 
+function handlerData(){
+    let currPageData = []
+    let size = paginationParams.pageSize
+    let current = paginationParams.page
+    if (props.page) {
+        props.data.forEach((it, i) => {
+            if (i >= ((current - 1) * size) && i < (current * size) && currPageData.length < size) {
+                currPageData.push(it)
+            }
+        })
+    } else {
+        currPageData = props.data
+    }
+    paginationParams.itemCount = props.data.length
+    bindProps.data = currPageData
+    bindProps.loading = false
+}
+
 function createTable() {
     bindProps.remote = !!props.url
     bindProps.loading = props.loading
@@ -359,8 +377,7 @@ function createTable() {
         if (props.page) {
             paginationParams.page = 1
         }
-        bindProps.data = props.data
-        bindProps.loading = false
+        handlerData()
     }, {deep: true})
     watch(() => props.loading, value => bindProps.loading = value)
     watch(() => props.checkedRowKeys, (value) => {
@@ -382,8 +399,7 @@ function loadData(options) {
         requestData({ where, loading: options && options.loading })
     }
     if (props.data) {
-        bindProps.data = props.data
-        bindProps.loading = false
+        handlerData()
         dataDone()
     }
     if(options){
