@@ -229,6 +229,10 @@ const props = defineProps({
     checkedRowKeys: {
         type: Array,
         default: () => []
+    },
+    keepCurrentPage: {
+        type: Boolean,
+        default: false
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -374,7 +378,7 @@ function createTable() {
     bindProps.remote = !!props.url
     bindProps.loading = props.loading
     watch(() => props.data, () => {
-        if (props.page) {
+        if (props.page && !props.keepCurrentPage) {
             paginationParams.page = 1
         }
         handlerData()
@@ -389,7 +393,7 @@ function loadData(options) {
     if (props.url) {
         let where = common.renderWhere(props.where)
         if(options){
-            if(options.reload && !options.keepCurrentPage){
+            if(options.reload && !options.keepCurrentPage && !props.keepCurrentPage){
                 paginationParams.page = 1
             }
             if(options.page){
