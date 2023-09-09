@@ -22,6 +22,7 @@
                     :row-key="it => it[rowKey]"
                     :default-expand-all="defaultExpandAll"
                     @unstable-column-resize="unstableColumnResize"
+                    @scroll="onScroll"
                 >
                     <template #switch="{ row, col }">
                         <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
@@ -195,8 +196,7 @@ const props = defineProps({
     },
     done: {
         type: Function,
-        default: () => {
-        }
+        default: () => {}
     },
     loading: {
         type: Boolean,
@@ -233,6 +233,10 @@ const props = defineProps({
     keepCurrentPage: {
         type: Boolean,
         default: false
+    },
+    onScroll: {
+        type: Function,
+        default: () => {}
     }
 })
 const ShowOrTooltip = defineComponent({
