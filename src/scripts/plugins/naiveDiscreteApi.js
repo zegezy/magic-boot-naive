@@ -9,5 +9,4 @@ export function setupNaiveDiscreteApi() {
     window['$dialog'] = dialog;
     window['$notification'] = notification;
     window['$loading'] = loadingBar;
-    window['$xe'] = XEUtils
 }

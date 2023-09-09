@@ -36,7 +36,7 @@
 import {watch, ref, nextTick, onBeforeMount} from 'vue'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
-import { clone, uniq, pull, pullAll } from 'lodash-es'
+import { clone, uniq, pull, pullAll, isEmpty } from 'lodash-es'
 
 const emit = defineEmits(['update:modelValue', 'check-change', 'node-click'])
 
@@ -104,7 +104,7 @@ function updateCheckedKeys(keys, option, meta) {
         let children = node.children
         // 去重
         checkedAllKeys.value = uniq(checkedAllKeys.value)
-        if ($xe.isEmpty(children)) {
+        if (isEmpty(children)) {
             if (action == 'check') {
                 // 添加"当前节点"
                 checkedKeys.value.push(id)

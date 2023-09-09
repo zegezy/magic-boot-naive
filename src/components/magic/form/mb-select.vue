@@ -17,6 +17,7 @@
 <script setup>
 
 import {ref, watch, onMounted, computed} from 'vue'
+import { isArray, isNumber, isString } from 'lodash-es'
 import {useDictStore} from "@/store/modules/dictStore";
 import common from '@/scripts/common'
 
@@ -109,8 +110,8 @@ watch(() => [props.type, props.url, props.options], () => {
 watch(() => props.modelValue, (value) => {
     let _value = value
     let sv = getSelectValue.value
-    _value = $xe.isArray(_value) ? _value.join(',') : _value && _value.toString()
-    sv = $xe.isArray(sv) ? getSelectValue.value.join(',') : sv && sv.toString()
+    _value = isArray(_value) ? _value.join(',') : _value && _value.toString()
+    sv = isArray(sv) ? getSelectValue.value.join(',') : sv && sv.toString()
     // 如果传过来的值和选择的值不一样则更新
     if(_value != sv){
         setValue(value)
@@ -124,13 +125,13 @@ onMounted(() => {
 let selectValueWatch = false
 
 function setValue(value) {
-    if($xe.isArray(value)){
+    if(isArray(value)){
         value = value.map(v => v.toString())
         selectValue.value = value
-    }else if($xe.isNumber(value)){
+    }else if(isNumber(value)){
         join = props.multiple
         selectValue.value = props.multiple ? value.toString().split(',') : value.toString()
-    }else if($xe.isString(value)){
+    }else if(isString(value)){
         join = props.multiple
         selectValue.value = props.multiple ? value.split(',') : value
     }

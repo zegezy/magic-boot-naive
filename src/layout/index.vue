@@ -71,6 +71,7 @@ import {useTabsStore} from "@/store/modules/tabsStore"
 import LayoutHeader from "@/layout/layout-header.vue";
 import IframeComponent from '@/views/common/iframe.vue'
 import common from "@/scripts/common";
+import { isEmpty } from 'lodash-es'
 
 const tabsStore = useTabsStore()
 const userStore = useUserStore()
@@ -105,7 +106,7 @@ function recursionRouters(children) {
     let menus = []
     children.forEach((chi) => {
         let menu = {}
-        if (!$xe.isEmpty(chi.children)) {
+        if (!isEmpty(chi.children)) {
             if (chi['alwaysShow'] === true) {
                 menu.key = chi.path
                 menu.label = chi.title

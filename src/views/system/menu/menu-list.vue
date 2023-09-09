@@ -52,6 +52,7 @@ import treeTable from '@/scripts/treeTable'
 import * as icons from "@vicons/ionicons5";
 import * as fluent from '@vicons/fluent'
 import {NIcon} from 'naive-ui';
+import { isEmpty } from 'lodash-es'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
 
@@ -151,7 +152,7 @@ const tableOptions = reactive({
                 if (row.isShow == 0) {
                     return false
                 }
-                if (!$xe.isEmpty(row.children) && row.children.some(it => it.isShow == 1)) {
+                if (!isEmpty(row.children) && row.children.some(it => it.isShow == 1)) {
                     return false
                 }
                 return row.url ? true : false

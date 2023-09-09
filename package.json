@@ -22,7 +22,6 @@
         "vue-cropper": "^1.0.2",
         "vue-router": "^4.1.6",
         "vuedraggable": "^4.1.0",
-        "xe-utils": "^3.5.7",
         "xlsx": "^0.18.3"
     },
     "devDependencies": {
