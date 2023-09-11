@@ -857,7 +857,7 @@ function getFixedCount() {
 }
 
 function arrIndexExchange(array, x, y) {
-    let arr_temp = [].concat(array);
+    let arr_temp = cloneDeep([].concat(array));
     arr_temp.splice(x, 0, arr_temp.splice(y, 1)[0]);
     return arr_temp;
 }
