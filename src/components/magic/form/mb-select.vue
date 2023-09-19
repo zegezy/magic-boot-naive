@@ -9,6 +9,7 @@
         :style="{ width }"
         :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
         :clearable="clearable"
+        :show-on-focus="showOnFocus"
         filterable
         max-tag-count="responsive"
     />
@@ -84,6 +85,10 @@ const props = defineProps({
         default: true
     },
     clearable: {
+        type: Boolean,
+        default: true
+    },
+    showOnFocus: {
         type: Boolean,
         default: true
     }
@@ -190,10 +195,6 @@ function handlerData(data) {
 
 function getOptions(){
     return selectList.value
-}
-
-function expand(){
-    magicSelect.value.$el.querySelector('.n-select > div').click()
 }
 
 defineExpose({ getOptions, expand })
