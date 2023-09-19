@@ -138,7 +138,7 @@ import global from '@/scripts/global'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
 import { NEllipsis } from 'naive-ui'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 import { useMouse, onClickOutside } from "@vueuse/core";
 
 const dictStore = useDictStore()
@@ -294,7 +294,7 @@ const ShowOrTooltip = defineComponent({
 const emit = defineEmits(['update:checked-row-keys', 'selected-row', 'update:checked-row-datas'])
 const tableRef = ref()
 const tableSlots = ref()
-const checkedRowKeys = ref(props.checkedRowKeys)
+const checkedRowKeys = ref(cloneDeep(props.checkedRowKeys))
 const expandedRowKeys = ref([])
 const columns = ref([])
 const showColumns = ref([])
@@ -389,7 +389,9 @@ function createTable() {
     }, {deep: true})
     watch(() => props.loading, value => bindProps.loading = value)
     watch(() => props.checkedRowKeys, (value) => {
-        checkedRowKeys.value = value
+        if(!isEqual(value, checkedRowKeys.value)){
+            checkedRowKeys.value = value
+        }
     })
 }
 
@@ -621,7 +623,13 @@ function renderSlot(col, type) {
 }
 
 function updateCheckedRowKeys(keys){
-    checkedRowKeys.value = keys
+    if(!isEqual(checkedRowKeys.value, keys)){
+        checkedRowKeys.value = keys
+        emitUpdateCheckedRowKeys()
+    }
+}
+
+function emitUpdateCheckedRowKeys(){
     emit('update:checked-row-keys', checkedRowKeys.value)
     emit('update:checked-row-datas', bindProps.data.filter(it => checkedRowKeys.value.indexOf(it[props.rowKey]) != -1))
 }
@@ -957,6 +965,9 @@ onMounted(() => {
                     columnDrop()
                 })
             }
+        })
+        watch(() => checkedRowKeys.value, () => {
+            emitUpdateCheckedRowKeys()
         })
     })
 })
