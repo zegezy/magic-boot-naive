@@ -197,6 +197,6 @@ function getOptions(){
     return selectList.value
 }
 
-defineExpose({ getOptions, expand })
+defineExpose({ getOptions })
 
 </script>
