@@ -1,5 +1,4 @@
 import * as NaiveUI from 'naive-ui'
-import XEUtils from 'xe-utils'
 
 export function setupNaiveDiscreteApi() {
     const {message, dialog, notification, loadingBar} = NaiveUI.createDiscreteApi(
