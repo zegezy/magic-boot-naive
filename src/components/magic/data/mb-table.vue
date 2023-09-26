@@ -101,7 +101,7 @@
                     <template #image="{ row, col }">
                         <n-image-group v-if="row[col.field]">
                             <n-space>
-                                <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="$global.filePrefix + it" />
+                                <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="it && it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)" />
                             </n-space>
                         </n-image-group>
                     </template>
