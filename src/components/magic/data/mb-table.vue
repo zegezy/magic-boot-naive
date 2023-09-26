@@ -56,7 +56,7 @@
                                 >
                                     <template #icon v-if="it.icon">
                                         <n-icon>
-                                            <component :is="icons5[it.icon] || fluent[it.icon]" />
+                                            <component :is="vicons[it.icon]" />
                                         </n-icon>
                                     </template>
                                     {{ it.label }}
@@ -129,10 +129,9 @@
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
-import * as icons5 from '@vicons/ionicons5'
+import vicons from '@/scripts/vicons'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
 import { EditFilled } from '@vicons/antd'
-import * as fluent from '@vicons/fluent'
 import common from '@/scripts/common'
 import global from '@/scripts/global'
 import {useDictStore} from "@/store/modules/dictStore";

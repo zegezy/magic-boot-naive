@@ -63,8 +63,7 @@ import {ref, h, watch, computed} from 'vue';
 import tabs from './tabs.vue'
 import none from './none.vue'
 import {RouterLink} from 'vue-router'
-import * as icons from "@vicons/ionicons5";
-import * as fluent from '@vicons/fluent'
+import vicons from '@/scripts/vicons'
 import {NIcon} from 'naive-ui';
 import {useUserStore} from "@/store/modules/userStore"
 import {useTabsStore} from "@/store/modules/tabsStore"
@@ -148,7 +147,7 @@ function recursionRouters(children) {
             }
         }
         let getIcon = (chi) => {
-            return icons[chi.icon] || fluent[chi.icon]
+            return vicons[chi.icon]
         }
         if (chi.icon && getIcon(chi)) {
             menu.icon = renderIcon(getIcon(chi))
