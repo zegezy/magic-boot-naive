@@ -20,7 +20,6 @@
                     :striped="striped"
                     flex-height
                     :row-key="it => it[rowKey]"
-                    :default-expand-all="defaultExpandAll"
                     @unstable-column-resize="unstableColumnResize"
                     @scroll="onScroll"
                 >
@@ -635,18 +634,34 @@ function emitUpdateCheckedRowKeys(){
 
 const tableKey = ref('magicTable' + common.uuid())
 const showTable = ref(true)
-const defaultExpandAll = ref(false)
 
 function expand() {
     showTable.value = false
-    defaultExpandAll.value = true
+    expandedRowKeys.value = getTreeIds()
     nextTick(() => showTable.value = true)
 }
 
 function toggleExpand() {
     showTable.value = false
-    defaultExpandAll.value = !defaultExpandAll.value
+    if(expandedRowKeys.value.length == 0){
+        expandedRowKeys.value = getTreeIds()
+    }else{
+        expandedRowKeys.value = []
+    }
     nextTick(() => showTable.value = true)
+}
+function getTreeIds(){
+    let ids = []
+    recursionGetTreeIds(bindProps.data, ids)
+    return ids
+}
+function recursionGetTreeIds(children, ids){
+    children.forEach(it => {
+        ids.push(it[props.rowKey])
+        if(it.children && it.children.length > 0){
+            recursionGetTreeIds(it.children, ids)
+        }
+    })
 }
 
 function reload(options) {
