@@ -99,6 +99,7 @@ const table = ref()
 const roleFormDialog = ref()
 const dataForm = ref()
 const tableOptions = reactive({
+    id: 'role-list',
     url: '/system/role/list',
     where: {
         name: {

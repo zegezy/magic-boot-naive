@@ -90,6 +90,7 @@ const officeTree = ref([])
 const searchValue = ref('')
 const table = ref()
 const tableOptions = reactive({
+    id: 'office-list',
     loading: false,
     showNo: false,
     page: false,

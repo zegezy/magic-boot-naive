@@ -14,6 +14,7 @@ import {ref, reactive, h} from 'vue'
 
 const table = ref()
 const tableOptions = reactive({
+    id: 'login-log',
     url: '/system/log/login/list',
     where: {
         createDate: {

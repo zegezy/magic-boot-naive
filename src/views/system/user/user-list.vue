@@ -126,6 +126,7 @@ function importUsers() {
 }
 
 const tableOptions = reactive({
+    id: 'user-list',
     url: '/system/user/list',
     page: true,
     selection: true,

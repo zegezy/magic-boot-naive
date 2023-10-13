@@ -66,6 +66,7 @@ const props = defineProps({
 })
 
 const tableOptions = reactive({
+    id: 'dict-items',
     url: '/system/dict/items/list',
     page: true,
     where: {

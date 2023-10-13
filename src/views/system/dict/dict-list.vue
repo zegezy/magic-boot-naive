@@ -63,6 +63,7 @@ import {AddOutline} from "@vicons/ionicons5";
 const dictStore = useDictStore()
 
 const tableOptions = reactive({
+    id: 'dict-list',
     url: '/system/dict/list',
     page: true,
     where: {

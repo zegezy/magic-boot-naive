@@ -98,6 +98,7 @@ const dictStore = useDictStore()
 const dialogTitle = ref('')
 const roleFormDialog = ref()
 const tableOptions = reactive({
+    id: 'configure-list',
     url: '/system/configure/list',
     page: true,
     where: {

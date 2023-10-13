@@ -23,6 +23,7 @@ import {ref, reactive} from 'vue'
 import {DownloadOutline} from '@vicons/ionicons5'
 const table = ref()
 const tableOptions = reactive({
+    id: 'oper-log',
     url: '/system/log/oper/list',
     where: {
         userIp: {
