@@ -111,7 +111,7 @@
             </div>
         </div>
         <div ref="tableMenusRef" class="table-menus" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
-            <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click" :key="i">
+            <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click({ e:$event, tableId: id, hideDropMenus, initRenderTable })" :key="i">
                 {{ menu.label }}
                 <div class="items" :style="{ top: itemsTop, left: itemsLeft, width: itemsWidth + 'px' }"
                      v-if="menu.children && menu.children.length > 0">
@@ -294,6 +294,7 @@ const tableRef = ref()
 const tableSlots = ref()
 const checkedRowKeys = ref(cloneDeep(props.checkedRowKeys))
 const expandedRowKeys = ref([])
+const sourceColumns = ref([])
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
@@ -534,7 +535,10 @@ function getColWidth(){
     }
     return ((tableWidth - totalWidth) / (props.cols.length - widths)) - 2
 }
-
+function renderShowColumns() {
+    showColumns.value = columns.value.filter(it => it.show)
+    calcScrollX()
+}
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
     const keys = Object.keys(tableSlots.value)
@@ -588,10 +592,7 @@ function fixCols() {
         }
         columns.value.push(column)
     })
-    let renderShowColumns = () => {
-        showColumns.value = columns.value.filter(it => it.show)
-        calcScrollX()
-    }
+    sourceColumns.value = cloneDeep(columns.value)
     if(componentProperties?.table?.remoteLoadColumn){
         componentProperties.table?.remoteLoadColumn(props.id, columns.value).then(value => {
             columns.value = value
@@ -662,6 +663,10 @@ function recursionGetTreeIds(children, ids){
             recursionGetTreeIds(it.children, ids)
         }
     })
+}
+function initRenderTable(){
+    columns.value = cloneDeep(sourceColumns.value)
+    renderShowColumns()
 }
 
 function reload(options) {
@@ -763,12 +768,12 @@ const dropMenus = reactive([{
     value: 'columns',
     label: '表格列',
     children: columns,
-    click: (col, e) => {
+    click: ({col, e}) => {
         if (e && e.target.className.indexOf('n-checkbox-box') == -1) {
             col.show = !col.show
         }
     }
-}])
+}, ...componentProperties?.table?.dropMenus])
 let mouse = useMouse()
 function headerClick(e, col) {
     currentCol = col
@@ -801,6 +806,9 @@ function headerClick(e, col) {
             itemsTop.value = itemsTop.value  + 'px'
         }
     })
+}
+function hideDropMenus(){
+    showMenus.value = false
 }
 function dataSort(col, rule) {
     columns.value.filter(it => it.field != col.field).forEach(it => {
