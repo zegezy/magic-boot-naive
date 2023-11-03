@@ -773,7 +773,11 @@ const dropMenus = reactive([{
             col.show = !col.show
         }
     }
-}, ...componentProperties?.table?.dropMenus])
+}])
+if(componentProperties?.table?.dropMenus){
+    dropMenus.push(...componentProperties.table.dropMenus)
+}
+
 let mouse = useMouse()
 function headerClick(e, col) {
     currentCol = col
