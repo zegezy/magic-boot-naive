@@ -729,7 +729,7 @@ function unstableColumnResize(widthAfterResize, limitWidth, column){
 
 const tableMenusRef = ref()
 const menusWidth = ref(158)
-const itemsWidth = ref(140)
+const itemsWidth = ref(180)
 const menusLeft = ref('')
 const menusTop = ref('')
 const itemsLeft = ref('')
@@ -1034,8 +1034,8 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     position: fixed;
     z-index: 99999;
     background: white;
-    box-shadow: 0 8px 16px 0 rgb(0 0 0 / 80%);
-    border-radius: 3px;
+    box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
+    border-radius: 5px;
 }
 
 .table-menus>.menu {
@@ -1070,6 +1070,8 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
 }
 
 .items .item {
+    display: inline-flex;
+    align-items: center;
     font-size: 12px;
     width: 100%;
     height: 30px;
