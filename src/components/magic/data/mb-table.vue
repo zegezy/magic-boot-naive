@@ -24,8 +24,7 @@
                     @scroll="onScroll"
                 >
                     <template #switch="{ row, col }">
-                        <mb-switch v-model="row[col.field]" @change="col.change(row)"
-                                   v-if="col.if != undefined ? col.if(row) : true"/>
+                        <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
                         <span v-else>-</span>
                     </template>
                     <template #html="{ row, col }">
@@ -56,7 +55,7 @@
                                 >
                                     <template #icon v-if="it.icon">
                                         <n-icon>
-                                            <component :is="vicons[it.icon]"/>
+                                            <component :is="vicons[it.icon]" />
                                         </n-icon>
                                     </template>
                                     {{ it.label }}
@@ -70,59 +69,54 @@
                         </ShowOrTooltip>
                     </template>
                     <template #dynamic="{ row, col, index }">
-                        <slot :name="col.field" :row="row" :col="col" :index="index"/>
+                        <slot :name="col.field" :row="row" :col="col" :index="index" />
                     </template>
                     <template #title="{ col }">
                         <div @click="dataSort(col)">
                             <label>{{ col.label }}</label>
                             <n-icon v-if="col.editIcon">
-                                <EditFilled/>
+                                <EditFilled />
                             </n-icon>
                             <n-icon v-if="col.dataSortRule">
-                                <CaretUpOutline/>
+                                <CaretUpOutline />
                             </n-icon>
                             <n-icon v-if="col.dataSortRule == false">
-                                <CaretDownOutline/>
+                                <CaretDownOutline />
                             </n-icon>
                             <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
-                                <ArrowSort16Filled/>
+                                <ArrowSort16Filled />
                             </n-icon>
                             <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
-                                <ArrowSortUp16Filled/>
+                                <ArrowSortUp16Filled />
                             </n-icon>
                             <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
-                                <ArrowSortDown16Filled/>
+                                <ArrowSortDown16Filled />
                             </n-icon>
                         </div>
                         <n-icon class="down-menus" @click="headerClick($event, col)">
-                            <ChevronDown/>
+                            <ChevronDown />
                         </n-icon>
                     </template>
                     <template #image="{ row, col }">
                         <n-image-group v-if="row[col.field]">
                             <n-space>
-                                <n-image v-for="it in row[col.field].split(',')" width="30" height="30"
-                                         :src="it && it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)"/>
+                                <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="it && it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)" />
                             </n-space>
                         </n-image-group>
                     </template>
                 </n-data-table>
             </div>
             <div style="flex: 1" v-if="props.page">
-                <mb-pagination style="float: right" v-bind="paginationParams" @updatePage="paginationUpdatePage"
-                               @updatePageSize="paginationUpdatePageSize"/>
+                <mb-pagination style="float: right" v-bind="paginationParams" @updatePage="paginationUpdatePage" @updatePageSize="paginationUpdatePageSize" />
             </div>
         </div>
-        <div ref="tableMenusRef" class="table-menus"
-             :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
-            <div class="menu" v-for="(menu, i) in dropMenus"
-                 @click="menu.click({ e:$event, tableId: id, hideDropMenus, initRenderTable })" :key="i">
+        <div ref="tableMenusRef" class="table-menus" :style="{ left: menusLeft, top: menusTop, display: showMenus ? 'flex' : 'none', width: menusWidth + 'px' }">
+            <div class="menu" v-for="(menu, i) in dropMenus" @click="menu.click({ e:$event, tableId: id, hideDropMenus, initRenderTable })" :key="i">
                 {{ menu.label }}
                 <div class="items" :style="{ top: itemsTop, left: itemsLeft, width: itemsWidth + 'px' }"
                      v-if="menu.children && menu.children.length > 0">
                     <div class="item" v-for="item in menu.children" :key="item.value" @click="menu.click(item, $event)">
-                        <n-checkbox v-model:checked="item.show" style="vertical-align: top;margin-right: 5px;"/>
-                        {{ item.type == 'selection' ? '多选' : item.label }}
+                        <n-checkbox v-model:checked="item.show" style="vertical-align: top;margin-right: 5px;" />{{ item.type == 'selection' ? '多选' : item.label }}
                     </div>
                 </div>
             </div>
@@ -133,17 +127,17 @@
 <script setup>
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
-import {ChevronDown, CaretUpOutline, CaretDownOutline} from '@vicons/ionicons5'
+import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
 import vicons from '@/scripts/vicons'
-import {ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled} from '@vicons/fluent'
-import {EditFilled} from '@vicons/antd'
+import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
+import { EditFilled } from '@vicons/antd'
 import common from '@/scripts/common'
 import global from '@/scripts/global'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
-import {NEllipsis} from 'naive-ui'
-import {cloneDeep, isEqual} from 'lodash-es'
-import {useMouse, onClickOutside} from "@vueuse/core";
+import { NEllipsis } from 'naive-ui'
+import { cloneDeep, isEqual } from 'lodash-es'
+import { useMouse, onClickOutside } from "@vueuse/core";
 
 const dictStore = useDictStore()
 
@@ -200,8 +194,7 @@ const props = defineProps({
     },
     done: {
         type: Function,
-        default: () => {
-        }
+        default: () => {}
     },
     loading: {
         type: Boolean,
@@ -241,12 +234,11 @@ const props = defineProps({
     },
     onScroll: {
         type: Function,
-        default: () => {
-        }
+        default: () => {}
     }
 })
 const ShowOrTooltip = defineComponent({
-    setup(props, {slots}) {
+    setup (props, { slots }) {
         const tooltip = ref()
         tooltip.value = false
         let timers
@@ -280,7 +272,7 @@ const ShowOrTooltip = defineComponent({
                             }
                         } else {
                             if (props.tooltip === true) {
-                                tooltipProps = {onUpdateShow}
+                                tooltipProps = { onUpdateShow }
                             }
                         }
                         tooltip.value = tooltipProps
@@ -292,7 +284,7 @@ const ShowOrTooltip = defineComponent({
                         ...props,
                         tooltip: tooltip.value
                     },
-                    {default: slots.default}
+                    { default: slots.default }
                 )
             )
     }
@@ -308,18 +300,18 @@ const showColumns = ref([])
 const bindProps = reactive(props.props || {})
 const getNowrap = computed(() => props.nowrap != undefined ? props.nowrap : componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : false)
 let currentRowDom = null
-if (props.selectedRowEnable) {
+if(props.selectedRowEnable){
     bindProps.rowProps = (row) => {
         return {
             onClick: (e) => {
                 let setBackgroundColor = (dom, color) => {
                     dom.forEach(d => {
                         let _color = color
-                        if (d) {
-                            if (!_color) {
-                                if (d.className.indexOf('n-data-table-tr--striped') != -1) {
+                        if(d){
+                            if(!_color){
+                                if(d.className.indexOf('n-data-table-tr--striped') != -1){
                                     _color = 'var(--n-merged-td-color-striped)'
-                                } else {
+                                }else{
                                     _color = 'var(--n-merged-td-color)'
                                 }
                             }
@@ -330,7 +322,7 @@ if (props.selectedRowEnable) {
                     })
                 }
                 currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
-                if (currentRowDom) {
+                if(currentRowDom){
                     setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling])
                 }
                 currentRowDom = e.currentTarget
@@ -341,11 +333,11 @@ if (props.selectedRowEnable) {
     }
 }
 
-function expandByKeys(keys) {
-    if (typeof (keys) == 'string') {
+function expandByKeys(keys){
+    if(typeof(keys) == 'string'){
         expandedRowKeys.value.push(keys)
     }
-    if (keys instanceof Array) {
+    if(keys instanceof Array){
         expandedRowKeys.value.push(...keys)
     }
 }
@@ -356,18 +348,18 @@ const paginationParams = reactive({
     pageSize: props.limit
 })
 
-function paginationUpdatePage(page) {
+function paginationUpdatePage(page){
     paginationParams.page = page
     loadData()
 }
 
-function paginationUpdatePageSize(pageSize) {
+function paginationUpdatePageSize(pageSize){
     paginationParams.pageSize = pageSize
     paginationParams.page = 1
     loadData()
 }
 
-function handlerData() {
+function handlerData(){
     let currPageData = []
     let size = paginationParams.pageSize
     let current = paginationParams.page
@@ -396,7 +388,7 @@ function createTable() {
     }, {deep: true})
     watch(() => props.loading, value => bindProps.loading = value)
     watch(() => props.checkedRowKeys, (value) => {
-        if (!isEqual(value, checkedRowKeys.value)) {
+        if(!isEqual(value, checkedRowKeys.value)){
             checkedRowKeys.value = value
         }
     })
@@ -405,39 +397,39 @@ function createTable() {
 function loadData(options) {
     if (props.url) {
         let where = common.renderWhere(props.where)
-        if (options) {
-            if (options.reload && !options.keepCurrentPage && !props.keepCurrentPage) {
+        if(options){
+            if(options.reload && !options.keepCurrentPage && !props.keepCurrentPage){
                 paginationParams.page = 1
             }
-            if (options.page) {
+            if(options.page){
                 paginationParams.page = options.page
             }
         }
-        requestData({where, loading: options && options.loading})
+        requestData({ where, loading: options && options.loading })
     }
     if (props.data) {
         handlerData()
         dataDone()
     }
-    if (options) {
-        if (!options.notClearChecked) {
+    if(options){
+        if(!options.notClearChecked){
             checkedRowKeys.value = []
         }
     }
 }
 
-function dataDone() {
+function dataDone(){
     props.done(bindProps.data)
-    if (props.defaultSelectedRow && props.selectedRowEnable) {
+    if(props.defaultSelectedRow && props.selectedRowEnable){
         nextTick(() => {
             tableRef.value.$el.querySelector('.n-data-table-base-table-body tr').click()
         })
     }
 }
 
-function requestData({where, loading}) {
+function requestData({ where, loading }) {
     loading = loading == undefined ? true : loading
-    if (loading) {
+    if(loading){
         bindProps.loading = true
     }
     if (props.page) {
@@ -449,7 +441,7 @@ function requestData({where, loading}) {
     let processData = (res) => {
         const {data} = res
         bindProps.data = data.list || []
-        if (loading) {
+        if(loading){
             bindProps.loading = false
         }
         if (props.page) {
@@ -463,18 +455,17 @@ function requestData({where, loading}) {
         common.$get(props.url, where).then(processData)
     }
 }
-
 createTable()
 
-function calcScrollX() {
+function calcScrollX(){
     scrollX.value = showColumns.value.reduce((total, it) => total + Number(
-            typeof (it.width) == 'number' ? it.width :
-                typeof (it.width) == 'string' ? it.width.replace('px', '') : 200
+            typeof(it.width) == 'number' ? it.width :
+                typeof(it.width) == 'string' ? it.width.replace('px', '') : 200
         )
         , 0)
 }
 
-function getColWidth() {
+function getColWidth(){
     let minWidth = props.defaultColWidth
     let tableWidth = tableRef.value.$el.offsetWidth
     let totalWidth = 0
@@ -482,14 +473,14 @@ function getColWidth() {
     let noWidth = 50
     props.cols.forEach((it, i) => {
         let width = it.width
-        if (width) {
-            if (typeof width == 'string') {
-                width = width.replace(' ', '')
-                if (width.indexOf('%') != -1) {
-                    width = width.replace('%', '')
+        if(width){
+            if(typeof width == 'string'){
+                width = width.replace(' ','')
+                if(width.indexOf('%') != -1){
+                    width = width.replace('%','')
                     width = parseFloat(width)
                     width = tableWidth * (width / 100)
-                } else {
+                }else{
                     width = parseFloat(width)
                 }
             }
@@ -497,7 +488,7 @@ function getColWidth() {
             widths++
         }
     })
-    if (props.selection) {
+    if(props.selection){
         columns.value.push({
             type: 'selection',
             show: true,
@@ -525,7 +516,7 @@ function getColWidth() {
         })
         tableWidth -= noWidth
     }
-    if (props.showNo) {
+    if(props.showNo){
         columns.value.push({
             label: '序号',
             title: '序号',
@@ -533,23 +524,21 @@ function getColWidth() {
             align: 'center',
             show: true,
             fixed: 'left',
-            render: (_, index) => {
+            render: (_,index) => {
                 return index + 1
             }
         })
         tableWidth -= noWidth
     }
-    if (props.cols.length * minWidth > tableWidth) {
+    if(props.cols.length * minWidth > tableWidth){
         return minWidth
     }
     return ((tableWidth - totalWidth) / (props.cols.length - widths)) - 2
 }
-
 function renderShowColumns() {
     showColumns.value = columns.value.filter(it => it.show)
     calcScrollX()
 }
-
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
     const keys = Object.keys(tableSlots.value)
@@ -577,20 +566,20 @@ function fixCols() {
             if (col.dictType) {
                 renderSlot(col, 'dictType')
             }
-            if (col.templet) {
+            if(col.templet){
                 renderSlot(col, 'templet')
             }
         }
         if (col.render) {
             column.render = col.render
-        } else {
-            if (getNowrap.value) {
+        }else{
+            if(getNowrap.value){
                 column.render = (row) => {
-                    return h(ShowOrTooltip, {}, {
+                    return h(ShowOrTooltip,{},{
                         default: () => row[col.field]
                     })
                 }
-            } else {
+            }else{
                 column.render = (row) => {
                     return row[col.field] ? row[col.field] : col.defaultValue || ''
                 }
@@ -604,26 +593,26 @@ function fixCols() {
         columns.value.push(column)
     })
     sourceColumns.value = cloneDeep(columns.value)
-    if (componentProperties?.table?.remoteLoadColumn) {
+    if(componentProperties?.table?.remoteLoadColumn){
         componentProperties.table?.remoteLoadColumn(props.id, columns.value).then(value => {
             columns.value = value
             renderShowColumns()
         }).catch(() => {
             renderShowColumns()
         })
-    } else {
+    }else{
         renderShowColumns()
     }
     let columnResizeTimeout = null
     watch(() => columns, () => {
         clearTimeout(columnResizeTimeout)
         columnResizeTimeout = setTimeout(() => {
-            if (componentProperties?.table?.saveCols) {
+            if(componentProperties?.table?.saveCols){
                 componentProperties?.table?.saveCols(props.id, columns.value)
             }
         }, 500)
         renderShowColumns()
-    }, {deep: true})
+    }, { deep: true })
 }
 
 function renderSlot(col, type) {
@@ -632,14 +621,14 @@ function renderSlot(col, type) {
     }
 }
 
-function updateCheckedRowKeys(keys) {
-    if (!isEqual(checkedRowKeys.value, keys)) {
+function updateCheckedRowKeys(keys){
+    if(!isEqual(checkedRowKeys.value, keys)){
         checkedRowKeys.value = keys
         emitUpdateCheckedRowKeys()
     }
 }
 
-function emitUpdateCheckedRowKeys() {
+function emitUpdateCheckedRowKeys(){
     emit('update:checked-row-keys', checkedRowKeys.value)
     emit('update:checked-row-datas', bindProps.data.filter(it => checkedRowKeys.value.indexOf(it[props.rowKey]) != -1))
 }
@@ -655,30 +644,27 @@ function expand() {
 
 function toggleExpand() {
     showTable.value = false
-    if (expandedRowKeys.value.length == 0) {
+    if(expandedRowKeys.value.length == 0){
         expandedRowKeys.value = getTreeIds()
-    } else {
+    }else{
         expandedRowKeys.value = []
     }
     nextTick(() => showTable.value = true)
 }
-
-function getTreeIds() {
+function getTreeIds(){
     let ids = []
     recursionGetTreeIds(bindProps.data, ids)
     return ids
 }
-
-function recursionGetTreeIds(children, ids) {
+function recursionGetTreeIds(children, ids){
     children.forEach(it => {
         ids.push(it[props.rowKey])
-        if (it.children && it.children.length > 0) {
+        if(it.children && it.children.length > 0){
             recursionGetTreeIds(it.children, ids)
         }
     })
 }
-
-function initRenderTable() {
+function initRenderTable(){
     columns.value = cloneDeep(sourceColumns.value)
     renderShowColumns()
 }
@@ -736,14 +722,14 @@ function exportExcel({fileName}) {
     }
 }
 
-function unstableColumnResize(widthAfterResize, limitWidth, column) {
+function unstableColumnResize(widthAfterResize, limitWidth, column){
     column.width = limitWidth
     calcScrollX()
 }
 
 const tableMenusRef = ref()
 const menusWidth = ref(158)
-const itemsWidth = ref(180)
+const itemsWidth = ref(140)
 const menusLeft = ref('')
 const menusTop = ref('')
 const itemsLeft = ref('')
@@ -788,17 +774,16 @@ const dropMenus = reactive([{
         }
     }
 }])
-if (componentProperties?.table?.dropMenus) {
+if(componentProperties?.table?.dropMenus){
     dropMenus.push(...componentProperties.table.dropMenus)
 }
 
 let mouse = useMouse()
-
 function headerClick(e, col) {
     currentCol = col
     let clientWidth = document.body.clientWidth;
     let clientHeight = document.body.clientHeight;
-    let coord = {x: mouse.x.value, y: mouse.y.value}
+    let coord = { x: mouse.x.value, y: mouse.y.value }
     if ((clientWidth - menusWidth.value - coord.x) < 0) {
         menusLeft.value = (clientWidth - menusWidth.value) + 'px'
         if ((clientWidth - menusWidth.value - itemsWidth.value - coord.x) < 0) {
@@ -819,18 +804,16 @@ function headerClick(e, col) {
         } else {
             itemsTop.value = tableMenus.bottom - 28
         }
-        if (itemsTop.value < 0) {
-            itemsTop.value = 0 + 'px'
-        } else {
-            itemsTop.value = itemsTop.value + 'px'
+        if(itemsTop.value < 0 ){
+            itemsTop.value = 0  + 'px'
+        }else{
+            itemsTop.value = itemsTop.value  + 'px'
         }
     })
 }
-
-function hideDropMenus() {
+function hideDropMenus(){
     showMenus.value = false
 }
-
 function dataSort(col, rule) {
     columns.value.filter(it => it.field != col.field).forEach(it => {
         it.dataSortRule = undefined
@@ -839,9 +822,9 @@ function dataSort(col, rule) {
         it.realSortRule = undefined
     })
     if (col.realSort) {
-        if (rule) {
+        if(rule){
             col.realSortRule = rule
-        } else {
+        }else{
             if (!col.realSortRule) {
                 col.realSortRule = '0' // asc
             } else {
@@ -852,9 +835,9 @@ function dataSort(col, rule) {
         props.where.direction = col.realSortRule
         reload()
     } else {
-        if (rule) {
+        if(rule){
             col.dataSortRule = ('0' == rule ? true : false)
-        } else {
+        }else{
             if (!col.dataSortRule) {
                 col.dataSortRule = true
             } else {
@@ -878,7 +861,6 @@ function dataSort(col, rule) {
 }
 
 let fixed = false
-
 function fixedColumn(index) {
     unFixedColumn()
     columns.value.forEach((it, i) => {
@@ -888,11 +870,10 @@ function fixedColumn(index) {
     })
     fixed = true
 }
-
 function unFixedColumn() {
     fixed = false
     columns.value.forEach((it) => {
-        if (it.fixed != 'right') {
+        if(it.fixed != 'right'){
             it.fixed = false
         }
     })
@@ -916,7 +897,6 @@ function arrIndexExchange(array, x, y) {
 }
 
 let sortableTh = null
-
 function columnDrop() {
     sortableTh && sortableTh.destroy()
     const wrapperTr = tableRef.value.$el.querySelector(`.n-data-table-base-table-header thead tr`)
@@ -928,22 +908,22 @@ function columnDrop() {
             nextTick(() => {
                 let _oldIndex = evt.oldIndex, _newIndex = evt.newIndex;
                 let fixedIndex = 0
-                for (let i = 0; i < columns.value.length; i++) {
+                for(let i =0; i<columns.value.length; i++){
                     let it = columns.value[i];
-                    if (it.fixed == 'left') {
+                    if(it.fixed == 'left'){
                         fixedIndex = i;
                     }
                 }
-                if (evt.newIndex > fixedIndex) {
+                if(evt.newIndex > fixedIndex){
                     fixedIndex = fixedIndex - 1
-                } else {
-                    if (columns.value[_oldIndex].fixed != columns.value[_newIndex].fixed) {
+                }else{
+                    if(columns.value[_oldIndex].fixed != columns.value[_newIndex].fixed){
                         fixedIndex = fixedIndex + 1
                     }
                 }
                 let newIndexLabel = columns.value.filter(it => it.show).filter((it, j) => j == evt.newIndex)[0].label
-                columns.value.slice(0, columns.value.findIndex(it => it.label == newIndexLabel)).forEach(it => !it.show && _newIndex++)
-                columns.value.slice(0, columns.value.findIndex(it => it.label == evt.clone.innerText)).forEach(it => !it.show && _oldIndex++)
+                columns.value.slice(0,columns.value.findIndex(it => it.label == newIndexLabel)).forEach(it => !it.show && _newIndex++)
+                columns.value.slice(0,columns.value.findIndex(it => it.label == evt.clone.innerText)).forEach(it => !it.show && _oldIndex++)
                 columns.value = arrIndexExchange(columns.value, _newIndex, _oldIndex)
                 if (columns.value.filter((it, i) => i <= _newIndex).some(it => it.fixed && it.fixed === 'left')) {
                     unFixedColumn()
@@ -959,29 +939,27 @@ function columnDrop() {
         }
     })
 }
-
 const currentRowIndex = ref(0)
-
 function directionOperation(e) {
-    if (e && (e.keyCode == 38 || e.keyCode == 40)) {
+    if(e && (e.keyCode == 38 || e.keyCode == 40)){
         e.preventDefault();
         let updateRowDom = null
         if (e && e.keyCode == 38) {// 上
             currentRowIndex.value = Math.max(0, currentRowIndex.value - 1)
-            if (currentRowDom.previousElementSibling) {
+            if(currentRowDom.previousElementSibling){
                 updateRowDom = currentRowDom.previousElementSibling
                 currentRowDom.previousElementSibling.click()
             }
         } else if (e && e.keyCode == 40) {// 下
             currentRowIndex.value = Math.min(bindProps.data.length - 1, currentRowIndex.value + 1)
-            if (currentRowDom.nextElementSibling) {
+            if(currentRowDom.nextElementSibling){
                 updateRowDom = currentRowDom.nextElementSibling
                 currentRowDom.nextElementSibling.click()
             }
         }
-        if (props.virtualScroll) {
+        if(props.virtualScroll){
             tableRef.value.scrollTo({index: currentRowIndex.value})
-        } else {
+        }else{
             tableRef.value.scrollTo({el: updateRowDom})
         }
     }
@@ -995,7 +973,7 @@ function removeListener() {
     tableRef.value.$el.removeEventListener('keydown', directionOperation)
 }
 
-function getData() {
+function getData(){
     return bindProps.data
 }
 
@@ -1008,7 +986,7 @@ onMounted(() => {
         columnDrop()
         onClickOutside(tableMenusRef, () => showMenus.value = false)
         watch(showTable, (value) => {
-            if (value) {
+            if(value){
                 nextTick(() => {
                     columnDrop()
                 })
@@ -1029,28 +1007,25 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
 
 </script>
 <style scoped>
-.body-container {
+.body-container{
     width: 100%;
     height: 100%;
     position: relative;
 }
-
-.table-container {
+.table-container{
     display: flex;
     height: 100%;
     flex-direction: column;
 }
-
 .btn-blue {
     color: #2D8CF0;
     transition-property: color;
     transition-duration: .25s;
 }
 
-.btn-blue:hover {
+.btn-blue:hover{
     color: #7eb6f3;
 }
-
 .table-menus {
     color: black;
     display: flex;
@@ -1059,22 +1034,22 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     position: fixed;
     z-index: 99999;
     background: white;
-    box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
-    border-radius: 5px;
+    box-shadow: 0 8px 16px 0 rgb(0 0 0 / 80%);
+    border-radius: 3px;
 }
 
-.table-menus > .menu {
+.table-menus>.menu {
     font-size: 13px;
     padding: 0 8px 0 16px;
-    height: 34px;
-    line-height: 34px;
+    height: 28px;
+    line-height: 28px;
     cursor: pointer;
     position: relative;
     flex: 1;
     flex-direction: column;
 }
 
-.table-menus > .menu > .items {
+.table-menus>.menu>.items {
     display: none;
     position: fixed;
     top: 50px;
@@ -1085,18 +1060,16 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     overflow-y: auto;
 }
 
-.table-menus > .menu > .items {
+.table-menus>.menu>.items {
     padding: 4px 0;
     box-shadow: 0 0 20px rgb(0 0 0 / 20%);
 }
 
-.table-menus > .menu:hover > .items {
+.table-menus>.menu:hover>.items {
     display: block;
 }
 
 .items .item {
-    display: inline-flex;
-    align-items: center;
     font-size: 12px;
     width: 100%;
     height: 30px;
@@ -1110,7 +1083,6 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
 .table-menus .menu:hover {
     background-color: #e0f0fe;
 }
-
 .down-menus {
     float: right;
     position: absolute;
@@ -1121,27 +1093,22 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     cursor: pointer;
     display: none;
 }
-
 .n-data-table-tr th:hover .down-menus,
 .n-data-table-tr th .down-menus:hover {
     display: block;
 }
-
-.n-data-table {
+.n-data-table{
     outline: none;
 }
-
 .nowrap :deep(td),
-.nowrap :deep(th) {
+.nowrap :deep(th){
     white-space: nowrap;
     overflow: hidden;
 }
-
-.nowrap :deep(.n-space) {
-    flex-wrap: nowrap !important;
+.nowrap :deep(.n-space){
+    flex-wrap: nowrap!important;
 }
-
-:deep(.n-data-table .n-data-table-check-extra) {
+:deep(.n-data-table .n-data-table-check-extra){
     right: 0px;
 }
 </style>
