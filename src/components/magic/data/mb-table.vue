@@ -637,19 +637,17 @@ const tableKey = ref('magicTable' + common.uuid())
 const showTable = ref(true)
 
 function expand() {
-    showTable.value = false
-    expandedRowKeys.value = getTreeIds()
-    nextTick(() => showTable.value = true)
+    nextTick(() => expandedRowKeys.value = getTreeIds())
 }
 
 function toggleExpand() {
-    showTable.value = false
-    if(expandedRowKeys.value.length == 0){
-        expandedRowKeys.value = getTreeIds()
-    }else{
-        expandedRowKeys.value = []
-    }
-    nextTick(() => showTable.value = true)
+    nextTick(() => {
+        if(expandedRowKeys.value.length == 0){
+            expandedRowKeys.value = getTreeIds()
+        }else{
+            expandedRowKeys.value = []
+        }
+    })
 }
 function getTreeIds(){
     let ids = []
