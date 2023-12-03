@@ -458,7 +458,7 @@ function requestData({ where, loading }) {
     }
     if (props.method.toLowerCase() == 'post') {
         common.$post(props.url, where).then(processData)
-    } else if(props.method.toLowerCase() == 'postJson') {
+    } else if(props.method.toLowerCase() == 'postjson') {
         common.$postJson(props.url, where).then(processData)
     } else {
         common.$get(props.url, where).then(processData)
