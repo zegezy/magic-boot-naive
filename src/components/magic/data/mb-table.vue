@@ -24,7 +24,14 @@
                     @scroll="onScroll"
                 >
                     <template #switch="{ row, col }">
-                        <mb-switch v-model="row[col.field]" @change="col.change(row)" v-if="col.if != undefined ? col.if(row) : true"/>
+                        <mb-switch
+                            v-model="row[col.field]"
+                            @change="col.change(row)"
+                            v-if="col.if != undefined ? col.if(row) : true"
+                            :checked-value="col.checkedValue"
+                            :unchecked-value="col.uncheckedValue"
+                            v-bind="col.props"
+                        />
                         <span v-else>-</span>
                     </template>
                     <template #html="{ row, col }">
