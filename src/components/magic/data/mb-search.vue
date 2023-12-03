@@ -1,7 +1,7 @@
 <template>
     <n-form :size="$global.uiSize.value"  inline label-placement="left" @keyup.enter="search" style="flex-wrap:wrap">
         <template v-for="(it, i) in where">
-            <n-form-item v-if="it && it.label" :label="it.label" :key="i">
+            <n-form-item v-if="it && it.label" :label="it.label" :key="i" :show-feedback="false">
                 <component
                         :is="
                         !it.component ? 'mb-input' : it.component.startsWith('n-') ||
@@ -14,7 +14,7 @@
                 />
             </n-form-item>
         </template>
-        <n-form-item>
+        <n-form-item :show-feedback="false">
             <n-space>
                 <n-button :size="$global.uiSize.value"  type="primary" @click="search">
                     <n-icon>
