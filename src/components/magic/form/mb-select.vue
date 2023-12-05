@@ -19,10 +19,8 @@
 
 import {ref, watch, onMounted, computed} from 'vue'
 import { isArray, isNumber, isString } from 'lodash-es'
-import {useDictStore} from "@/store/modules/dictStore";
-import common from '@/scripts/common'
+import { getSelectData } from './mb-select.js'
 
-const dictStore = useDictStore()
 const magicSelect = ref()
 const emit = defineEmits(['update:modelValue', 'change'])
 const props = defineProps({
@@ -155,42 +153,19 @@ function setValue(value) {
 }
 
 function loadData() {
-    if (props.type) {
-        listConcat(dictStore.getDictType(props.type))
-    } else if (props.url) {
-        common.$get(props.url, props.params).then(res => {
-            listConcat(handlerData(res.data.list || res.data))
-        })
-    } else if (props.options && props.options.length > 0) {
-        listConcat(handlerData(props.options))
-    }
-}
-
-function listConcat(dictData) {
-    if(props.optionsFilter){
-        dictData = dictData.filter(props.optionsFilter)
-    }
-    if (props.allOption) {
-        selectList.value = [{
-            value: '',
-            label: '全部'
-        }]
-        selectList.value = selectList.value.concat(dictData)
-    } else {
-        selectList.value = dictData
-    }
-    setValue(props.modelValue)
-}
-
-function handlerData(data) {
-    let newData = []
-    data.forEach(it => {
-        newData.push({
-            label: it[props.labelField],
-            value: it[props.valueField].toString()
-        })
+    getSelectData({
+        type: props.type,
+        url: props.url,
+        params: props.params,
+        options: props.options,
+        optionsFilter: props.optionsFilter,
+        allOption: props.allOption,
+        labelField: props.labelField,
+        valueField: props.valueField
+    }).then(data => {
+        selectList.value = data
+        setValue(props.modelValue)
     })
-    return newData
 }
 
 function getOptions(){
