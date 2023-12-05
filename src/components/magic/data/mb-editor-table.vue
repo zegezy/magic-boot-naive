@@ -1,50 +1,101 @@
 <style scoped>
-:deep(.n-data-table-tr){
-    height: 60px;
-    position: relative;
+.edit-text{
+    min-height: 80%;
+}
+:deep(.n-data-table-tr:hover .edit-text){
+    border: var(--mb-editor-table-tr-hover-border)
 }
 .edit-text:hover{
-    border: 1px dashed #ccc;
+    border: 1px dashed #ccc !important;
 }
 .edit-text-not-allowed{
     cursor: not-allowed;
 }
+:deep(.n-data-table-td){
+    height: 60px;
+}
 </style>
 
 <template>
-    <mb-table ref="magicTable" v-bind="tableOptions">
+    <mb-table
+        ref="magicTable"
+        v-bind="tableOptions"
+        @scroll="onScroll"
+        @load="onLoad"
+    >
         <template v-for="(col, colIndex) in cols" #[col.field]="{ row }">
-            <template v-if="dataList[row._index_]">
-                <template v-if="!col.alwaysEdit && !edits[row._index_ + '' + colIndex] && col.component">
-                    <div
-                        v-if="getIsEdit(col.edit, dataList[row._index_])"
-                        @click="colClick(row._index_, colIndex, col)"
-                        class="edit-text"
-                        :style="col.labelStyle"
+            <template v-if="row">
+                <template v-if="col.component">
+                    <!-- 设置了组件并且是非编辑模式下 -->
+                    <template v-if="col.alwaysEdit !== true && !edits[row._index_ + '' + colIndex]">
+                        <!-- 如果是可以编辑，则鼠标悬浮显示边框 -->
+                        <div
+                            v-if="getIsEdit(col.edit, row)"
+                            @click="editMode(row._index_, colIndex, col)"
+                            class="edit-text"
+                            :style="col.labelStyle"
+                        >
+                            <slot
+                                :name="col.field + '-view'"
+                                :row="row"
+                                :col="col"
+                                :row-index="row._index_"
+                                :col-index="colIndex"
+                            >
+                                <span v-if="col.show == undefined || (col.show && col.show(row))">
+                                    {{ getLabel(row[col.field], col) }}
+                                </span>
+                            </slot>
+                        </div>
+                        <!-- 如果不可以编辑，则鼠标悬浮显示禁止标志 -->
+                        <div v-else class="edit-text-not-allowed" :style="col.labelStyle">
+                            <slot
+                                :name="col.field + '-view'"
+                                :row="row"
+                                :col="col"
+                                :row-index="row._index_"
+                                :col-index="colIndex"
+                            >
+                                <span v-if="col.show == undefined || (col.show && col.show(row))">
+                                    {{ getLabel(row[col.field], col) || '-' }}
+                                </span>
+                            </slot>
+                        </div>
+                    </template>
+                    <!-- edit 和 alwaysEdit 可配合使用 比如符合条件的 可以一直保持编辑模式 -->
+                    <slot
+                        v-if="(col.edit != undefined && col.edit(row) && col.alwaysEdit) || (col.edit == undefined && col.alwaysEdit) || (edits[row._index_ + '' + colIndex] && currentRowIndex == row._index_ && currentColIndex == colIndex)"
+                        :name="col.field + '-edit'"
+                        :row="row"
+                        :col="col"
+                        :row-index="row._index_"
+                        :col-index="colIndex"
                     >
-                        {{ getLabel(row._index_, col) }}&nbsp;
-                    </div>
-                    <div
-                        v-if="!getIsEdit(col.edit, dataList[row._index_])"
-                        class="edit-text-not-allowed"
-                        :style="col.labelStyle"
-                    >
-                        {{ getLabel(row._index_, col) }}&nbsp;
-                    </div>
+                        <!-- edit = true（始终编辑模式） 或者激活编辑模式 显示组件 -->
+                        <component
+                            :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
+                            :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
+                            v-model="row[col.field]"
+                            v-bind="componentDynamicBind(row, col)"
+                            :style="col.componentStyle"
+                            @blur="componentBlur(row._index_, colIndex, col, row)"
+                        />
+                    </slot>
                 </template>
-                <div v-if="!col.component" :style="col.labelStyle">
-                    {{ dataList[row._index_][col.field] }}
+                <!-- 如果没有设置组件 直接显示数据 -->
+                <div v-else :style="col.labelStyle">
+                    <slot
+                        :name="col.field + '-view'"
+                        :row="row"
+                        :col="col"
+                        :row-index="row._index_"
+                        :col-index="colIndex"
+                    >
+                        <span v-if="col.show == undefined || (col.show && col.show(row))">
+                            {{ row[col.field] }}
+                        </span>
+                    </slot>
                 </div>
-                <component
-                    v-if="col.alwaysEdit || (edits[row._index_ + '' + colIndex] && currentRowIndex == row._index_ && currentColIndex == colIndex)"
-                    :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
-                    :is="col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
-                    v-model="dataList[row._index_][col.field]"
-                    v-bind="col.props"
-                    :style="col.componentStyle"
-                    @change="dataChange"
-                    @blur="componentBlur(row._index_, colIndex, col)"
-                />
             </template>
         </template>
     </mb-table>
@@ -52,16 +103,19 @@
 
 <script setup>
 
-import { reactive, ref, watch, nextTick, toRaw } from 'vue'
+import { reactive, ref, onMounted, nextTick, toRaw } from 'vue'
+import { getSelectData } from "@/components/magic/form/mb-select.js";
 import common from '@/scripts/common'
-
-const emit = defineEmits(['update:modelValue', 'change'])
-
+import { omit, cloneDeep } from 'lodash-es'
 const magicTable = ref()
 const props = defineProps({
-    modelValue: {
-        type: Array,
-        default: () => []
+    id: {
+        type: String,
+        default: ''
+    },
+    props: {
+        type: Object,
+        default: () => {}
     },
     cols: {
         type: Array,
@@ -72,8 +126,12 @@ const props = defineProps({
         default: true
     },
     operation: {
-        type: Boolean,
-        default: true
+        type: Object,
+        default: () => {}
+    },
+    operationWidth: {
+        type: Number,
+        default: 85
     },
     page: {
         type: Boolean,
@@ -82,74 +140,119 @@ const props = defineProps({
     rowKey: {
         type: String,
         default: 'id'
+    },
+    preview: {
+        type: Boolean,
+        default: false
+    },
+    onLoad: {
+        type: Function,
+        default: () => {}
+    },
+    rowHoverEdit: {
+        type: Boolean,
+        default: true
     }
 })
-
+// 深拷贝对象，取消对象引用
 const tableOptions = reactive({
-    data: props.modelValue,
-    cols: [],
+    id: props.id,
     page: props.page,
     showNo: props.showNo,
     selectedRowEnable: false,
-    rowKey: props.rowKey
+    rowKey: props.rowKey,
+    keepCurrentPage: true,
+    data: [],
+    cols: [],
+    props: props.props
 })
 const currentColIndex = ref(0)
 const currentRowIndex = ref(0)
+const currentCol = ref()
+// 是否可编辑单元格，可以控制某行某列
 const edits = ref({})
-dataAddIndex(props.modelValue)
-const dataList = ref(props.modelValue || [])
+const showLabelData = reactive({})
+
+function setData(data){
+    let newData = cloneDeep(data)
+    tableOptions.data = dataAddIndex(newData)
+}
 
 for (let i in props.cols) {
     let col = props.cols[i]
-    tableOptions.cols.push({
-        ...col,
-        type: 'dynamic',
-        editIcon: col.component ? true : false
-    })
+    getShowLabelData(col)
+    if(!col.type){
+        col.type = 'dynamic'
+    }
+    if(!col.editIcon){
+        col.editIcon = col.component ? true : false
+    }
+    tableOptions.cols.push(col)
 }
 
-if(props.operation){
+function getShowLabelData(col){
+    switch (col.component) {
+        case 'select':
+            getSelectData(col.componentProps).then(data => {
+                showLabelData[col.field] = data
+            })
+        default:
+            break;
+    }
+}
+
+if(props.operation && !props.preview){
+    let buttons = [{
+        label: '删除',
+        link: true,
+        if: () => props.operation.delete,
+        click: (row) => {
+            deleteRow(row)
+        }
+    }, {
+        label: '添加下级',
+        link: true,
+        if: () => props.operation.sub,
+        click: (row) => {
+            addChildrenRow(row)
+        }
+    }, {
+        label: '添加同级',
+        link: true,
+        if: () => props.operation.same,
+        click: (row) => {
+            addRow(row)
+        }
+    }]
+    if(props.operation.buttons){
+        buttons.push(...props.operation.buttons)
+    }
     tableOptions.cols.push({
         label: '操作',
         type: 'buttons',
-        width: 85,
+        width: props.operationWidth,
         fixed: 'right',
-        buttons: [{
-            label: '删除',
-            click: (row) => {
-                deleteRow(row)
-            }
-        }]
-    })
-    tableOptions.cols.push({
-        label: '添加下级',
-        type: 'buttons',
-        width: 120,
-        fixed: 'right',
-        buttons: [{
-            label: '添加下级',
-            click: (row) => {
-                addChildrenRow(row)
-            }
-        }]
-    })
-    tableOptions.cols.push({
-        label: '添加同级',
-        type: 'buttons',
-        width: 120,
-        fixed: 'right',
-        buttons: [{
-            label: '添加同行',
-            click: (row) => {
-                addRow(row)
-            }
-        }]
+        buttons: buttons
     })
 }
 
+function componentDynamicBind(row, col){
+    let bind = {...col.componentProps}
+    if(col.componentProps){
+        if(col.componentProps.onChange){
+            bind.onChange = (value) => {
+                col.componentProps.onChange(value, row)
+            }
+        }
+    }
+    return bind
+}
+
+// 增加同级
 function addRow(row){
+    // 递归树结构数据 查到当前行数据 在父级push
     recursionAddRow(tableOptions.data, row._index_)
-    dataAddIndex(tableOptions.data)
+    tableDataAddIndex()
 }
 
 function recursionAddRow(children, index){
@@ -163,18 +266,30 @@ function recursionAddRow(children, index){
     })
 }
 
+// 添加下级
 function addChildrenRow(row){
     if(row.children && row.children.length > 0){
         row.children.push({[props.rowKey]: common.uuid()})
     }else{
         row.children = [{[props.rowKey]: common.uuid()}]
     }
-    dataAddIndex(tableOptions.data)
+    tableDataAddIndex()
 }
 
+/**
+ * 递归增加index（主要是为了解决树形结构数据，naive-ui的index不包含子级的问题）
+ * https://www.naiveui.com/zh-CN/os-theme/components/data-table#expand.vue
+ */
 function dataAddIndex(children){
     let index = { index: 0 }
-    recursionAddIndex(children, index)
+    // 深拷贝解除对象引用
+    let data = cloneDeep(children)
+    recursionAddIndex(data, index)
+    return data
+}
+
+function tableDataAddIndex(){
+    tableOptions.data = dataAddIndex(tableOptions.data)
 }
 
 function recursionAddIndex(children, index){
@@ -187,9 +302,10 @@ function recursionAddIndex(children, index){
     })
 }
 
+// 删除本行及以下子节点
 function deleteRow(row){
     recursionDelete(tableOptions.data, row._index_)
-    dataAddIndex(tableOptions.data)
+    tableDataAddIndex()
 }
 
 function recursionDelete(children, index){
@@ -203,13 +319,7 @@ function recursionDelete(children, index){
     })
 }
 
-watch(() => props.modelValue, (value) => {
-    dataAddIndex(value)
-    tableOptions.data = value
-}, {
-    deep: true
-})
-
+// 把树形数据还原成一级 为了template循环渲染组件 不深度拷贝 利用对象引用 v-model更新时 自动更新tableOptions.data
 function recursionRearrange(children){
     const list = []
     children.forEach(it => {
@@ -221,15 +331,10 @@ function recursionRearrange(children){
     return list
 }
 
-watch(() => tableOptions.data, (value) => {
-    dataList.value = recursionRearrange(value)
-},{
-    deep: true
-})
-
+// 根据edit（boolean） 或者 edit（function）判断此列是否可以编辑，不能编辑的话 显示文字
 function getIsEdit(edit, row){
-    if(typeof(edit) == 'boolean'){
-        return edit
+    if(props.preview){
+        return false
     }
     if(typeof(edit) == 'function'){
         return edit(row)
@@ -237,40 +342,54 @@ function getIsEdit(edit, row){
     return true
 }
 
-function getLabel(index, col){
-    let value = dataList.value[index][col.field]
-    if(col.component == 'select'){
-        return value && showLabelDatas[col.field] && showLabelDatas[col.field].filter(it => it.value == value)[0].label
+// 反显方法 比如字典
+function getLabel(value, col){
+    if(value){
+        if(col.component == 'select'){
+            let labels = []
+            let values = value.split(',')
+            for(let value of values){
+                let data = showLabelData[col.field].filter(it => it[col.showLabel?.valueField || 'value'] == value)[0];
+                labels.push(data && data[col.showLabel?.labelField || 'label'])
+            }
+            return labels.join(',')
+        }
+        // 其他可以用 showLabel: data valueField labelField
     }
     return value
 }
 
-function colClick(rowIndex, colIndex, col){
-    if(col.component){
-        currentRowIndex.value = rowIndex
-        currentColIndex.value = colIndex
-        edits.value[rowIndex + '' + colIndex] = true
-    }
-}
-
 let currentEditRef = null
-const showLabelDatas = reactive({})
-function componentBlur(rowIndex, colIndex, col){
+function componentBlur(rowIndex, colIndex, col, row){
     edits.value[rowIndex + '' + colIndex] = false
-    if(col.component == 'select'){
-        showLabelDatas[col.field] = currentEditRef.getOptions()
+    col.blur && col.blur(row)
+}
+
+// 动态设置ref
+function setComponentRef(rowIndex, colIndex, el, col){
+    if(el && edits.value[rowIndex + '' + colIndex]){
+        currentEditRef = el
+        nextTick(() => {
+            let key = Object.keys(toRaw(el.$refs))[0]
+            // 执行组件的focus方法，如果组件内template根节点内有focus方法 直接设置ref属性即可，比如mb-input
+            key && (el.$refs[key].focus && el.$refs[key].focus() || el.$refs[key].$el.focus())
+            componentInit(el, col)
+        })
     }
 }
 
+// 组件初始化时
 function componentInit(el, col){
+    // 如果为textarea 则放大显示
     if(col.component == 'textarea'){
         col.componentStyle = col.componentStyle || {}
         let parentNodeRect = el.$el.parentNode.getBoundingClientRect()
         let tableRect = magicTable.value.$el.getBoundingClientRect()
         let tableWidth = magicTable.value.$el.clientWidth
         let left = parentNodeRect.left - tableRect.left
+        let top = parentNodeRect.top - tableRect.top - magicTable.value.$el.querySelector('.n-data-table-base-table-header').offsetHeight
         col.componentStyle.position = 'absolute'
-        col.componentStyle['z-index'] = 1
+        col.componentStyle['z-index'] = 999999
         col.componentStyle.width = col.componentStyle.width || parentNodeRect.width + 'px'
         if(tableWidth - left - col.componentStyle.width.match(/\d+/)[0] < 1){
             col.componentStyle.right = `1px`
@@ -279,29 +398,62 @@ function componentInit(el, col){
             col.componentStyle.left = `${left}px`
             col.componentStyle.right = 'unset'
         }
-        col.componentStyle.top = '1px'
+        col.componentStyle.top = `${top}px`
     }
-    if(col.component == 'select'){
-        el.expand()
+    // select时则自动展开
+    // if(col.component == 'select'){
+    //     el.expand()
+    // }
+}
+
+// 让单元格变成预览模式
+function previewMode(rowIndex, colIndex){
+    edits.value[rowIndex + '' + colIndex] = false
+}
+
+// 让单元格变成编辑模式
+function editMode(rowIndex, colIndex, col){
+    currentRowIndex.value = rowIndex
+    currentColIndex.value = colIndex
+    edits.value[rowIndex + '' + colIndex] = true
+    if(col){
+        currentCol.value = col
     }
 }
 
-function setComponentRef(rowIndex, colIndex, el, col){
-    if(el && edits.value[rowIndex + '' + colIndex]){
-        currentEditRef = el
-        nextTick(() => {
-            let key = Object.keys(toRaw(el.$refs))[0]
-            key && (el.$refs[key].focus && el.$refs[key].focus() || el.$refs[key].$el.focus())
-            componentInit(el, col)
-        })
+function onScroll(){
+    if(currentCol.value && currentCol.value.component == 'textarea' && edits.value[currentRowIndex.value + '' + currentColIndex.value]){
+        edits.value[currentRowIndex.value + '' + currentColIndex.value] = false
+        currentCol.value = null
     }
 }
 
-function dataChange() {
-    console.log('更新')
-    console.log(tableOptions.data)
-    emit('update:modelValue', tableOptions.data)
-    emit('change', tableOptions.data)
+function getData(){
+    return tableOptions.data.map(it => omit({...it}, '_index_'))
 }
+
+function push(data){
+    tableOptions.data.push(data)
+    tableDataAddIndex()
+}
+
+function unshift(data){
+    tableOptions.data.unshift(data)
+    tableDataAddIndex()
+}
+
+function getTableRef(){
+    return magicTable.value
+}
+
+onMounted(() => {
+    if(props.rowHoverEdit){
+        magicTable.value?.$el.style.setProperty('--mb-editor-table-tr-hover-border', '1px dashed #ccc')
+    }else{
+        magicTable.value?.$el.style.setProperty('--mb-editor-table-tr-hover-border', 'unset')
+    }
+})
+
+defineExpose({ getTableRef, previewMode, editMode, getData, setData, push, unshift })
 
 </script>
