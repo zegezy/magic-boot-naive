@@ -2,6 +2,7 @@ import request from '@/scripts/request'
 import global from '@/scripts/global'
 import {utils, writeFile} from 'xlsx'
 import {useUserStore} from "@/store/modules/userStore";
+import {isArray, cloneDeep} from "lodash-es";
 
 const common = {}
 
@@ -247,6 +248,33 @@ common.filterIframeTabs = (it) => {
         ||
         it.meta.openMode == '2'
     )
+}
+
+/**
+ * 字符串数组和字符串（带逗号）对比
+ */
+common.arrayStringEq = (v1, v2) => {
+    let value1 = cloneDeep(v1)
+    let value2 = cloneDeep(v2)
+    value1 = isArray(value1) ? value1.join(',') : value1 && value1.toString()
+    value2 = isArray(value2) ? value2.join(',') : value2 && value2.toString()
+    return value1 == value2
+}
+
+/**
+ * 判断数据不为null、undefined、空字符串。不包含0和1
+ */
+common.notEmptyNot01 = (value) => {
+    if(value !== null && value !== undefined && value !== ''){
+        return true
+    }
+    return false
+}
+
+common.stopWatchList = (watchList) => {
+    for(let watchFunction of watchList){
+        watchFunction()
+    }
 }
 
 export default common

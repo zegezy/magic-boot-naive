@@ -1,3 +1,4 @@
+import { omit } from "lodash-es";
 const treeTable = {}
 
 treeTable.isChildren = (children, id) => {
@@ -32,6 +33,20 @@ treeTable.queryChildren = (children, id) => {
         }
     }
     return result
+}
+
+/**
+ * 把树形数据还原成一级
+ */
+treeTable.recursionRearrange = (children) => {
+    const list = []
+    children.forEach(it => {
+        list.push(omit(it, 'children'))
+        if(it.children && it.children.length > 0){
+            list.push(...treeTable.recursionRearrange(it.children))
+        }
+    })
+    return list
 }
 
 treeTable.genTree = (children) => {

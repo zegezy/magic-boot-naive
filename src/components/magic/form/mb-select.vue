@@ -5,7 +5,7 @@
         v-bind="props.props"
         v-model:value="selectValue"
         :multiple="multiple"
-        :options="selectList"
+        :options="options"
         :style="{ width }"
         :placeholder="placeholder || (itemLabel && '请输入' + itemLabel)"
         :clearable="clearable"
@@ -17,9 +17,10 @@
 
 <script setup>
 
-import {ref, watch, onMounted, computed} from 'vue'
-import { isArray, isNumber, isString } from 'lodash-es'
-import { getSelectData } from './mb-select.js'
+import { ref, watch, onMounted } from 'vue'
+import { getSelectData } from '@/api/components/mb-select.js'
+import { watchValue } from "@/components/magic/scripts/watch-join-update";
+import common from "@/scripts/common";
 
 const magicSelect = ref()
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -91,67 +92,18 @@ const props = defineProps({
         default: true
     }
 })
-
-let join = props.join
-if(!props.multiple){
-    join = false
-}
-const selectList = ref([])
+const options = ref([])
 const selectValue = ref(props.multiple ? [] : null)
-const getSelectValue = computed(() => {
-    if (join) {
-        return selectValue.value.join(',')
-    } else {
-        return selectValue.value
-    }
-})
 
 watch(() => [props.type, props.url, props.options], () => {
     loadData()
 }, {deep: true})
 
-watch(() => props.modelValue, (value) => {
-    let _value = value
-    let sv = getSelectValue.value
-    _value = isArray(_value) ? _value.join(',') : _value && _value.toString()
-    sv = isArray(sv) ? getSelectValue.value.join(',') : sv && sv.toString()
-    // 如果传过来的值和选择的值不一样则更新
-    if(_value != sv){
-        setValue(value)
-    }
-})
-
 onMounted(() => {
     loadData()
 })
 
-let selectValueWatch = false
-
-function setValue(value) {
-    if(isArray(value)){
-        value = value.map(v => v.toString())
-        selectValue.value = value
-    }else if(isNumber(value)){
-        join = props.multiple
-        selectValue.value = props.multiple ? value.toString().split(',') : value.toString()
-    }else if(isString(value)){
-        join = props.multiple
-        selectValue.value = props.multiple ? value.split(',') : value
-    }
-    if (!selectValueWatch) {
-        watch(selectValue, (value) => {
-            if (join) {
-                emit('update:modelValue', value.join(','))
-                emit('change', value.join(','))
-            } else {
-                emit('update:modelValue', value)
-                emit('change', value)
-            }
-        })
-    }
-    selectValueWatch = true
-}
-
+let watchList = []
 function loadData() {
     getSelectData({
         type: props.type,
@@ -163,13 +115,14 @@ function loadData() {
         labelField: props.labelField,
         valueField: props.valueField
     }).then(data => {
-        selectList.value = data
-        setValue(props.modelValue)
+        options.value = data
+        common.stopWatchList(watchList)
+        watchList = watchValue(selectValue, props, emit)
     })
 }
 
 function getOptions(){
-    return selectList.value
+    return options.value
 }
 
 defineExpose({ getOptions })

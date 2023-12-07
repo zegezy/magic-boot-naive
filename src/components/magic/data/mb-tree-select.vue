@@ -1,20 +1,22 @@
 <template>
     <n-tree-select
+        ref="magicTreeSelect"
         v-model:value="selectValue"
         :options="options"
         :placeholder="placeholder || (itemLabel && '请选择' + itemLabel)"
+        :multiple="multiple"
         v-bind="props.props"
         default-expand-all
     />
 </template>
 
 <script setup>
-import {ref, watch} from "vue"
-import treeTable from '@/scripts/treeTable'
-import common from '@/scripts/common'
+import {ref} from "vue"
+import { watchValue } from '@/components/magic/scripts/watch-join-update.js'
+import { getTreeSelectData } from '@/api/components/mb-tree-select.js'
 
+const magicTreeSelect = ref()
 const emit = defineEmits(['update:modelValue'])
-const selectValue = ref(null)
 const props = defineProps({
     modelValue: {
         type: String,
@@ -27,22 +29,23 @@ const props = defineProps({
     },
     itemLabel: String,
     placeholder: String,
-    props: Object
+    props: Object,
+    multiple: {
+        type: Boolean,
+        default: false
+    },
+    join: {
+        type: Boolean,
+        default: true
+    }
 })
 
-selectValue.value = props.modelValue
-watch(() => props.modelValue, (value) => {
-    selectValue.value = value
-})
-watch(selectValue, (value) => {
-    emit('update:modelValue', value)
-})
-
+const selectValue = ref(props.multiple ? [] : null)
 const options = ref([])
 
-common.$get(props.url).then(res => {
-    options.value = res.data.list
-    treeTable.deleteEmptyChildren(options.value)
+getTreeSelectData(props).then(data => {
+    options.value = data
+    watchValue(selectValue, props, emit)
 })
 
 </script>

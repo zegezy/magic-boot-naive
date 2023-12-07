@@ -104,9 +104,11 @@
 <script setup>
 
 import { reactive, ref, onMounted, nextTick, toRaw } from 'vue'
-import { getSelectData } from "@/components/magic/form/mb-select.js";
+import { getSelectData } from "@/api/components/mb-select.js";
+import { getTreeSelectData } from "@/api/components/mb-tree-select";
 import common from '@/scripts/common'
 import { omit, cloneDeep } from 'lodash-es'
+import treeTable from "@/scripts/treeTable";
 const magicTable = ref()
 const props = defineProps({
     id: {
@@ -196,6 +198,12 @@ function getShowLabelData(col){
             getSelectData(col.componentProps).then(data => {
                 showLabelData[col.field] = data
             })
+            break;
+        case 'tree-select':
+            getTreeSelectData(col.componentProps).then(data => {
+                showLabelData[col.field] = treeTable.recursionRearrange(data)
+            })
+            break;
         default:
             break;
     }
@@ -319,18 +327,6 @@ function recursionDelete(children, index){
     })
 }
 
-// 把树形数据还原成一级 为了template循环渲染组件 不深度拷贝 利用对象引用 v-model更新时 自动更新tableOptions.data
-function recursionRearrange(children){
-    const list = []
-    children.forEach(it => {
-        list.push(it)
-        if(it.children && it.children.length > 0){
-            list.push(...recursionRearrange(it.children))
-        }
-    })
-    return list
-}
-
 // 根据edit（boolean） 或者 edit（function）判断此列是否可以编辑，不能编辑的话 显示文字
 function getIsEdit(edit, row){
     if(props.preview){
@@ -342,21 +338,30 @@ function getIsEdit(edit, row){
     return true
 }
 
+function getLabelByData(col, value, data){
+    let dataList = data || showLabelData[col.field]
+    if(dataList && dataList.length > 0){
+        let labels = []
+        let values = value.toString().split(',')
+        for(let value of values){
+            let data = dataList.filter(it => it[col.showLabel?.valueField || 'value'] == value)[0];
+            labels.push(data && data[col.showLabel?.labelField || 'label'])
+        }
+        return labels.join(',')
+    }
+}
+
 // 反显方法 比如字典
 function getLabel(value, col){
-    if(value){
-        if(col.component == 'select'){
-            let labels = []
-            let values = value.split(',')
-            for(let value of values){
-                let data = showLabelData[col.field].filter(it => it[col.showLabel?.valueField || 'value'] == value)[0];
-                labels.push(data && data[col.showLabel?.labelField || 'label'])
-            }
-            return labels.join(',')
+    if(common.notEmptyNot01(value)){
+        if(['select', 'tree-select'].indexOf(col.component) != -1){
+            return getLabelByData(col, value)
+        }else if(col.showLabel){
+            return getLabelByData(col, value, col.showLabel.data)
+        }else{
+            return value
         }
-        // 其他可以用 showLabel: data valueField labelField
     }
-    return value
 }
 
 let currentEditRef = null
@@ -401,7 +406,7 @@ function componentInit(el, col){
         col.componentStyle.top = `${top}px`
     }
     // select时则自动展开
-    // if(col.component == 'select'){
+    // if(col.component == 'tree-select'){
     //     el.expand()
     // }
 }
