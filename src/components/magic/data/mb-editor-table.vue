@@ -405,10 +405,10 @@ function componentInit(el, col){
         }
         col.componentStyle.top = `${top}px`
     }
-    // select时则自动展开
-    // if(col.component == 'tree-select'){
-    //     el.expand()
-    // }
+    // tree-select时则自动展开
+    if(col.component == 'tree-select'){
+        el.expand()
+    }
 }
 
 // 让单元格变成预览模式

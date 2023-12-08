@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue"
+import { ref,nextTick } from "vue"
 import { watchValue } from '@/components/magic/scripts/watch-join-update.js'
 import { getTreeSelectData } from '@/api/components/mb-tree-select.js'
 
@@ -47,5 +47,11 @@ getTreeSelectData(props).then(data => {
     options.value = data
     watchValue(selectValue, props, emit)
 })
+
+function expand(){
+    nextTick(() => magicTreeSelect.value.handleTriggerClick())
+}
+
+defineExpose({ expand })
 
 </script>
