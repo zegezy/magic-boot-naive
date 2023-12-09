@@ -351,7 +351,7 @@ function getLabelByData(col, value, data){
     }
 }
 
-// 反显方法 比如字典
+// 反显方法
 function getLabel(value, col){
     if(common.notEmptyNot01(value)){
         if(['select', 'tree-select'].indexOf(col.component) != -1){
@@ -385,30 +385,39 @@ function setComponentRef(rowIndex, colIndex, el, col){
 
 // 组件初始化时
 function componentInit(el, col){
-    // 如果为textarea 则放大显示
-    if(col.component == 'textarea'){
-        col.componentStyle = col.componentStyle || {}
-        let parentNodeRect = el.$el.parentNode.getBoundingClientRect()
-        let tableRect = magicTable.value.$el.getBoundingClientRect()
-        let tableWidth = magicTable.value.$el.clientWidth
-        let left = parentNodeRect.left - tableRect.left
-        let top = parentNodeRect.top - tableRect.top - magicTable.value.$el.querySelector('.n-data-table-base-table-header').offsetHeight
-        col.componentStyle.position = 'absolute'
-        col.componentStyle['z-index'] = 999999
-        col.componentStyle.width = col.componentStyle.width || parentNodeRect.width + 'px'
-        if(tableWidth - left - col.componentStyle.width.match(/\d+/)[0] < 1){
-            col.componentStyle.right = `1px`
-            col.componentStyle.left = 'unset'
-        }else{
-            col.componentStyle.left = `${left}px`
-            col.componentStyle.right = 'unset'
-        }
-        col.componentStyle.top = `${top}px`
+    switch (col.component){
+        case 'textarea':
+            // 放大显示
+            textareaInit(el, col)
+            break;
+        case 'tree-select':
+            // 展开
+            el.expand()
+            break;
+        default:
+            break;
     }
-    // tree-select时则自动展开
-    if(col.component == 'tree-select'){
-        el.expand()
+}
+
+// textarea初始化
+function textareaInit(el, col){
+    col.componentStyle = col.componentStyle || {}
+    let parentNodeRect = el.$el.parentNode.getBoundingClientRect()
+    let tableRect = magicTable.value.$el.getBoundingClientRect()
+    let tableWidth = magicTable.value.$el.clientWidth
+    let left = parentNodeRect.left - tableRect.left
+    let top = parentNodeRect.top - tableRect.top - magicTable.value.$el.querySelector('.n-data-table-base-table-header').offsetHeight
+    col.componentStyle.position = 'absolute'
+    col.componentStyle['z-index'] = 999999
+    col.componentStyle.width = col.componentStyle.width || parentNodeRect.width + 'px'
+    if(tableWidth - left - col.componentStyle.width.match(/\d+/)[0] < 1){
+        col.componentStyle.right = `1px`
+        col.componentStyle.left = 'unset'
+    }else{
+        col.componentStyle.left = `${left}px`
+        col.componentStyle.right = 'unset'
     }
+    col.componentStyle.top = `${top}px`
 }
 
 // 让单元格变成预览模式

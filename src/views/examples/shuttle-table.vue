@@ -87,7 +87,7 @@ const dataTableOptions = reactive({
     cols: [{
         field: 'username',
         label: '登录名称',
-        component: 'input'
+        component: 'textarea'
     },{
         field: 'roleId',
         label: '角色',
