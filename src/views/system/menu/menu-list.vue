@@ -49,8 +49,7 @@ import {ref, reactive, onMounted, nextTick, watch, h} from 'vue'
 import MenuForm from './menu-form'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
-import vicons from "@/scripts/vicons";
-import {NIcon} from 'naive-ui';
+import MbIcon from '@/components/magic/basic/mb-icon.vue';
 import { isEmpty } from 'lodash-es'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
@@ -86,11 +85,8 @@ const tableOptions = reactive({
             field: 'icon',
             label: '图标',
             render(row) {
-                let getIcon = (row) => {
-                    return vicons[row.icon]
-                }
-                if (row.icon && getIcon(row)) {
-                    return h(NIcon, null, {default: () => h(getIcon(row))})
+                if (row.icon) {
+                    return h(MbIcon, { icon: row.icon })
                 }
             }
         },

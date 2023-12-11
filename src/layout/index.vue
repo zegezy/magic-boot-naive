@@ -63,8 +63,7 @@ import {ref, h, watch, computed} from 'vue';
 import tabs from './tabs.vue'
 import none from './none.vue'
 import {RouterLink} from 'vue-router'
-import vicons from '@/scripts/vicons'
-import {NIcon} from 'naive-ui';
+import MbIcon from '@/components/magic/basic/mb-icon.vue';
 import {useUserStore} from "@/store/modules/userStore"
 import {useTabsStore} from "@/store/modules/tabsStore"
 import LayoutHeader from "@/layout/layout-header.vue";
@@ -88,7 +87,7 @@ function selectMenu(key) {
 }
 
 function renderIcon(icon) {
-    return () => h(NIcon, null, {default: () => h(icon)})
+    return () => h(MbIcon, { icon })
 }
 
 const isCollapsed = ref(false)
@@ -146,11 +145,8 @@ function recursionRouters(children) {
                 )
             }
         }
-        let getIcon = (chi) => {
-            return vicons[chi.icon]
-        }
-        if (chi.icon && getIcon(chi)) {
-            menu.icon = renderIcon(getIcon(chi))
+        if (chi.icon) {
+            menu.icon = renderIcon(chi.icon)
         }
         menus.push(menu)
     })

@@ -61,9 +61,7 @@
                                     @click="it.click(row)"
                                 >
                                     <template #icon v-if="it.icon">
-                                        <n-icon>
-                                            <component :is="vicons[it.icon]" />
-                                        </n-icon>
+                                        <mb-icon :icon="it.icon" />
                                     </template>
                                     {{ it.label }}
                                 </n-button>
@@ -135,7 +133,6 @@
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
-import vicons from '@/scripts/vicons'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
 import { EditFilled } from '@vicons/antd'
 import common from '@/scripts/common'

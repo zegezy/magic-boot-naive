@@ -1,82 +1,93 @@
 <template>
-    <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
-        <n-grid :cols="24">
-            <n-gi :span="12">
-                <n-form-item label="菜单类型" path="type">
-                    <n-radio-group v-model:value="menuType">
-                        <n-radio-button key="menu" value="menu" label="菜单"/>
-                        <n-radio-button key="button" value="button" label="按钮"/>
-                    </n-radio-group>
-                </n-form-item>
-            </n-gi>
-            <n-gi :span="12">
-                <n-form-item label="上级菜单" path="pid">
-                    <n-tree-select
-                        v-model:value="temp.pid"
-                        :options="menuTree"
-                    />
-                </n-form-item>
-            </n-gi>
-        </n-grid>
-        <n-form-item label="菜单名称" path="name">
-            <n-input v-model:value="temp.name"/>
-        </n-form-item>
-        <n-form-item label="菜单链接" path="url" v-if="menuType == 'menu'">
-            <n-input v-model:value="temp.url"/>
-        </n-form-item>
-        <n-form-item label="打开方式" path="openMode"
-                     v-if="menuType == 'menu'">
-            <n-radio-group v-model:value="openModeRef">
-                <n-radio-button key="0" value="0" label="页签"/>
-                <n-radio-button key="1" value="1" label="新标签页"/>
-                <n-radio-button key="2" value="2" label="iframe"/>
-            </n-radio-group>
-        </n-form-item>
-        <n-form-item label="关联组件" path="componentName"
-                     v-if="menuType == 'menu' && !(temp.url.startsWith('http') || (temp.url.startsWith('/') && temp.url.indexOf('.htm') != -1))">
-            <n-tree-select
-                v-model:value="temp.componentName"
-                :options="componentTree"
-            />
-        </n-form-item>
-        <n-form-item label="权限标识" path="permission" v-if="menuType == 'button'">
-            <n-input v-model:value="temp.permission"/>
-        </n-form-item>
+    <div>
+        <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="100px">
+            <n-grid :cols="24">
+                <n-gi :span="12">
+                    <n-form-item label="菜单类型" path="type">
+                        <n-radio-group v-model:value="menuType">
+                            <n-radio-button key="menu" value="menu" label="菜单"/>
+                            <n-radio-button key="button" value="button" label="按钮"/>
+                        </n-radio-group>
+                    </n-form-item>
+                </n-gi>
+                <n-gi :span="12">
+                    <n-form-item label="上级菜单" path="pid">
+                        <n-tree-select
+                            v-model:value="temp.pid"
+                            :options="menuTree"
+                        />
+                    </n-form-item>
+                </n-gi>
+            </n-grid>
+            <n-form-item label="菜单名称" path="name">
+                <n-input v-model:value="temp.name"/>
+            </n-form-item>
+            <n-form-item label="菜单链接" path="url" v-if="menuType == 'menu'">
+                <n-input v-model:value="temp.url"/>
+            </n-form-item>
+            <n-form-item label="打开方式" path="openMode"
+                         v-if="menuType == 'menu'">
+                <n-radio-group v-model:value="openModeRef">
+                    <n-radio-button key="0" value="0" label="页签"/>
+                    <n-radio-button key="1" value="1" label="新标签页"/>
+                    <n-radio-button key="2" value="2" label="iframe"/>
+                </n-radio-group>
+            </n-form-item>
+            <n-form-item label="关联组件" path="componentName"
+                         v-if="menuType == 'menu' && !(temp.url.startsWith('http') || (temp.url.startsWith('/') && temp.url.indexOf('.htm') != -1))">
+                <n-tree-select
+                    v-model:value="temp.componentName"
+                    :options="componentTree"
+                />
+            </n-form-item>
+            <n-form-item label="权限标识" path="permission" v-if="menuType == 'button'">
+                <n-input v-model:value="temp.permission"/>
+            </n-form-item>
 
-        <div class="flex flex-wrap">
-            <div style="width: 50%">
-                <n-form-item label="菜单显示" path="isShow" v-if="menuType == 'menu'">
-                    <n-radio-group v-model:value="temp.isShow">
-                        <n-radio-button :key="1" :value="1" label="显示"/>
-                        <n-radio-button :key="0" :value="0" label="不显示"/>
-                    </n-radio-group>
-                </n-form-item>
+            <div class="flex flex-wrap">
+                <div style="width: 50%">
+                    <n-form-item label="菜单显示" path="isShow" v-if="menuType == 'menu'">
+                        <n-radio-group v-model:value="temp.isShow">
+                            <n-radio-button :key="1" :value="1" label="显示"/>
+                            <n-radio-button :key="0" :value="0" label="不显示"/>
+                        </n-radio-group>
+                    </n-form-item>
+                </div>
+                <div style="width: 50%">
+                    <n-form-item label="路由缓存" path="keepAlive" v-if="menuType == 'menu'">
+                        <n-radio-group v-model:value="temp.keepAlive">
+                            <n-radio-button :key="1" :value="1" label="缓存"/>
+                            <n-radio-button :key="0" :value="0" label="不缓存"/>
+                        </n-radio-group>
+                    </n-form-item>
+                </div>
+                <div style="width: 50%">
+                    <n-form-item label="排序" path="sort">
+                        <n-input-number v-model:value="temp.sort" button-placement="both"/>
+                    </n-form-item>
+                </div>
+                <div style="width: 50%">
+                    <n-form-item label="图标" path="icon">
+                        <a @click="openIcons">
+                            <n-input v-model:value="temp.icon">
+                                <template #suffix>
+                                    <mb-icon :icon="temp.icon" />
+                                </template>
+                            </n-input>
+                        </a>
+                    </n-form-item>
+                </div>
             </div>
-            <div style="width: 50%">
-                <n-form-item label="路由缓存" path="keepAlive" v-if="menuType == 'menu'">
-                    <n-radio-group v-model:value="temp.keepAlive">
-                        <n-radio-button :key="1" :value="1" label="缓存"/>
-                        <n-radio-button :key="0" :value="0" label="不缓存"/>
-                    </n-radio-group>
-                </n-form-item>
-            </div>
-            <div style="width: 50%">
-                <n-form-item label="排序" path="sort">
-                    <n-input-number v-model:value="temp.sort" button-placement="both"/>
-                </n-form-item>
-            </div>
-            <div style="width: 50%">
-                <n-form-item label="图标" path="icon">
-                    <n-input v-model:value="temp.icon"/>
-                </n-form-item>
-            </div>
-
-        </div>
-    </n-form>
+        </n-form>
+        <mb-modal ref="iconDialog" width="650px" title="选择图标">
+            <menu-icons :select-icon="selectIcon" />
+        </mb-modal>
+    </div>
 </template>
 
 <script setup>
 import {ref, reactive, watch, nextTick} from 'vue'
+import MenuIcons from './menu-icons'
 import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 
@@ -95,6 +106,7 @@ const emit = defineEmits(['reload-table'])
 const componentTree = ref()
 const dataForm = ref()
 const menuType = ref('menu')
+const iconDialog = ref()
 const openModeRef = ref('0')
 const getTemp = () => {
     return {
@@ -230,6 +242,15 @@ function getInfo(row) {
 
 function resetTemp() {
     temp.value = getTemp()
+}
+
+function selectIcon(symbol) {
+    temp.value.icon = symbol
+    iconDialog.value.hide()
+}
+
+function openIcons() {
+    iconDialog.value.show()
 }
 
 function getSort() {
