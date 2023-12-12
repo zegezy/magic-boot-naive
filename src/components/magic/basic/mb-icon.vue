@@ -1,8 +1,18 @@
 <template>
-    <svg v-if="dynamic" aria-hidden="true" class="mb-icon" :style="{ width: size, height: size }">
+    <svg
+        v-if="dynamic"
+        aria-hidden="true"
+        class="mb-icon"
+        :fill="color"
+        :style="{ width: size, height: size }"
+    >
         <use :xlink:href="symbolId" :class="className"/>
     </svg>
-    <n-icon :size="size" v-else>
+    <n-icon
+        v-else
+        :color="color"
+        :size="size"
+    >
         <component :is="xicons[icon]" />
     </n-icon>
 </template>
@@ -19,6 +29,10 @@ const props = defineProps({
     size: {
         type: String,
         default: '1em'
+    },
+    color: {
+        type: String,
+        default: 'currentColor'
     }
 });
 const symbolId = computed(() => props.icon&&props.icon.startsWith('#') ? props.icon : `#${props.prefix}-${props.icon}`)
@@ -32,6 +46,5 @@ if(svgIcons.indexOf(props.icon) != -1){
 .mb-icon {
 	vertical-align: -0.25em;
 	overflow: hidden;
-	fill: var(--mb-main-icon-color)
 }
 </style>
