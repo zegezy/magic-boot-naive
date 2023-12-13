@@ -103,7 +103,7 @@
 
 <script setup>
 
-import { reactive, ref, onMounted, nextTick, toRaw } from 'vue'
+import { reactive, ref, nextTick, toRaw, watch } from 'vue'
 import { getSelectData } from "@/api/components/mb-select.js";
 import { getTreeSelectData } from "@/api/components/mb-tree-select";
 import common from '@/scripts/common'
@@ -460,11 +460,11 @@ function getTableRef(){
     return magicTable.value
 }
 
-onMounted(() => {
+watch(magicTable, () => {
     if(props.rowHoverEdit){
-        magicTable.value?.$el.style.setProperty('--mb-editor-table-tr-hover-border', '1px dashed #ccc')
+        magicTable.value.$el.style.setProperty('--mb-editor-table-tr-hover-border', '1px dashed #ccc')
     }else{
-        magicTable.value?.$el.style.setProperty('--mb-editor-table-tr-hover-border', 'unset')
+        magicTable.value.$el.style.setProperty('--mb-editor-table-tr-hover-border', 'unset')
     }
 })
 
