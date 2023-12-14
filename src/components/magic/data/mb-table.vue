@@ -77,30 +77,32 @@
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
                     </template>
                     <template #title="{ col }">
-                        <div @click="dataSort(col)">
-                            <label>{{ col.label }}</label>
-                            <n-icon v-if="col.editIcon">
-                                <EditFilled />
-                            </n-icon>
-                            <n-icon v-if="col.dataSortRule">
-                                <CaretUpOutline />
-                            </n-icon>
-                            <n-icon v-if="col.dataSortRule == false">
-                                <CaretDownOutline />
-                            </n-icon>
-                            <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
-                                <ArrowSort16Filled />
-                            </n-icon>
-                            <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
-                                <ArrowSortUp16Filled />
-                            </n-icon>
-                            <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
-                                <ArrowSortDown16Filled />
+                        <div @contextmenu.prevent="headerClick($event, col)">
+                            <div @click="dataSort(col)">
+                                <label>{{ col.label }}</label>
+                                <n-icon v-if="col.editIcon">
+                                    <EditFilled />
+                                </n-icon>
+                                <n-icon v-if="col.dataSortRule">
+                                    <CaretUpOutline />
+                                </n-icon>
+                                <n-icon v-if="col.dataSortRule == false">
+                                    <CaretDownOutline />
+                                </n-icon>
+                                <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
+                                    <ArrowSort16Filled />
+                                </n-icon>
+                                <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
+                                    <ArrowSortUp16Filled />
+                                </n-icon>
+                                <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
+                                    <ArrowSortDown16Filled />
+                                </n-icon>
+                            </div>
+                            <n-icon class="down-menus" @click="headerClick($event, col)">
+                                <ChevronDown />
                             </n-icon>
                         </div>
-                        <n-icon class="down-menus" @click="headerClick($event, col)">
-                            <ChevronDown />
-                        </n-icon>
                     </template>
                     <template #image="{ row, col }">
                         <n-image-group v-if="row[col.field]">
