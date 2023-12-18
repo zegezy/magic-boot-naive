@@ -14,6 +14,9 @@
 :deep(.n-data-table-td){
     height: 60px;
 }
+:deep(.n-data-table .n-data-table-expand-trigger){
+    float: left;
+}
 </style>
 
 <template>
@@ -22,6 +25,8 @@
         v-bind="tableOptions"
         @scroll="onScroll"
         @load="onLoad"
+        @dynamicSettingContextmenu="dynamicSettingContextmenu"
+        @contextmenuSelect="contextmenuSelect"
     >
         <template v-for="(col, colIndex) in cols" #[col.field]="{ row }">
             <template v-if="row">
@@ -209,8 +214,9 @@ function getShowLabelData(col){
     }
 }
 
+let buttons = []
 if(props.operation && !props.preview){
-    let buttons = [{
+    buttons.push(...[{
         label: '删除',
         link: true,
         if: () => props.operation.delete,
@@ -231,7 +237,7 @@ if(props.operation && !props.preview){
         click: (row) => {
             addRow(row)
         }
-    }]
+    }])
     if(props.operation.buttons){
         buttons.push(...props.operation.buttons)
     }
@@ -439,6 +445,29 @@ function onScroll(){
     if(currentCol.value && currentCol.value.component == 'textarea' && edits.value[currentRowIndex.value + '' + currentColIndex.value]){
         edits.value[currentRowIndex.value + '' + currentColIndex.value] = false
         currentCol.value = null
+    }
+}
+
+let contextmenus = []
+function dynamicSettingContextmenu(row){
+    contextmenus = []
+    for(let button of buttons){
+        if((button.if && button.if(row)) || button.if === undefined){
+            contextmenus.push({
+                key: button.label,
+                title: button.label,
+                row: row,
+                click: button.click
+            })
+        }
+    }
+    return contextmenus
+}
+
+function contextmenuSelect(key){
+    let menu = contextmenus.filter(it => it.key == key)[0]
+    if(menu.click){
+        menu.click(menu.row)
     }
 }
 

@@ -128,6 +128,16 @@
                 </div>
             </div>
         </div>
+        <n-dropdown
+            placement="bottom-start"
+            trigger="manual"
+            :x="rightClickMenuX"
+            :y="rightClickMenuY"
+            :options="rightClickOptions"
+            :show="rightClickShowDropdown"
+            :on-clickoutside="() => rightClickShowDropdown = false"
+            @select="rightClickMenuSelect"
+        />
     </div>
 </template>
 
@@ -241,6 +251,20 @@ const props = defineProps({
     onScroll: {
         type: Function,
         default: () => {}
+    },
+    onContextmenu: {
+        type: Function,
+        default: () => {}
+    },
+    onDynamicSettingContextmenu: {
+        type: Function,
+        default: () => {
+            return []
+        }
+    },
+    onContextmenuSelect: {
+        type: Function,
+        default: () => {}
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -306,37 +330,76 @@ const showColumns = ref([])
 const bindProps = reactive(props.props || {})
 const getNowrap = computed(() => props.nowrap != undefined ? props.nowrap : componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : false)
 let currentRowDom = null
-if(props.selectedRowEnable){
-    bindProps.rowProps = (row) => {
-        return {
-            onClick: (e) => {
-                let setBackgroundColor = (dom, color) => {
-                    dom.forEach(d => {
-                        let _color = color
-                        if(d){
-                            if(!_color){
-                                if(d.className.indexOf('n-data-table-tr--striped') != -1){
-                                    _color = 'var(--n-merged-td-color-striped)'
-                                }else{
-                                    _color = 'var(--n-merged-td-color)'
-                                }
+
+bindProps.rowProps = (row) => {
+    let _rowProps = {}
+    if(props.selectedRowEnable){
+        _rowProps['onClick'] = (e) => {
+            let setBackgroundColor = (dom, color) => {
+                dom.forEach(d => {
+                    let _color = color
+                    if(d){
+                        if(!_color){
+                            if(d.className.indexOf('n-data-table-tr--striped') != -1){
+                                _color = 'var(--n-merged-td-color-striped)'
+                            }else{
+                                _color = 'var(--n-merged-td-color)'
                             }
-                            d.querySelectorAll('td').forEach(it => {
-                                it.style['background-color'] = _color
-                            })
                         }
-                    })
-                }
-                currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
-                if(currentRowDom){
-                    setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling])
-                }
-                currentRowDom = e.currentTarget
-                setBackgroundColor([currentRowDom], componentProperties.table.selectedRowColor)
-                emit('selected-row', row)
+                        d.querySelectorAll('td').forEach(it => {
+                            it.style['background-color'] = _color
+                        })
+                    }
+                })
             }
+            currentRowIndex.value = bindProps.data.findIndex(it => it[props.rowKey] == row[props.rowKey])
+            if(currentRowDom){
+                setBackgroundColor([currentRowDom, currentRowDom.previousElementSibling, currentRowDom.nextElementSibling])
+            }
+            currentRowDom = e.currentTarget
+            setBackgroundColor([currentRowDom], componentProperties.table.selectedRowColor)
+            emit('selected-row', row)
         }
     }
+    _rowProps['onContextmenu'] = (e) => {
+        props.onContextmenu(e, row)
+        e.preventDefault()
+        settingRightClickOptions(props.onDynamicSettingContextmenu(row))
+        currentSelection = window.getSelection().toString()
+        rightClickShowDropdown.value = false
+        nextTick().then(() => {
+            rightClickShowDropdown.value = true;
+            rightClickMenuX.value = e.clientX;
+            rightClickMenuY.value = e.clientY;
+        });
+    }
+    return _rowProps
+}
+
+let currentSelection = null
+const rightClickMenuX = ref(0)
+const rightClickMenuY = ref(0)
+const rightClickSourceOptions = [{
+    title: "复制",
+    key: "copy"
+}]
+const rightClickOptions = ref()
+const rightClickShowDropdown = ref(false)
+function rightClickMenuSelect(key){
+    switch (key) {
+        case 'copy':
+            common.copyText(currentSelection)
+            break;
+        default:
+            props.onContextmenuSelect(key)
+            break;
+    }
+    rightClickShowDropdown.value = false
+}
+function settingRightClickOptions(options){
+    rightClickOptions.value = []
+    rightClickOptions.value.push(...rightClickSourceOptions)
+    rightClickOptions.value.push(...options)
 }
 
 function expandByKeys(keys){

@@ -11,11 +11,27 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { cloneDeep } from 'lodash-es'
 
 const queryTableRef = ref()
 const dataTableRef = ref()
+
+watch(dataTableRef, () => {
+    dataTableRef.value.setData([{
+        username: '这是第一行',
+        id: '1',
+        roleId: undefined,
+        officeIds: undefined,
+        isLogin: 0
+    }, {
+        username: '这是第二行',
+        id: '2',
+        roleId: undefined,
+        officeIds: undefined,
+        isLogin: 0
+    }])
+})
 
 const queryTableOptions = reactive({
     id: 'user-list',
@@ -27,7 +43,8 @@ const queryTableOptions = reactive({
     cols: [
         {
             field: 'username',
-            label: '登录名称'
+            label: '登录名称',
+            style: ''
         },
         {
             field: 'name',
@@ -84,10 +101,15 @@ const dataTableOptions = reactive({
         }
     },
     showNo: false,
+    operation: {
+        delete: true,
+        sub: true,
+        same: true
+    },
+    operationWidth: 300,
     cols: [{
         field: 'username',
-        label: '登录名称',
-        component: 'textarea'
+        label: '登录名称'
     },{
         field: 'roleId',
         label: '角色',
