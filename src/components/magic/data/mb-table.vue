@@ -232,6 +232,10 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
+    contextmenuEnable: {
+        type: Boolean,
+        default: false
+    },
     defaultSelectedRow: {
         type: Boolean,
         default: false
@@ -361,17 +365,19 @@ bindProps.rowProps = (row) => {
             emit('selected-row', row)
         }
     }
-    _rowProps['onContextmenu'] = (e) => {
-        props.onContextmenu(e, row)
-        e.preventDefault()
-        settingRightClickOptions(props.onDynamicSettingContextmenu(row))
-        currentSelection = window.getSelection().toString()
-        rightClickShowDropdown.value = false
-        nextTick().then(() => {
-            rightClickShowDropdown.value = true;
-            rightClickMenuX.value = e.clientX;
-            rightClickMenuY.value = e.clientY;
-        });
+    if(props.contextmenuEnable){
+        _rowProps['onContextmenu'] = (e) => {
+            props.onContextmenu(e, row)
+            e.preventDefault()
+            settingRightClickOptions(props.onDynamicSettingContextmenu(row))
+            currentSelection = window.getSelection().toString()
+            rightClickShowDropdown.value = false
+            nextTick().then(() => {
+                rightClickShowDropdown.value = true;
+                rightClickMenuX.value = e.clientX;
+                rightClickMenuY.value = e.clientY;
+            });
+        }
     }
     return _rowProps
 }

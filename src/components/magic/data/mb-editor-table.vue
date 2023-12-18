@@ -167,6 +167,7 @@ const tableOptions = reactive({
     page: props.page,
     showNo: props.showNo,
     selectedRowEnable: false,
+    contextmenuEnable: true,
     rowKey: props.rowKey,
     keepCurrentPage: true,
     data: [],
