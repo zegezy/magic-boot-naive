@@ -1,11 +1,10 @@
 import {defineStore} from 'pinia'
-import common from '@/scripts/common'
 
 export const useDictStore = defineStore('dict', () => {
     let dictData = []
 
     async function getDictData() {
-        await common.$get('/system/dict/items/all').then(res => {
+        await $common.get('/system/dict/items/all').then(res => {
             dictData = res.data
         })
     }

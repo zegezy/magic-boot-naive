@@ -1,6 +1,5 @@
 import {computed, watch} from 'vue'
 import {isArray, isNumber, isString, omit} from "lodash-es";
-import common from "@/scripts/common";
 
 export function watchValue(componentValue, props, emit){
     let watchList = []
@@ -44,7 +43,7 @@ export function watchValue(componentValue, props, emit){
     setValue(props.modelValue)
     watchList.push(watch(() => props.modelValue, (value) => {
         // 如果传过来的值和选择的值不一样则更新
-        if(!common.arrayStringEq(value, getComponentValue.value)){
+        if(!$common.arrayStringEq(value, getComponentValue.value)){
             setValue(value)
         }
     }))

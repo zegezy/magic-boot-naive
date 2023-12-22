@@ -34,7 +34,6 @@
 <script setup>
 import {SaveSharp} from '@vicons/ionicons5'
 import {ref, reactive, nextTick} from 'vue'
-import common from '@/scripts/common'
 import {useUserStore} from "@/store/modules/userStore";
 
 const userStore = useUserStore()
@@ -84,14 +83,14 @@ function resetTemp() {
 function save() {
     dataForm.value.validate((errors) => {
         if (!errors) {
-            common.$post('/system/user/center/update', temp.value).then(() => {
+            $common.post('/system/user/center/update', temp.value).then(() => {
                 $message.success('修改成功')
             })
         }
     })
 }
 
-common.objAssign(temp.value, userStore.getInfo, ['password'])
+$common.objAssign(temp.value, userStore.getInfo, ['password'])
 </script>
 
 <style scoped>

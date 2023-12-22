@@ -85,7 +85,6 @@ import {VueCropper} from 'vue-cropper'
 import draggable from 'vuedraggable'
 import {Trash, Crop, Add} from "@vicons/ionicons5";
 import {useUserStore} from "@/store/modules/userStore";
-import common from '@/scripts/common'
 import global from '@/scripts/global'
 import request from '@/scripts/request'
 
@@ -168,7 +167,7 @@ onMounted(() => {
     cropperOption.value = props.cropperConfig || {}
     cropperOption.value.img = ''
     if (props.externalId) {
-        common.$get('/system/file/files', {
+        $common.get('/system/file/files', {
             externalId: props.externalId,
             externalType: props.externalType
         }).then(res => {
@@ -207,7 +206,7 @@ function handleDelete(url) {
     let deleteFile = () => {
         urls.value = urls.value.filter(it => it != url)
         fileList.value = fileList.value.filter(it => it.fullPath != url)
-        common.$delete('/system/file/delete', {url: encodeURI(url)})
+        $common.delete('/system/file/delete', {url: encodeURI(url)})
         if (props.multiple) {
             if (props.join) {
                 updateValue(urls.value.join(','))
@@ -264,7 +263,7 @@ function onFinish({file, event}) {
 }
 
 function onDragEnd() {
-    common.$get('/system/file/resort', {urls: urls.value.map(url => encodeURI(url)).join(',')})
+    $common.get('/system/file/resort', {urls: urls.value.map(url => encodeURI(url)).join(',')})
 }
 
 function beforeCropper(url) {

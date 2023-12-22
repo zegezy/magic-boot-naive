@@ -1,5 +1,4 @@
 import {useDictStore} from "@/store/modules/dictStore";
-import common from "@/scripts/common";
 const dictStore = useDictStore()
 let props = {}
 export function getSelectData(_props){
@@ -8,7 +7,7 @@ export function getSelectData(_props){
         if (props.type) {
             resolve(listConcat(dictStore.getDictType(props.type)))
         } else if (props.url) {
-            common.$get(props.url, props.params).then(res => {
+            $common.get(props.url, props.params).then(res => {
                 resolve(listConcat(handlerData(res.data.list || res.data)))
             })
         } else if (props.options && props.options.length > 0) {

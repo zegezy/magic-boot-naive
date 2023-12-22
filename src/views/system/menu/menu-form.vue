@@ -88,7 +88,6 @@
 <script setup>
 import {ref, reactive, watch, nextTick} from 'vue'
 import MenuIcons from './menu-icons'
-import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 
 const props = defineProps({
@@ -125,7 +124,7 @@ const getTemp = () => {
     }
 }
 
-common.$get('/system/component/select').then(res => {
+$common.get('/system/component/select').then(res => {
     componentTree.value = res.data
 })
 
@@ -207,7 +206,7 @@ function save(d) {
                 temp.value.icon = ''
                 temp.value.url = ''
             }
-            common.$post('/system/menu/save', temp.value).then(() => {
+            $common.post('/system/menu/save', temp.value).then(() => {
                 d.hideLoading()
                 $message.success(d.title + '成功')
                 d.hide()
@@ -221,7 +220,7 @@ function addSubMenu(id) {
     resetTemp()
     menuType.value = 'menu'
     temp.value.pid = id
-    temp.value.id = common.uuid()
+    temp.value.id = $common.uuid()
     getSort()
     nextTick(() => {
         dataForm.value.restoreValidation()
@@ -254,7 +253,7 @@ function openIcons() {
 }
 
 function getSort() {
-    common.$get('/system/menu/sort', {pid: temp.value.pid}).then(res => {
+    $common.get('/system/menu/sort', {pid: temp.value.pid}).then(res => {
         temp.value.sort = res.data
     })
 }

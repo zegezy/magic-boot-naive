@@ -1,10 +1,9 @@
 import OSS from "ali-oss";
-import common from '@/scripts/common'
 import global from '@/scripts/global'
 
 const init = async () => {
     let stsInfo = {}
-    await common.$get('/oss/sts/service').then(res => {
+    await $common.get('/oss/sts/service').then(res => {
         stsInfo = res.data
     })
     const client = new OSS({
@@ -18,7 +17,7 @@ const init = async () => {
         refreshSTSToken: async () => {
             // 向您搭建的STS服务获取临时访问凭证。
             let info = {}
-            await common.$get('/oss/sts/service').then(res => {
+            await $common.get('/oss/sts/service').then(res => {
                 info = res.data
             })
             return {

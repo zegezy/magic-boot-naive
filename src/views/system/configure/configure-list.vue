@@ -89,7 +89,6 @@
 <script setup>
 
 import {ref, reactive, nextTick} from 'vue'
-import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
 import {AddOutline} from '@vicons/ionicons5'
 
@@ -169,7 +168,7 @@ const tableOptions = reactive({
                     label: '删除',
                     link: true,
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/configure/delete',
                             id: row.id,
                             done: () => {
@@ -228,7 +227,7 @@ function handleCreate() {
 function save() {
     dataForm.value.validate((errors) => {
         if (!errors) {
-            common.$post('/system/configure/save', temp.value).then((response) => {
+            $common.post('/system/configure/save', temp.value).then((response) => {
                 roleFormDialog.value.hide()
                 $message.success((dialogStatus.value === 'create' ? '创建' : '修改') + '成功')
                 reloadTable()
@@ -238,7 +237,7 @@ function save() {
 }
 
 function handleUpdate(row) {
-    common.objAssign(temp.value, row)
+    $common.objAssign(temp.value, row)
     dialogTitle.value = '添加'
     roleFormDialog.value.show()
     nextTick(() => {

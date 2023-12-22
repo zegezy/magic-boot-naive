@@ -78,7 +78,6 @@ li:hover {
 
 <script setup>
 import ossutil from '@/scripts/ossutil'
-import common from '@/scripts/common'
 import global from '@/scripts/global'
 import {Trash, Crop, Add} from "@vicons/ionicons5";
 import {ref, onMounted, watch, nextTick} from 'vue'
@@ -234,7 +233,7 @@ function fileChange() {
         return
     }
     let uploadDirs = []
-    common.$get('/system/file/getFileUploadDirectory', {length: files.length}).then(dirRes => {
+    $common.get('/system/file/getFileUploadDirectory', {length: files.length}).then(dirRes => {
         uploadDirs = dirRes.data
         let _fileList = []
         uploadDirs.forEach((uploadDir, i) => {

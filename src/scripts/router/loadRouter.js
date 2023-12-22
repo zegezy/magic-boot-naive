@@ -1,4 +1,3 @@
-import common from '@/scripts/common'
 import {sha256} from 'js-sha256'
 import { cloneDeep } from 'lodash-es'
 
@@ -19,7 +18,7 @@ export const handlerLayoutMenus = (menus, level) => {
     level = level || 0
     const layoutMenus = menus.filter(menu => {
         if (menu.isShow === 1) {
-            let urlType = common.getUrlType(menu.url)
+            let urlType = $common.getUrlType(menu.url)
             if (urlType == 0 || urlType == 1) {// http地址 || 项目内静态页面
                 setIframe(menu)
             } else if (menu.url && menu.url.startsWith('/') && menu.openMode == '2') {// 项目内页面并且打开方式为 iframe
@@ -34,7 +33,7 @@ export const handlerLayoutMenus = (menus, level) => {
                 if(menu.openMode != '1'){
                     const component = menu.component
                     if (component === 'Layout') {
-                        menu.path = "/" + common.uuid()
+                        menu.path = "/" + $common.uuid()
                         menu.component = level > 0 ? layoutModules[`${relativePath}/layout/none.vue`] : loadLayoutView(component)
                     } else {
                         menu.path = menu.path.startsWith('/') ? menu.path : '/' + menu.path
@@ -57,7 +56,7 @@ const deleteNewTabMenu = (menus, level) => {
     level = level || 0
     const layoutMenus = menus.filter(menu => {
         if (menu.isShow === 1) {
-            let urlType = common.getUrlType(menu.url)
+            let urlType = $common.getUrlType(menu.url)
             if (urlType == 2 && menu.openMode == '1') {
                 return false
             }
@@ -113,7 +112,7 @@ export function handlerNotLayoutMenus(menus) {
 
 export function generateRoutes() {
     return new Promise((resolve) => {
-        common.$post('/system/menu/current/menus').then(res => {
+        $common.post('/system/menu/current/menus').then(res => {
             const { notLayoutMenus, layoutMenus } = res.data
             handlerLayoutMenus(layoutMenus)
             handlerNotLayoutMenus(notLayoutMenus)

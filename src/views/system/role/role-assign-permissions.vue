@@ -5,7 +5,6 @@
 
 <script setup>
 import {ref} from 'vue'
-import common from '@/scripts/common'
 
 const emit = defineEmits(['close'])
 const props = defineProps({
@@ -17,13 +16,13 @@ const props = defineProps({
 
 const menus = ref('')
 
-common.$get('/system/menu/by/role', {roleId: props.id}).then(res => {
+$common.get('/system/menu/by/role', {roleId: props.id}).then(res => {
     menus.value = res.data.join(',')
 })
 
 function save(d) {
     d.loading()
-    common.$post('/system/role/save', {
+    $common.post('/system/role/save', {
         id: props.id,
         menus: menus.value
     }).then((response) => {

@@ -50,7 +50,6 @@
 import {ref, watch, onMounted} from 'vue'
 import {useUserStore} from "@/store/modules/userStore";
 import global from '@/scripts/global'
-import common from '@/scripts/common'
 
 const userStore = useUserStore()
 const emit = defineEmits(['change', 'update:modelValue'])
@@ -138,7 +137,7 @@ const headers = {
 }
 const uploadRef = ref()
 const urls = ref([])
-const uploadDomId = common.uuid()
+const uploadDomId = $common.uuid()
 const fileList = ref([])
 const uploadLoading = ref(false)
 const emitUpdate = ref(true)
@@ -156,7 +155,7 @@ watch(() => props.modelValue, () => {
 
 onMounted(() => {
     if (props.externalId) {
-        common.$get('/system/file/files', {
+        $common.get('/system/file/files', {
             externalId: props.externalId,
             externalType: props.externalType
         }).then(res => {
@@ -233,7 +232,7 @@ function onRemove({file}) {
             document.getElementById(uploadDomId).getElementsByClassName('n-upload-file-input')[0].removeAttribute('disabled')
             updateValue('')
         }
-        common.$delete('/system/file/delete', {url: encodeURI(url)})
+        $common.delete('/system/file/delete', {url: encodeURI(url)})
     }
     return new Promise((resolve, reject) => {
         if (!props.deleteTip) {

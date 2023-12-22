@@ -35,15 +35,15 @@ const formatJson = (list, filterVal) => {
     }))
 }
 
-common.$get = (url, data) => request({url, params: data})
-common.$delete = (url, data) => request({url, method: 'delete', params: data})
-common.$post = (url, data) => request.post(url, data, {
+common.get = (url, data) => request({url, params: data})
+common.delete = (url, data) => request({url, method: 'delete', params: data})
+common.post = (url, data) => request.post(url, data, {
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
     },
     transformRequest: [data => data && Object.keys(data).map(it => encodeURIComponent(it) + '=' + encodeURIComponent(data[it] === null || data[it] === undefined ? '' : data[it])).join('&')]
 })
-common.$postJson = (url, data) => request.post(url, JSON.stringify(data), {
+common.postJson = (url, data) => request.post(url, JSON.stringify(data), {
     headers: {
         'Content-Type': 'application/json'
     }
@@ -62,7 +62,7 @@ common.renderWhere = (where) => {
 }
 
 // common.exportExcel = (options) => {
-//   var where = options.where || {}
+//   let where = options.where || {}
 //   where = common.renderWhere(where)
 //   where.current = 1
 //   where.size = 99999999
@@ -86,9 +86,9 @@ common.renderWhere = (where) => {
 // }
 
 common.handlerTreeData = (data, id, pid, sort, pidVal) => {
-    var treeData = []
-    var addChildren = (it) => {
-        var children = data.filter(d => d[pid] === it[id])
+    let treeData = []
+    let addChildren = (it) => {
+        let children = data.filter(d => d[pid] === it[id])
         if (children && children.length > 0) {
             children.sort((a, b) => {
                 return a[sort] - b[sort]
@@ -119,8 +119,8 @@ common.uuid = () => {
 
 common.objAssign = (obj1, obj2, exclude) => {
     exclude = exclude || ''
-    for (var o1 in obj1) {
-        for (var o2 in obj2) {
+    for (let o1 in obj1) {
+        for (let o2 in obj2) {
             if (o1 === o2) {
                 if (exclude.indexOf(o1) == -1) {
                     obj1[o1] = obj2[o2]
@@ -136,7 +136,7 @@ common.copyNew = (obj) => {
 
 common.getParam = (data) => {
     let url = ''
-    for (var k in data) {
+    for (let k in data) {
         const value = data[k] !== undefined ? data[k] : ''
         url += `&${k}=${encodeURIComponent(value)}`
     }

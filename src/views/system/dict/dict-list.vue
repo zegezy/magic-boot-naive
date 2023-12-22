@@ -55,7 +55,6 @@
 
 <script setup>
 import DictItems from './dict-items'
-import common from '@/scripts/common'
 import {ref, reactive, nextTick} from 'vue'
 import {useDictStore} from "@/store/modules/dictStore";
 import {AddOutline} from "@vicons/ionicons5";
@@ -122,7 +121,7 @@ const tableOptions = reactive({
                     label: '删除',
                     link: true,
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/dict/delete',
                             id: row.id,
                             done: () => {
@@ -186,7 +185,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
-            common.$post('/system/dict/save', temp.value).then((response) => {
+            $common.post('/system/dict/save', temp.value).then((response) => {
                 d.hideLoading()
                 temp.value.id = response.data
                 dictDialog.value.hide()
@@ -199,7 +198,7 @@ function save(d) {
 }
 
 function handleUpdate(row) {
-    common.objAssign(temp.value, row)
+    $common.objAssign(temp.value, row)
     dialogTitle.value = '修改'
     dictDialog.value.show()
     nextTick(() => {

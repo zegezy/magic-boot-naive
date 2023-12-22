@@ -22,7 +22,6 @@
 
 <script setup>
 import {reactive, ref} from "vue";
-import common from '@/scripts/common'
 
 const magicList = ref()
 const magicDialog = ref()
@@ -105,7 +104,7 @@ const listOptions = reactive({
                             //   positiveText: '确定',
                             //   negativeText: '取消',
                             //   onPositiveClick: () => {
-                            //     common.$get('/system/online/logout',{ token: row.token }).then(() => {
+                            //     $common.get('/system/online/logout',{ token: row.token }).then(() => {
                             //       magicList.value.reload()
                             //     })
                             //   }
@@ -119,7 +118,7 @@ const listOptions = reactive({
 })
 
 function disable() {
-    common.$get('/system/online/logout', {id: currRow.value.id, time: time.value}).then(() => {
+    $common.get('/system/online/logout', {id: currRow.value.id, time: time.value}).then(() => {
         magicDialog.value.hide()
         magicList.value.reload()
     })

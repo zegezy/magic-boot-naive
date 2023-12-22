@@ -20,7 +20,6 @@
 import { ref, watch, onMounted } from 'vue'
 import { getSelectData } from '@/api/components/mb-select.js'
 import { watchValue } from "@/components/magic/scripts/watch-join-update";
-import common from "@/scripts/common";
 import { isArray } from "lodash-es";
 
 const magicSelect = ref()
@@ -121,7 +120,7 @@ function loadData() {
         valueField: props.valueField
     }).then(data => {
         options.value = data
-        common.stopWatchList(watchList)
+        $common.stopWatchList(watchList)
         watchList = watchValue(selectValue, props, emit)
         if(props.defaultFirstItem && options.value && options.value[0]){
             let defaultValue = options.value[0][props.valueField]

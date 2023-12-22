@@ -51,7 +51,6 @@
 import router from '@/scripts/router'
 import {useUserStore} from '@/store/modules/userStore'
 import {reactive, ref} from 'vue'
-import common from '@/scripts/common'
 
 const userStore = useUserStore()
 const codeImg = ref()
@@ -64,7 +63,7 @@ const loading = ref(false)
 const codeEnable = ref()
 
 function getCodeEnable() {
-    common.$get('/system/config/getCodeEnable').then(res => {
+    $common.get('/system/config/getCodeEnable').then(res => {
         codeEnable.value = res.data
     })
 }
@@ -72,7 +71,7 @@ function getCodeEnable() {
 getCodeEnable()
 
 function refreshCode() {
-    common.$get('/system/security/verification/code').then(res => {
+    $common.get('/system/security/verification/code').then(res => {
         codeImg.value = 'data:image/png;base64,' + res.data.img
         loginForm.uuid = res.data.uuid
     })

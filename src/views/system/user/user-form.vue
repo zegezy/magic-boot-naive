@@ -37,7 +37,6 @@
 <script setup>
 
 import {ref, reactive, nextTick} from 'vue'
-import common from '@/scripts/common'
 
 const emit = defineEmits(['reload-table'])
 
@@ -77,7 +76,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
-            common.$post('/system/user/save', temp.value).then(() => {
+            $common.post('/system/user/save', temp.value).then(() => {
                 d.hideLoading()
                 $message.success(d.title + '成功')
                 emit('reload-table')
@@ -93,7 +92,7 @@ function getInfo(row) {
             temp.value[t] = row[t]
         }
     }
-    common.$get('/system/user/roles', {userId: temp.value.id}).then((res) => {
+    $common.get('/system/user/roles', {userId: temp.value.id}).then((res) => {
         temp.value.roles = res.data.join(',')
     })
 }

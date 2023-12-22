@@ -34,7 +34,6 @@
 <script setup>
 
 import {watch, ref, nextTick, onBeforeMount} from 'vue'
-import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import { clone, uniq, pull, pullAll, isEmpty } from 'lodash-es'
 
@@ -269,7 +268,7 @@ function nodeProps({option}) {
 
 async function loadTreeData() {
     if (treeData.value.length == 0) {
-        await common.$get(props.url, props.params).then((res) => {
+        await $common.get(props.url, props.params).then((res) => {
             treeTable.deleteEmptyChildren(res.data.list)
             treeData.value = res.data.list
             loadSourceData(treeData.value)

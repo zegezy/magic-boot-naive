@@ -47,7 +47,6 @@
 
 import {ref, reactive, onMounted, nextTick, watch, h} from 'vue'
 import MenuForm from './menu-form'
-import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import MbIcon from '@/components/magic/basic/mb-icon.vue';
 import { isEmpty } from 'lodash-es'
@@ -103,7 +102,7 @@ const tableOptions = reactive({
                     label: '上移',
                     link: true,
                     click: (row) => {
-                        common.$get('/system/menu/sort/up', {
+                        $common.get('/system/menu/sort/up', {
                             id: row.id,
                             pid: row.pid,
                             sort: row.sort
@@ -116,7 +115,7 @@ const tableOptions = reactive({
                     label: '下移',
                     link: true,
                     click: (row) => {
-                        common.$get('/system/menu/sort/down', {
+                        $common.get('/system/menu/sort/down', {
                             id: row.id,
                             pid: row.pid,
                             sort: row.sort
@@ -133,7 +132,7 @@ const tableOptions = reactive({
             type: 'switch',
             width: 100,
             change: (row) => {
-                common.$get('/system/menu/change', {
+                $common.get('/system/menu/change', {
                     id: row.id,
                     isShow: row.isShow
                 })
@@ -154,7 +153,7 @@ const tableOptions = reactive({
                 return row.url ? true : false
             },
             change: (row) => {
-                common.$get('/system/menu/change', {
+                $common.get('/system/menu/change', {
                     id: row.id,
                     keepAlive: row.keepAlive
                 })
@@ -188,7 +187,7 @@ const tableOptions = reactive({
                     link: true,
                     permission: 'menu:delete',
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/menu/delete',
                             id: row.id,
                             done: () => reloadTable()
@@ -205,7 +204,7 @@ const menuFormRef = ref()
 
 function reloadTable() {
     tableOptions.loading = true
-    common.$get('/system/menu/tree').then(res => {
+    $common.get('/system/menu/tree').then(res => {
         menuData.value = res.data.list
         tableOptions.data = menuData.value
         tableOptions.loading = false
@@ -215,7 +214,7 @@ function reloadTable() {
 function searchMenu() {
     table.value.expand()
     if (searchValue.value) {
-        tableOptions.data = treeTable.recursionSearch(['name', 'url', 'permission'], common.copyNew(menuData.value), searchValue.value)
+        tableOptions.data = treeTable.recursionSearch(['name', 'url', 'permission'], $common.copyNew(menuData.value), searchValue.value)
     } else {
         tableOptions.data = menuData.value
     }

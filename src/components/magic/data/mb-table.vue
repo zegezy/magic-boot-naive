@@ -147,7 +147,6 @@ import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineCom
 import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
 import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
 import { EditFilled } from '@vicons/antd'
-import common from '@/scripts/common'
 import global from '@/scripts/global'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
@@ -394,7 +393,7 @@ const rightClickShowDropdown = ref(false)
 function rightClickMenuSelect(key){
     switch (key) {
         case 'copy':
-            common.copyText(currentSelection)
+            $common.copyText(currentSelection)
             break;
         default:
             props.onContextmenuSelect(key)
@@ -471,7 +470,7 @@ function createTable() {
 
 function loadData(options) {
     if (props.url) {
-        let where = common.renderWhere(props.where)
+        let where = $common.renderWhere(props.where)
         if(options){
             if(options.reload && !options.keepCurrentPage && !props.keepCurrentPage){
                 paginationParams.page = 1
@@ -525,11 +524,11 @@ function requestData({ where, loading }) {
         dataDone()
     }
     if (props.method.toLowerCase() == 'post') {
-        common.$post(props.url, where).then(processData)
+        $common.post(props.url, where).then(processData)
     } else if(props.method.toLowerCase() == 'postjson') {
-        common.$postJson(props.url, where).then(processData)
+        $common.postJson(props.url, where).then(processData)
     } else {
-        common.$get(props.url, where).then(processData)
+        $common.get(props.url, where).then(processData)
     }
 }
 createTable()
@@ -622,7 +621,7 @@ function fixCols() {
     let colWidth = getColWidth()
     props.cols.forEach((col) => {
         let column = {}
-        column.field = col.field || common.uuid()
+        column.field = col.field || $common.uuid()
         column.key = column.field
         column.label = col.label
         column.title = (col) => {
@@ -710,7 +709,7 @@ function emitUpdateCheckedRowKeys(){
     emit('update:checked-row-datas', bindProps.data.filter(it => checkedRowKeys.value.indexOf(it[props.rowKey]) != -1))
 }
 
-const tableKey = ref('magicTable' + common.uuid())
+const tableKey = ref('magicTable' + $common.uuid())
 const showTable = ref(true)
 
 function expand() {
@@ -771,26 +770,26 @@ function renderExportData(sourceData) {
 
 function exportExcel({fileName}) {
     if (props.url) {
-        let where = common.renderWhere(props.where)
+        let where = $common.renderWhere(props.where)
         where.size = 99999999
         let processData = (res) => {
             const {data} = res
-            common.exportExcel({
+            $common.exportExcel({
                 data: renderExportData(data.list),
                 fileName: fileName
             })
         }
         if (props.method.toLowerCase() == 'post') {
-            common.$post(props.url, where).then(res => {
+            $common.post(props.url, where).then(res => {
                 processData(res)
             })
         } else {
-            common.$get(props.url, where).then(res => {
+            $common.get(props.url, where).then(res => {
                 processData(res)
             })
         }
     } else if (props.data) {
-        common.exportExcel({
+        $common.exportExcel({
             data: props.data,
             fileName: fileName
         })

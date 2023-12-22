@@ -81,7 +81,6 @@
 <script setup>
 import {ref, reactive, onMounted, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
-import common from '@/scripts/common'
 import treeTable from '@/scripts/treeTable'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
@@ -131,7 +130,7 @@ const tableOptions = reactive({
                     label: '上移',
                     link: true,
                     click: (row) => {
-                        common.$get('/system/office/sort/up', {
+                        $common.get('/system/office/sort/up', {
                             id: row.id,
                             pid: row.pid,
                             sort: row.sort
@@ -144,7 +143,7 @@ const tableOptions = reactive({
                     label: '下移',
                     link: true,
                     click: (row) => {
-                        common.$get('/system/office/sort/down', {
+                        $common.get('/system/office/sort/down', {
                             id: row.id,
                             pid: row.pid,
                             sort: row.sort
@@ -183,7 +182,7 @@ const tableOptions = reactive({
                     link: true,
                     permission: 'office:delete',
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/office/delete',
                             id: row.id,
                             done: () => reloadTable()
@@ -229,7 +228,7 @@ watch(officeData, () => {
 
 function searchOffice() {
     if (searchValue.value) {
-        tableOptions.data = treeTable.recursionSearch(['name', 'code'], common.copyNew(officeData.value), searchValue.value)
+        tableOptions.data = treeTable.recursionSearch(['name', 'code'], $common.copyNew(officeData.value), searchValue.value)
     } else {
         tableOptions.data = officeData.value
     }
@@ -251,7 +250,7 @@ function resetTemp() {
 }
 
 function getSort() {
-    common.$get('/system/office/sort', {pid: temp.value.pid}).then(res => {
+    $common.get('/system/office/sort', {pid: temp.value.pid}).then(res => {
         temp.value.sort = res.data
     })
 }
@@ -259,7 +258,7 @@ function getSort() {
 function addSubOffice(id) {
     resetTemp()
     temp.value.pid = id
-    temp.value.id = common.uuid()
+    temp.value.id = $common.uuid()
     getSort()
     dialogTitle.value = '添加'
     officeFormDialog.value.show()
@@ -280,7 +279,7 @@ function save(d) {
                 $message.warning('上级机构不能选当前机构子级')
                 return
             }
-            common.$post('/system/office/save', temp.value).then(() => {
+            $common.post('/system/office/save', temp.value).then(() => {
                 d.hideLoading()
                 $message.success(dialogTitle.value + '成功')
                 reloadTable()
@@ -292,7 +291,7 @@ function save(d) {
 
 function reloadTable() {
     tableOptions.loading = true
-    common.$get('/system/office/tree').then(res => {
+    $common.get('/system/office/tree').then(res => {
         officeData.value = res.data.list
         tableOptions.data = officeData.value
         tableOptions.loading = false

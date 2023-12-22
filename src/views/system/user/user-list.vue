@@ -85,7 +85,6 @@ import UserForm from './user-form.vue'
 
 import {ref, reactive, nextTick, onActivated, watch} from 'vue'
 import {useRoute} from 'vue-router'
-import common from '@/scripts/common'
 import {Search, TrashOutline, AddOutline, ArrowDownOutline, DownloadOutline} from "@vicons/ionicons5";
 
 const route = useRoute()
@@ -114,7 +113,7 @@ function importUserSuccess(res, file, fileList) {
 }
 
 function importUsers() {
-    common.$postJson('/system/user/import', {
+    $common.postJson('/system/user/import', {
         datas: sourceDatas.value
     }).then(res => {
         if (res.data) {
@@ -185,7 +184,7 @@ const tableOptions = reactive({
                 return row.id != '1'
             },
             change: (row) => {
-                common.$get('/system/user/change/login/status', {
+                $common.get('/system/user/change/login/status', {
                     id: row.id,
                     isLogin: row.isLogin
                 })
@@ -220,7 +219,7 @@ const tableOptions = reactive({
                         return row.id != '1'
                     },
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/user/delete',
                             id: row.id,
                             done: () => reloadTable()

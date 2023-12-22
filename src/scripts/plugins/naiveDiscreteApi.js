@@ -1,5 +1,5 @@
 import * as NaiveUI from 'naive-ui'
-import common from '@/scripts/common.js'
+import common from '@/scripts/common'
 
 export function setupNaiveDiscreteApi() {
     const {message, dialog, notification, loadingBar} = NaiveUI.createDiscreteApi(

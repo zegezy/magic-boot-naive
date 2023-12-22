@@ -17,13 +17,12 @@
 </template>
 
 <script>
-import common from '@/scripts/common'
 
 export default {
     name: 'UploadFile',
     data() {
         return {
-            externalId: common.uuid(),
+            externalId: $common.uuid(),
             externalType: '营业执照',
             imgUrl: '',
             multipleImgUrl: '',

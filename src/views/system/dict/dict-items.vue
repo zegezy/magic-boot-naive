@@ -52,7 +52,6 @@
 <script setup>
 
 import {ref, reactive, nextTick} from 'vue'
-import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
 import {AddOutline} from "@vicons/ionicons5";
 
@@ -100,7 +99,7 @@ const tableOptions = reactive({
                     label: '上移',
                     link: true,
                     click: (row) => {
-                        common.$get('/system/dict/items/sort/up', {
+                        $common.get('/system/dict/items/sort/up', {
                             id: row.id,
                             sort: row.sort,
                             dictId: props.dictId
@@ -113,7 +112,7 @@ const tableOptions = reactive({
                     label: '下移',
                     link: true,
                     click: (row) => {
-                        common.$get('/system/dict/items/sort/down', {
+                        $common.get('/system/dict/items/sort/down', {
                             id: row.id,
                             sort: row.sort,
                             dictId: props.dictId
@@ -147,12 +146,12 @@ const tableOptions = reactive({
                     label: '删除',
                     link: true,
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/dict/items/delete',
                             id: row.id,
                             done: () => {
                                 reloadTable()
-                                common.getDictData()
+                                $common.getDictData()
                             }
                         })
                     }
@@ -188,7 +187,7 @@ function getTemp() {
 }
 
 function getSort() {
-    common.$get('/system/dict/items/sort', {dictId: props.dictId}).then(res => {
+    $common.get('/system/dict/items/sort', {dictId: props.dictId}).then(res => {
         temp.value.sort = res.data
     })
 }
@@ -207,7 +206,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
-            common.$post('/system/dict/items/save', temp.value).then(() => {
+            $common.post('/system/dict/items/save', temp.value).then(() => {
                 d.hideLoading()
                 formDialog.value.hide()
                 $message.success(dialogTitle.value + '成功')
@@ -219,7 +218,7 @@ function save(d) {
 }
 
 function handleUpdate(row) {
-    common.objAssign(temp.value, row)
+    $common.objAssign(temp.value, row)
     dialogTitle.value = '修改'
     formDialog.value.show()
     nextTick(() => {

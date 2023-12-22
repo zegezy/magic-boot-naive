@@ -111,7 +111,6 @@
 import { reactive, ref, nextTick, toRaw, watch } from 'vue'
 import { getSelectData } from "@/api/components/mb-select.js";
 import { getTreeSelectData } from "@/api/components/mb-tree-select";
-import common from '@/scripts/common'
 import { omit, cloneDeep } from 'lodash-es'
 import treeTable from "@/scripts/treeTable";
 const magicTable = ref()
@@ -219,7 +218,7 @@ let buttons = []
 if(props.operation && !props.preview){
     let deleteClick = (row, confirm) => {
         if(confirm){
-            common.warning('此操作将永久删除该数据, 是否继续?', () => {
+            $common.warning('此操作将永久删除该数据, 是否继续?', () => {
                 deleteRow(row)
             })
         }else{
@@ -291,7 +290,7 @@ function addRow(row){
 function recursionAddRow(children, index){
     children.forEach(it => {
         if(it._index_ == index){
-            children.push({[props.rowKey]: common.uuid()})
+            children.push({[props.rowKey]: $common.uuid()})
         }
         if(it.children && it.children.length > 0){
             recursionAddRow(it.children, index)
@@ -302,9 +301,9 @@ function recursionAddRow(children, index){
 // 添加下级
 function addChildrenRow(row){
     if(row.children && row.children.length > 0){
-        row.children.push({[props.rowKey]: common.uuid()})
+        row.children.push({[props.rowKey]: $common.uuid()})
     }else{
-        row.children = [{[props.rowKey]: common.uuid()}]
+        row.children = [{[props.rowKey]: $common.uuid()}]
     }
     tableDataAddIndex()
 }
@@ -378,7 +377,7 @@ function getLabelByData({col, value, data, valueField, labelField}){
 
 // 反显方法
 function getLabel(value, col){
-    if(common.notEmptyNot01(value)){
+    if($common.notEmptyNot01(value)){
         let valueField = 'value'
         let labelField = 'label'
         if(['select', 'tree-select'].indexOf(col.component) != -1){

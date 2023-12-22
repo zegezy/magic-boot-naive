@@ -85,7 +85,7 @@ const queryTableOptions = reactive({
                     click: (row) => {
                         let newRow = cloneDeep(row)
                         // 如果想重复一条数据 这里重新给id赋值
-                        // newRow.id = common.uuid()
+                        // newRow.id = $common.uuid()
                         dataTableRef.value.push(cloneDeep(row))
                     }
                 }

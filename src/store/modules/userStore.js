@@ -1,7 +1,6 @@
 import {defineStore} from 'pinia'
 import {ref, computed} from 'vue'
 import {sha256} from "js-sha256"
-import common from '@/scripts/common'
 import {useDictStore} from "@/store/modules/dictStore";
 import {generateRoutes} from "@/scripts/router/loadRouter";
 import router from "@/scripts/router"
@@ -52,7 +51,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     async function getUserInfo() {
-        await common.$get('/system/user/info').then(res => {
+        await $common.get('/system/user/info').then(res => {
             const {data} = res
             if (data) {
                 const authorities_ = []
@@ -71,7 +70,7 @@ export const useUserStore = defineStore('user', () => {
 
         await userStore.getUserInfo()
         await dictStore.getDictData()
-        await common.loadConfig()
+        await $common.loadConfig()
 
         await generateRoutes().then(({ layoutMenus, notLayoutMenus, showMenus }) => {
             userStore.pushPermissionRouter(showMenus)
@@ -83,7 +82,7 @@ export const useUserStore = defineStore('user', () => {
 
     function login(data) {
         return new Promise((resolve, reject) => {
-            common.$postJson('/system/security/login', {
+            $common.postJson('/system/security/login', {
                 username: data.username,
                 password: sha256(data.password),
                 code: data.code,
@@ -100,7 +99,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     function logout() {
-        common.$get('/system/security/logout').then(() => {
+        $common.get('/system/security/logout').then(() => {
             removeToken()
             location.reload()
         })

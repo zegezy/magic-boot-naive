@@ -46,7 +46,7 @@
                             <component
                                 v-for="com in keepaliveIframes"
                                 :is="IframeComponent"
-                                :url="common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
+                                :url="$common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
                                 v-show="com.path == $route.path"
                             />
                             <none />
@@ -68,7 +68,6 @@ import {useUserStore} from "@/store/modules/userStore"
 import {useTabsStore} from "@/store/modules/tabsStore"
 import LayoutHeader from "@/layout/layout-header.vue";
 import IframeComponent from '@/views/common/iframe.vue'
-import common from "@/scripts/common";
 import { isEmpty } from 'lodash-es'
 
 const tabsStore = useTabsStore()
@@ -79,7 +78,7 @@ const selectedKey = ref(currentTab)
 selectMenu(currentTab)
 watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
 // 单独处理 "iframe" 并且开启缓存的页面
-const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => common.filterIframeTabs(it)))
+const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => $common.filterIframeTabs(it)))
 
 function selectMenu(key) {
     selectedKey.value = key
@@ -124,7 +123,7 @@ function recursionRouters(children) {
         } else {
             menu.key = chi.path
             if(chi.openMode == '1'){
-                let path = common.handlerUrlPage(chi.path)
+                let path = $common.handlerUrlPage(chi.path)
                 menu.label = () => h(
                     'a',
                     {

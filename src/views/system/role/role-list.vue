@@ -75,7 +75,6 @@
 
 <script setup>
 import {ref, reactive, watch, nextTick} from 'vue'
-import common from '@/scripts/common'
 import {push} from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
 import {AddOutline} from "@vicons/ionicons5";
@@ -145,7 +144,7 @@ const tableOptions = reactive({
                     label: '删除',
                     link: true,
                     click: (row) => {
-                        common.handleDelete({
+                        $common.handleDelete({
                             url: '/system/role/delete',
                             id: row.id,
                             done: () => reloadTable()
@@ -222,7 +221,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
-            common.$post('/system/role/save', temp.value).then(() => {
+            $common.post('/system/role/save', temp.value).then(() => {
                 d.hideLoading()
                 reloadTable()
                 roleFormDialog.value.hide()
@@ -236,10 +235,10 @@ function handleUpdate(row) {
     for (let t in temp.value) {
         temp.value[t] = row[t]
     }
-    common.$get('/system/menu/by/role', {roleId: row.id}).then(res => {
+    $common.get('/system/menu/by/role', {roleId: row.id}).then(res => {
         temp.value.menus = res.data.join(',')
     })
-    common.$get('/system/office/by/role', {roleId: row.id}).then(res => {
+    $common.get('/system/office/by/role', {roleId: row.id}).then(res => {
         temp.value.offices = res.data.join(',')
     })
     dialogTitle.value = '修改'

@@ -26,7 +26,6 @@
 
 <script setup>
 import {ref, reactive, watch} from 'vue'
-import common from '@/scripts/common'
 
 const rules = reactive(getRules())
 const formData = ref({})
@@ -56,17 +55,17 @@ const emit = defineEmits(['reload'])
 watch(() => [props.detail && props.detail.formData, props.add && props.add.formData], (value) => {
     value.forEach(it => {
         if (it) {
-            formData.value = common.objectAssign(formData.value, it)
+            formData.value = $common.objectAssign(formData.value, it)
         }
     })
 }, {deep: true})
 
 props.form.props = props.form.props || {}
-common.setDefaultValue(props.form.props, 'labelPosition', 'right')
-common.setDefaultValue(props.form.props, 'labelWidth', '')
+$common.setDefaultValue(props.form.props, 'labelPosition', 'right')
+$common.setDefaultValue(props.form.props, 'labelWidth', '')
 
 if (props.add && props.add.formData) {
-    formData.value = common.objectAssign(formData.value, props.add.formData)
+    formData.value = $common.objectAssign(formData.value, props.add.formData)
 }
 
 function getRules() {
@@ -103,7 +102,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
-            common.$post(props.form.request.url, formData.value).then(res => {
+            $common.post(props.form.request.url, formData.value).then(res => {
                 d.hideLoading()
                 $message.success((!formData.value[props.primaryField] ? '创建' : '修改') + '成功')
                 d.hide()
@@ -118,7 +117,7 @@ function getDetail(id) {
     if (props.detail && props.detail.request) {
         let _formData = getData()
         _formData[props.primaryField] = id
-        common.$get(props.detail.request.url, {[props.primaryField]: id}).then(res => {
+        $common.get(props.detail.request.url, {[props.primaryField]: id}).then(res => {
             const {data} = res
             for (let t in _formData) {
                 if ((data[t] || data[t] === 0) && (!props.detail.excludeAssign || props.detail.excludeAssign.indexOf(t) === -1)) {
@@ -126,7 +125,7 @@ function getDetail(id) {
                 }
             }
             if (formData.value) {
-                formData.value = common.objectAssign(_formData, formData.value)
+                formData.value = $common.objectAssign(_formData, formData.value)
             } else {
                 formData.value = _formData
             }
