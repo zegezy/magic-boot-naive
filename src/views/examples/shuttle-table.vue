@@ -102,7 +102,9 @@ const dataTableOptions = reactive({
     },
     showNo: false,
     operation: {
-        delete: true,
+        delete: {
+            confirm: true
+        },
         sub: true,
         same: true
     },
@@ -127,10 +129,6 @@ const dataTableOptions = reactive({
             url: "/system/user/offices",
             placeholder: "请选择组织机构",
             multiple: true
-        },
-        showLabel: {
-            valueField: 'key',
-            labelField: 'label'
         }
     },{
         field: 'isLogin',
