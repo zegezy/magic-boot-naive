@@ -345,14 +345,14 @@ function getIsEdit(edit, row){
     return true
 }
 
-function getLabelByData(col, value, data){
+function getLabelByData({col, value, data, valueField, labelField}){
     let dataList = data || showLabelData[col.field]
     if(dataList && dataList.length > 0){
         let labels = []
         let values = value.toString().split(',')
         for(let value of values){
-            let data = dataList.filter(it => it[col.showLabel?.valueField || 'value'] == value)[0];
-            labels.push(data && data[col.showLabel?.labelField || 'label'])
+            let data = dataList.filter(it => it[col.showLabel?.valueField || valueField] == value)[0];
+            labels.push(data && data[col.showLabel?.labelField || labelField])
         }
         return labels.join(',')
     }
@@ -361,10 +361,16 @@ function getLabelByData(col, value, data){
 // 反显方法
 function getLabel(value, col){
     if(common.notEmptyNot01(value)){
+        let valueField = 'value'
+        let labelField = 'label'
         if(['select', 'tree-select'].indexOf(col.component) != -1){
-            return getLabelByData(col, value)
+            if(col.component == 'tree-select'){
+                valueField = 'key'
+                labelField = 'label'
+            }
+            return getLabelByData({col, value, valueField, labelField})
         }else if(col.showLabel){
-            return getLabelByData(col, value, col.showLabel.data)
+            return getLabelByData({col, value, data: col.showLabel.data, valueField, labelField})
         }else{
             return value
         }
