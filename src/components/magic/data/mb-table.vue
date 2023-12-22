@@ -1035,7 +1035,9 @@ function directionOperation(e) {
         if(props.virtualScroll){
             tableRef.value.scrollTo({index: currentRowIndex.value})
         }else{
-            tableRef.value.scrollTo({el: updateRowDom})
+            if(updateRowDom){
+                tableRef.value.scrollTo({el: updateRowDom})
+            }
         }
     }
 }
