@@ -1,4 +1,5 @@
 import * as NaiveUI from 'naive-ui'
+import common from '@/scripts/common.js'
 
 export function setupNaiveDiscreteApi() {
     const {message, dialog, notification, loadingBar} = NaiveUI.createDiscreteApi(
@@ -8,4 +9,5 @@ export function setupNaiveDiscreteApi() {
     window['$dialog'] = dialog;
     window['$notification'] = notification;
     window['$loading'] = loadingBar;
+    window['$common'] = common
 }
