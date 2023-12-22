@@ -217,14 +217,32 @@ function getShowLabelData(col){
 
 let buttons = []
 if(props.operation && !props.preview){
-    buttons.push(...[{
-        label: '删除',
-        link: true,
-        if: () => props.operation.delete,
-        click: (row) => {
+    let deleteClick = (row, confirm) => {
+        if(confirm){
+            common.warning('此操作将永久删除该数据, 是否继续?', () => {
+                deleteRow(row)
+            })
+        }else{
             deleteRow(row)
         }
-    }, {
+    }
+    if(typeof(props.operation.delete) == 'object'){
+        const { confirm } = props.operation.delete
+        buttons.push({
+            label: '删除',
+            link: true,
+            if: () => props.operation.delete,
+            click: (row) => deleteClick(row, confirm)
+        })
+    }else if(typeof(props.operation.delete) == 'boolean'){
+        buttons.push({
+            label: '删除',
+            link: true,
+            if: () => props.operation.delete,
+            click: (row) => deleteClick(row)
+        })
+    }
+    buttons.push(...[{
         label: '添加下级',
         link: true,
         if: () => props.operation.sub,

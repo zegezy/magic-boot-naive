@@ -289,4 +289,16 @@ common.copyText = (selection) => {
     document.body.removeChild(copyDiv);
 }
 
+common.warning = (content, callback) => {
+    $dialog.warning({
+        title: '提示',
+        content,
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: () => {
+            callback()
+        }
+    })
+}
+
 export default common
