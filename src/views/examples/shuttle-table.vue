@@ -134,6 +134,10 @@ const dataTableOptions = reactive({
         field: 'isLogin',
         label: '禁止登录',
         component: 'switch',
+        componentProps: {
+            checkedValue: 1,
+            uncheckedValue: 0
+        },
         showLabel: {
             data: [{value: 0, label: '禁用'},{value: 1, label: '启用'}]
         }

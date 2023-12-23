@@ -30,11 +30,11 @@ function change() {
 }
 
 function setActive(value) {
-    if (typeof (value) == 'boolean') {
-        _checkedValue.value = true
-        _uncheckedValue.value = false
-    } else {
-        if (value || value == 0) {
+    if($common.notEmptyNot01(value)){
+        if (typeof (value) == 'boolean') {
+            _checkedValue.value = true
+            _uncheckedValue.value = false
+        } else {
             if (props.checkedValue == undefined && props.uncheckedValue == undefined) {
                 _checkedValue.value = '1'
                 _uncheckedValue.value = '0'
@@ -42,10 +42,10 @@ function setActive(value) {
                 _checkedValue.value = props.checkedValue + ''
                 _uncheckedValue.value = props.uncheckedValue + ''
             }
-        } else {
-            _checkedValue.value = true
-            _uncheckedValue.value = false
         }
+    }else{
+        _checkedValue.value = props.checkedValue || true
+        _uncheckedValue.value = props.uncheckedValue || false
     }
 }
 
