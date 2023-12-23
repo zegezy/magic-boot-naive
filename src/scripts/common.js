@@ -3,6 +3,8 @@ import global from '@/scripts/global'
 import {utils, writeFile} from 'xlsx'
 import {useUserStore} from "@/store/modules/userStore";
 import {isArray, cloneDeep} from "lodash-es";
+import {h} from 'vue'
+import MbIcon from "@/components/magic/basic/mb-icon.vue";
 
 const common = {}
 
@@ -299,6 +301,10 @@ common.warning = (content, callback) => {
             callback()
         }
     })
+}
+
+common.renderIcon = (icon) => {
+    return () => h(MbIcon, { icon })
 }
 
 export default common

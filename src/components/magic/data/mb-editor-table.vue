@@ -225,25 +225,28 @@ if(props.operation && !props.preview){
             deleteRow(row)
         }
     }
+    let deleteOption = {
+        label: '删除',
+        link: true,
+        icon: 'Delete24Regular',
+        if: () => props.operation.delete,
+    }
     if(typeof(props.operation.delete) == 'object'){
         const { confirm } = props.operation.delete
         buttons.push({
-            label: '删除',
-            link: true,
-            if: () => props.operation.delete,
+            ...deleteOption,
             click: (row) => deleteClick(row, confirm)
         })
     }else if(typeof(props.operation.delete) == 'boolean'){
         buttons.push({
-            label: '删除',
-            link: true,
-            if: () => props.operation.delete,
+            ...deleteOption,
             click: (row) => deleteClick(row)
         })
     }
     buttons.push(...[{
         label: '添加下级',
         link: true,
+        icon: 'sub-level',
         if: () => props.operation.sub,
         click: (row) => {
             addChildrenRow(row)
@@ -251,6 +254,7 @@ if(props.operation && !props.preview){
     }, {
         label: '添加同级',
         link: true,
+        icon: 'same-level',
         if: () => props.operation.same,
         click: (row) => {
             addRow(row)
@@ -481,7 +485,8 @@ function dynamicSettingContextmenu(row){
                 key: button.label,
                 title: button.label,
                 row: row,
-                click: button.click
+                click: button.click,
+                icon: $common.renderIcon(button.icon)
             })
         }
     }

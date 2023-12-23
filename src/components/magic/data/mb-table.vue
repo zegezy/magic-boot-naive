@@ -386,7 +386,8 @@ const rightClickMenuX = ref(0)
 const rightClickMenuY = ref(0)
 const rightClickSourceOptions = [{
     title: "复制",
-    key: "copy"
+    key: "copy",
+    icon: $common.renderIcon('CopyOutline')
 }]
 const rightClickOptions = ref()
 const rightClickShowDropdown = ref(false)

@@ -85,10 +85,6 @@ function selectMenu(key) {
     menuRef.value?.showOption(key);
 }
 
-function renderIcon(icon) {
-    return () => h(MbIcon, { icon })
-}
-
 const isCollapsed = ref(false)
 
 function updateCollapsed(collapsed) {
@@ -145,7 +141,7 @@ function recursionRouters(children) {
             }
         }
         if (chi.icon) {
-            menu.icon = renderIcon(chi.icon)
+            menu.icon = $common.renderIcon(chi.icon)
         }
         menus.push(menu)
     })
