@@ -153,7 +153,8 @@ const tableOptions = reactive({
     cols: [
         {
             field: 'username',
-            label: '登录名称'
+            label: '登录名称',
+            realSort: true
         },
         {
             field: 'name',

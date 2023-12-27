@@ -890,9 +890,11 @@ function hideDropMenus(){
     showMenus.value = false
 }
 function dataSort(col, rule) {
+    // 重置静态排序状态
     columns.value.filter(it => it.field != col.field).forEach(it => {
         it.dataSortRule = undefined
     })
+    // 重置后台排序状态
     columns.value.filter(it => it.realSort && it.field != col.field).forEach(it => {
         it.realSortRule = undefined
     })
@@ -900,25 +902,35 @@ function dataSort(col, rule) {
         if(rule){
             col.realSortRule = rule
         }else{
-            if (!col.realSortRule) {
+            if(col.realSortRule == undefined){
                 col.realSortRule = '0' // asc
-            } else {
-                col.realSortRule = col.realSortRule == '0' ? '1' : '0'
+            }else if(col.realSortRule == '0'){
+                col.realSortRule = '1' // desc
+            }else if(col.realSortRule == '1'){
+                col.realSortRule = undefined
             }
         }
-        props.where.orderByColumn = col.field.replace(/([A-Z])/g, "_$1").toLowerCase()
-        props.where.direction = col.realSortRule
+        if(col.realSortRule == undefined){
+            props.where.orderByColumn = ''
+            props.where.direction = ''
+        }else{
+            props.where.orderByColumn = col.field.replace(/([A-Z])/g, "_$1").toLowerCase()
+            props.where.direction = col.realSortRule
+        }
         reload()
     } else {
         if(rule){
             col.dataSortRule = ('0' == rule ? true : false)
         }else{
-            if (!col.dataSortRule) {
+            if(col.dataSortRule == undefined){
                 col.dataSortRule = true
-            } else {
-                col.dataSortRule = !col.dataSortRule
+            }else if(col.dataSortRule == true){
+                col.dataSortRule = false
+            }else if(col.dataSortRule == false){
+                col.dataSortRule = undefined
             }
         }
+        // todo dataSortRule = undefined时 还原数据
         bindProps.data.sort((a, b) => {
             if (typeof (a[col.field]) == 'number') {
                 if (col.dataSortRule) {
