@@ -328,6 +328,7 @@ const tableSlots = ref()
 const checkedRowKeys = ref(cloneDeep(props.checkedRowKeys))
 const expandedRowKeys = ref([])
 const sourceColumns = ref([])
+const sourceData = ref([])
 const columns = ref([])
 const showColumns = ref([])
 const bindProps = reactive(props.props || {})
@@ -449,6 +450,7 @@ function handlerData(){
     }
     paginationParams.itemCount = props.data.length
     bindProps.data = currPageData
+    sourceData.value = cloneDeep(currPageData)
     bindProps.loading = false
 }
 
@@ -516,6 +518,7 @@ function requestData({ where, loading }) {
     let processData = (res) => {
         const {data} = res
         bindProps.data = data.list || []
+        sourceData.value = cloneDeep(data.list) || []
         if(loading){
             bindProps.loading = false
         }
@@ -750,10 +753,10 @@ function reload(options) {
     loadData(options)
 }
 
-function renderExportData(sourceData) {
+function renderExportData(exportData) {
     let data = []
     let fields = props.cols.filter(it => it.type != 'buttons')
-    sourceData.forEach(it => {
+    exportData.forEach(it => {
         let row = {}
         fields.forEach(f => {
             if (f.exportRender) {
@@ -930,20 +933,23 @@ function dataSort(col, rule) {
                 col.dataSortRule = undefined
             }
         }
-        // todo dataSortRule = undefined时 还原数据
-        bindProps.data.sort((a, b) => {
-            if (typeof (a[col.field]) == 'number') {
-                if (col.dataSortRule) {
-                    return a[col.field] - (b[col.field] || 0)
+        if(col.dataSortRule == undefined){
+            bindProps.data = cloneDeep(sourceData.value)
+        }else{
+            bindProps.data.sort((a, b) => {
+                if (typeof (a[col.field]) == 'number') {
+                    if (col.dataSortRule) {
+                        return a[col.field] - (b[col.field] || 0)
+                    }
+                    return (b[col.field] || 0) - a[col.field]
+                } else {
+                    if (col.dataSortRule) {
+                        return (a[col.field] || '').localeCompare(b[col.field] || '')
+                    }
+                    return (b[col.field] || '').localeCompare(a[col.field] || '')
                 }
-                return (b[col.field] || 0) - a[col.field]
-            } else {
-                if (col.dataSortRule) {
-                    return (a[col.field] || '').localeCompare(b[col.field] || '')
-                }
-                return (b[col.field] || '').localeCompare(a[col.field] || '')
-            }
-        })
+            })
+        }
     }
 }
 
