@@ -5,6 +5,8 @@
         :options="options"
         :placeholder="placeholder || (itemLabel && '请选择' + itemLabel)"
         :multiple="multiple"
+        :key-field="valueField"
+        :label-field="labelField"
         v-bind="props.props"
         default-expand-all
     />
@@ -37,6 +39,14 @@ const props = defineProps({
     join: {
         type: Boolean,
         default: true
+    },
+    labelField: {
+        type: String,
+        default: 'label'
+    },
+    valueField: {
+        type: String,
+        default: 'key'
     }
 })
 

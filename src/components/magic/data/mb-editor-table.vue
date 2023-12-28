@@ -382,12 +382,12 @@ function getLabelByData({col, value, data, valueField, labelField}){
 // 反显方法
 function getLabel(value, col){
     if($common.notEmptyNot01(value)){
-        let valueField = 'value'
-        let labelField = 'label'
+        let valueField = col.componentProps?.valueField || 'value'
+        let labelField = col.componentProps?.labelField || 'label'
         if(['select', 'tree-select'].indexOf(col.component) != -1){
             if(col.component == 'tree-select'){
-                valueField = 'key'
-                labelField = 'label'
+                valueField = col.componentProps?.valueField || 'key'
+                labelField = col.componentProps?.labelField || 'label'
             }
             return getLabelByData({col, value, valueField, labelField})
         }else if(col.showLabel){
