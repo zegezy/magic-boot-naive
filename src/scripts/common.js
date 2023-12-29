@@ -327,6 +327,22 @@ common.info = (content, ok, options) => {
     })
 }
 
+common.success = (content, ok, options) => {
+    common.dialog('success', {
+        content,
+        ok,
+        ...options
+    })
+}
+
+common.error = (content, ok, options) => {
+    common.dialog('error', {
+        content,
+        ok,
+        ...options
+    })
+}
+
 common.renderIcon = (icon) => {
     return () => h(MbIcon, { icon })
 }
