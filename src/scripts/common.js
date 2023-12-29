@@ -280,15 +280,17 @@ common.stopWatchList = (watchList) => {
 }
 
 common.copyText = (selection) => {
-    let copyDiv = document.createElement('div');
-    copyDiv.contentEditable = 'true';
-    document.body.appendChild(copyDiv);
-    copyDiv.innerHTML = selection;
-    copyDiv.unselectable = 'off';
-    copyDiv.focus();
-    document.execCommand('SelectAll');
-    document.execCommand('Copy', false, null);
-    document.body.removeChild(copyDiv);
+    let textarea = document.createElement('textarea')
+    textarea.value = selection
+    document.body.appendChild(textarea);
+    textarea.select()
+    try {
+        document.execCommand("copy");
+        $message.success('复制成功')
+    } catch (err) {
+        $message.error('复制失败')
+    }
+    document.body.removeChild(textarea);
 }
 
 common.dialog = (type, options) => {

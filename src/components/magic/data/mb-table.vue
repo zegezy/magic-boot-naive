@@ -77,8 +77,8 @@
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
                     </template>
                     <template #title="{ col }">
-                        <div @contextmenu.prevent="headerClick($event, col)">
-                            <div @click="dataSort(col)">
+                        <div @contextmenu.prevent="headerClick($event, col)" style="display: flex">
+                            <div @click="dataSort(col)" style="flex: 1">
                                 <label>{{ col.label }}</label>
                                 <n-icon v-if="col.editIcon">
                                     <EditFilled />
@@ -99,9 +99,16 @@
                                     <ArrowSortDown16Filled />
                                 </n-icon>
                             </div>
-                            <n-icon class="down-menus" @click="headerClick($event, col)">
-                                <ChevronDown />
-                            </n-icon>
+                            <div style="display: flex">
+                                <div class="down-menus">
+                                    <n-icon @click="headerClick($event, col)">
+                                        <ChevronDown />
+                                    </n-icon>
+                                </div>
+                                <div class="align-center">
+                                    <mb-icon style="cursor: pointer" icon="CopyOutline" v-if="col.copyAll" @click="copyAll(col.field)" />
+                                </div>
+                            </div>
                         </div>
                     </template>
                     <template #image="{ row, col }">
@@ -636,6 +643,7 @@ function fixCols() {
         column.minWidth = col.minWidth || column.width
         column.fixed = col.fixed
         column.show = col.show == undefined ? true : col.show
+        column.copyAll = col.copyAll
         column.realSort = col.realSort
         column.resizable = true
         column.editIcon = col.editIcon
@@ -891,6 +899,9 @@ function headerClick(e, col) {
 }
 function hideDropMenus(){
     showMenus.value = false
+}
+function copyAll(field){
+    $common.copyText(bindProps.data.map(it => it[field]).join('\n'))
 }
 function dataSort(col, rule) {
     // 重置静态排序状态
@@ -1181,18 +1192,17 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     background-color: #e0f0fe;
 }
 .down-menus {
-    float: right;
-    position: absolute;
-    right: 20px;
-    top: 1.2em;
-    width: 0.6em;
-    height: 0.6em;
     cursor: pointer;
     display: none;
 }
 .n-data-table-tr th:hover .down-menus,
 .n-data-table-tr th .down-menus:hover {
-    display: block;
+    display: flex;
+    align-items: center
+}
+.align-center{
+    display: flex;
+    align-items: center
 }
 .n-data-table{
     outline: none;
