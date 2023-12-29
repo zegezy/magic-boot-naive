@@ -504,7 +504,7 @@ function loadData(options) {
 
 function dataDone(){
     props.done(bindProps.data)
-    if(props.defaultSelectedRow && props.selectedRowEnable){
+    if(props.defaultSelectedRow && props.selectedRowEnable && bindProps.data.length > 0){
         nextTick(() => {
             tableRef.value.$el.querySelector('.n-data-table-base-table-body tr').click()
         })
