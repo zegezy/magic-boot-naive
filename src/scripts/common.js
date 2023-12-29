@@ -291,15 +291,39 @@ common.copyText = (selection) => {
     document.body.removeChild(copyDiv);
 }
 
-common.warning = (content, callback) => {
-    $dialog.warning({
-        title: '提示',
+common.dialog = (type, options) => {
+    $dialog[type]({
+        title: options.title || '提示',
+        content: options.content,
+        positiveText: options.positiveText || '确定',
+        negativeText: options.negativeText || '取消',
+        onPositiveClick: (e) => {
+            if(options.ok){
+                return options.ok(e)
+            }
+        },
+        onNegativeClick: (e) => {
+            if(options.cancel){
+                return options.cancel(e)
+            }
+        },
+        ...options
+    })
+}
+
+common.warning = (content, ok, options) => {
+    common.dialog('warning', {
         content,
-        positiveText: '确定',
-        negativeText: '取消',
-        onPositiveClick: () => {
-            callback()
-        }
+        ok,
+        ...options
+    })
+}
+
+common.info = (content, ok, options) => {
+    common.dialog('info', {
+        content,
+        ok,
+        ...options
     })
 }
 
