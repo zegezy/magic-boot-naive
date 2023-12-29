@@ -388,6 +388,9 @@ function getLabel(value, col){
             if(col.component == 'tree-select'){
                 valueField = col.componentProps?.valueField || 'key'
                 labelField = col.componentProps?.labelField || 'label'
+            }else if(col.component == 'select'){
+                valueField = 'value'
+                labelField = 'label'
             }
             return getLabelByData({col, value, valueField, labelField})
         }else if(col.showLabel){
