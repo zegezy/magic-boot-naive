@@ -123,7 +123,7 @@ function loadData() {
         $common.stopWatchList(watchList)
         watchList = watchValue(selectValue, props, emit)
         if(props.defaultFirstItem && options.value && options.value[0]){
-            let defaultValue = options.value[0][props.valueField]
+            let defaultValue = options.value[0].value
             selectValue.value = isArray(selectValue.value) ? [defaultValue] : defaultValue
         }
     })
