@@ -10,7 +10,7 @@
                     "
                         v-model="it.value"
                         :item-label="it.label"
-                        v-bind="it.props"
+                        v-bind="it.componentProps || it.props"
                 />
             </n-form-item>
         </template>
@@ -81,7 +81,7 @@ function input(input) {
 function search() {
 	for (let key in props.where) {
 		if (props.where[key] instanceof Object) {
-			if (props.where[key].type && props.where[key].type.startsWith('date') && props.where[key].value instanceof Array && props.where[key].value.join(',')) {
+			if (props.where[key].component && props.where[key].component.startsWith('date') && props.where[key].value instanceof Array && props.where[key].value.join(',')) {
 				props.where[key].value = props.where[key].value.join(',')
 			}
 		}
@@ -90,7 +90,7 @@ function search() {
 		emit('search')
 		for (let key in props.where) {
 			if (props.where[key] instanceof Object) {
-				if (props.where[key].type && props.where[key].type.startsWith('date') && props.where[key].value) {
+				if (props.where[key].component && props.where[key].component.startsWith('date') && props.where[key].value) {
 					props.where[key].value = props.where[key].value.split(',')
 				}
 			}
