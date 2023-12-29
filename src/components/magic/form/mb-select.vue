@@ -94,6 +94,10 @@ const props = defineProps({
     defaultFirstItem: {
         type: Boolean,
         default: false
+    },
+    done: {
+        type: Function,
+        default: () => {}
     }
 })
 const options = ref([])
@@ -120,6 +124,7 @@ function loadData() {
         valueField: props.valueField
     }).then(data => {
         options.value = data
+        props.done(data)
         $common.stopWatchList(watchList)
         watchList = watchValue(selectValue, props, emit)
         if(props.defaultFirstItem && options.value && options.value[0]){
