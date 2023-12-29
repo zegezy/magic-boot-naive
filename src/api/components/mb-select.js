@@ -1,8 +1,32 @@
 import {useDictStore} from "@/store/modules/dictStore";
 const dictStore = useDictStore()
-let props = {}
-export function getSelectData(_props){
-    props = _props
+export function getSelectData(props){
+    let listConcat = (dictData) => {
+        let selectList = []
+        if(props.optionsFilter){
+            dictData = dictData.filter(props.optionsFilter)
+        }
+        if (props.allOption) {
+            selectList = [{
+                value: '',
+                label: '全部'
+            }]
+            selectList = selectList.concat(dictData)
+        } else {
+            selectList = dictData
+        }
+        return selectList
+    }
+    let handlerData = (data) => {
+        let newData = []
+        data.forEach(it => {
+            newData.push({
+                label: it[props.labelField || 'label'],
+                value: it[props.valueField || 'value'].toString()
+            })
+        })
+        return newData
+    }
     return new Promise((resolve, reject) => {
         if (props.type) {
             resolve(listConcat(dictStore.getDictType(props.type)))
@@ -16,32 +40,4 @@ export function getSelectData(_props){
             reject()
         }
     })
-}
-
-function listConcat(dictData) {
-    let selectList = []
-    if(props.optionsFilter){
-        dictData = dictData.filter(props.optionsFilter)
-    }
-    if (props.allOption) {
-        selectList = [{
-            value: '',
-            label: '全部'
-        }]
-        selectList = selectList.concat(dictData)
-    } else {
-        selectList = dictData
-    }
-    return selectList
-}
-
-function handlerData(data) {
-    let newData = []
-    data.forEach(it => {
-        newData.push({
-            label: it[props.labelField || 'label'],
-            value: it[props.valueField || 'value'].toString()
-        })
-    })
-    return newData
 }
