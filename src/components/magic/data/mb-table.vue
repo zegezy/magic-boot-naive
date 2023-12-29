@@ -635,7 +635,7 @@ function fixCols() {
         column.width = col.width || colWidth
         column.minWidth = col.minWidth || column.width
         column.fixed = col.fixed
-        column.show = true
+        column.show = col.show == undefined ? true : col.show
         column.realSort = col.realSort
         column.resizable = true
         column.editIcon = col.editIcon
