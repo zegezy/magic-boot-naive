@@ -7,7 +7,14 @@
         :unchecked-value="_uncheckedValue"
         v-bind="props.props"
         @update:value="change"
-    />
+    >
+        <template #checked>
+            <slot name="checked"></slot>
+        </template>
+        <template #unchecked>
+            <slot name="unchecked"></slot>
+        </template>
+    </n-switch>
 </template>
 
 <script setup>
