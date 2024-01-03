@@ -94,8 +94,8 @@
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
                     </template>
                     <template #title="{ col }">
-                        <div @contextmenu.prevent="headerClick($event, col)" style="display: flex">
-                            <div @click="dataSort(col)" style="flex: 1">
+                        <div @contextmenu.prevent="headerClick($event, col)" class="relative">
+                            <div @click="dataSort(col)">
                                 <label>{{ col.label }}</label>
                                 <n-icon v-if="col.editIcon">
                                     <EditFilled />
@@ -116,7 +116,7 @@
                                     <ArrowSortDown16Filled />
                                 </n-icon>
                             </div>
-                            <div style="display: flex">
+                            <div class="title-tools">
                                 <div class="down-menus">
                                     <n-icon @click="headerClick($event, col)">
                                         <ChevronDown />
@@ -1243,5 +1243,12 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     margin-top: 4px;
     right: 0px;
     position: absolute;
+}
+.title-tools{
+    display: flex;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
 }
 </style>
