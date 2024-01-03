@@ -35,14 +35,28 @@
                         <span v-else>-</span>
                     </template>
                     <template #html="{ row, col }">
-                        <ShowOrTooltip>
-                            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
-                        </ShowOrTooltip>
+                        <div class="relative">
+                            <ShowOrTooltip>
+                                <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                            </ShowOrTooltip>
+                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        </div>
                     </template>
                     <template #templet="{ row, col, index }">
-                        <ShowOrTooltip>
-                            <span v-html="col.templet(row, col, index)"></span>
-                        </ShowOrTooltip>
+                        <div class="relative">
+                            <ShowOrTooltip>
+                                <span v-html="col.templet(row, col, index)"></span>
+                            </ShowOrTooltip>
+                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        </div>
+                    </template>
+                    <template #text="{ row, col }">
+                        <div class="relative">
+                            <ShowOrTooltip>
+                                <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                            </ShowOrTooltip>
+                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        </div>
                     </template>
                     <template #buttons="{ row, col }">
                         <n-space>
@@ -69,9 +83,12 @@
                         </n-space>
                     </template>
                     <template #dictType="{ row, col }">
-                        <ShowOrTooltip>
-                            <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
-                        </ShowOrTooltip>
+                        <div class="relative">
+                            <ShowOrTooltip>
+                                <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+                            </ShowOrTooltip>
+                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        </div>
                     </template>
                     <template #dynamic="{ row, col, index }">
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
@@ -647,7 +664,7 @@ function fixCols() {
         column.realSort = col.realSort
         column.resizable = true
         column.editIcon = col.editIcon
-        let type = col.type
+        let type = col.type || 'text'
         if (!col.render && type && keys.indexOf(type) != -1) {
             renderSlot(col, type)
         } else {
@@ -899,6 +916,9 @@ function headerClick(e, col) {
 }
 function hideDropMenus(){
     showMenus.value = false
+}
+function copyText(text){
+    $common.copyText(text)
 }
 function copyAll(field){
     $common.copyText(bindProps.data.map(it => it[field]).join('\n'))
@@ -1217,5 +1237,11 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
 }
 :deep(.n-data-table .n-data-table-check-extra){
     right: 0px;
+}
+.copy-text{
+    cursor: pointer;
+    margin-top: 4px;
+    right: 0px;
+    position: absolute;
 }
 </style>
