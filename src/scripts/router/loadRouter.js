@@ -34,7 +34,7 @@ export const handlerLayoutMenus = (menus, level) => {
                     const component = menu.component
                     if (component === 'Layout') {
                         menu.path = "/" + $common.uuid()
-                        menu.component = level > 0 ? layoutModules[`${relativePath}/layout/none.vue`] : loadLayoutView(component)
+                        menu.component = level > 0 ? layoutModules[`${relativePath}/layout/nested-router.vue`] : loadLayoutView(component)
                     } else {
                         menu.path = menu.path.startsWith('/') ? menu.path : '/' + menu.path
                         menu.component = loadView(component) || layoutModules[`${relativePath}/layout/empty.vue`]
