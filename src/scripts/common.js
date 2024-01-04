@@ -349,4 +349,13 @@ common.renderIcon = (icon) => {
     return () => h(MbIcon, { icon })
 }
 
+common.mapLabelValue = (data, labelField, valueField) => {
+    return data.map(it => {
+        return {
+            label: it[labelField || 'label'],
+            value: it[valueField || 'value'].toString()
+        }
+    })
+}
+
 export default common
