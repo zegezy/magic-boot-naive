@@ -49,7 +49,7 @@
                                 :url="$common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
                                 v-show="com.path == $route.path"
                             />
-                            <none />
+                            <nested-router />
                         </div>
                     </n-layout-content>
                 </n-layout>
@@ -61,7 +61,7 @@
 <script setup>
 import {ref, h, watch, computed} from 'vue';
 import tabs from './tabs.vue'
-import none from './none.vue'
+import NestedRouter from './nested-router.vue'
 import {RouterLink} from 'vue-router'
 import MbIcon from '@/components/magic/basic/mb-icon.vue';
 import {useUserStore} from "@/store/modules/userStore"
