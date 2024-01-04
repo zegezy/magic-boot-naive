@@ -35,28 +35,22 @@
                         <span v-else>-</span>
                     </template>
                     <template #html="{ row, col }">
-                        <div class="relative">
-                            <ShowOrTooltip>
-                                <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
-                            </ShowOrTooltip>
-                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
-                        </div>
+                        <ShowOrTooltip>
+                            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                        </ShowOrTooltip>
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
                     </template>
                     <template #templet="{ row, col, index }">
-                        <div class="relative">
-                            <ShowOrTooltip>
-                                <span v-html="col.templet(row, col, index)"></span>
-                            </ShowOrTooltip>
-                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
-                        </div>
+                        <ShowOrTooltip>
+                            <span v-html="col.templet(row, col, index)"></span>
+                        </ShowOrTooltip>
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
                     </template>
                     <template #text="{ row, col }">
-                        <div class="relative">
-                            <ShowOrTooltip>
-                                <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
-                            </ShowOrTooltip>
-                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
-                        </div>
+                        <ShowOrTooltip>
+                            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                        </ShowOrTooltip>
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
                     </template>
                     <template #buttons="{ row, col }">
                         <n-space>
@@ -83,12 +77,10 @@
                         </n-space>
                     </template>
                     <template #dictType="{ row, col }">
-                        <div class="relative">
-                            <ShowOrTooltip>
-                                <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
-                            </ShowOrTooltip>
-                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
-                        </div>
+                        <ShowOrTooltip>
+                            <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+                        </ShowOrTooltip>
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
                     </template>
                     <template #dynamic="{ row, col, index }">
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
@@ -1239,10 +1231,8 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     right: 0px;
 }
 .copy-text{
-    cursor: pointer;
-    margin-top: 4px;
-    right: 0px;
-    position: absolute;
+    margin-top: 5px;
+    float: right;
 }
 .title-tools{
     display: flex;
