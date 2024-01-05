@@ -78,9 +78,18 @@
                     >
                         <!-- edit = true（始终编辑模式） 或者激活编辑模式 显示组件 -->
                         <component
+                            v-if="col.component.startsWith('mb-')"
                             :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
                             :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
                             v-model="row[col.field]"
+                            v-bind="componentDynamicBind(row, col)"
+                            :style="col.componentStyle"
+                            @blur="componentBlur(row._index_, colIndex, col, row)"
+                        />
+                        <component
+                            v-else
+                            :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
+                            :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
                             v-model:value="row[col.field]"
                             v-bind="componentDynamicBind(row, col)"
                             :style="col.componentStyle"
@@ -281,6 +290,9 @@ function componentDynamicBind(row, col){
                 col.componentProps.onChange(value, row)
             }
         }
+    }
+    if(col.handlerComponentProps){
+        col.handlerComponentProps(bind, row)
     }
     return bind
 }
