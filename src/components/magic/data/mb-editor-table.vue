@@ -81,6 +81,7 @@
                             :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
                             :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
                             v-model="row[col.field]"
+                            v-model:value="row[col.field]"
                             v-bind="componentDynamicBind(row, col)"
                             :style="col.componentStyle"
                             @blur="componentBlur(row._index_, colIndex, col, row)"
@@ -412,9 +413,19 @@ function setComponentRef(rowIndex, colIndex, el, col){
     if(el && edits.value[rowIndex + '' + colIndex]){
         currentEditRef = el
         nextTick(() => {
-            let key = Object.keys(toRaw(el.$refs))[0]
-            // 执行组件的focus方法，如果组件内template根节点内有focus方法 直接设置ref属性即可，比如mb-input
-            key && (el.$refs[key].focus && el.$refs[key].focus() || el.$refs[key].$el.focus())
+            if(el.focus){
+                el.focus()
+            }else{
+                let key = Object.keys(toRaw(el.$refs))[0]
+                // 执行组件的focus方法，如果组件内template根节点内有focus方法 直接设置ref属性即可，比如mb-input
+                if(key){
+                    if(el.$refs[key].focus){
+                        el.$refs[key].focus()
+                    }else{
+                        el.$refs[key].$el.focus()
+                    }
+                }
+            }
             componentInit(el, col)
         })
     }
