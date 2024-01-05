@@ -36,7 +36,7 @@
                     </template>
                     <template #html="{ row, col }">
                         <ShowOrTooltip>
-                            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                            <span v-html="getLabel(row, col)"></span>
                         </ShowOrTooltip>
                         <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
                     </template>
@@ -48,7 +48,7 @@
                     </template>
                     <template #text="{ row, col }">
                         <ShowOrTooltip>
-                            <span v-html="row[col.field] ? row[col.field] : col.defaultValue || ''"></span>
+                            <span v-html="getLabel(row, col)"></span>
                         </ShowOrTooltip>
                         <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
                     </template>
@@ -635,6 +635,9 @@ function renderShowColumns() {
     showColumns.value = columns.value.filter(it => it.show)
     calcScrollX()
 }
+function getLabel(row, col){
+    return $common.notEmptyNot01(row[col.field]) ? row[col.field] : $common.notEmptyNot01(col.defaultValue) ? col.defaultValue : ''
+}
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
     const keys = Object.keys(tableSlots.value)
@@ -678,7 +681,7 @@ function fixCols() {
                 }
             }else{
                 column.render = (row) => {
-                    return row[col.field] ? row[col.field] : col.defaultValue || ''
+                    return getLabel(row, col)
                 }
             }
         }
