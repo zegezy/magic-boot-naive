@@ -285,9 +285,11 @@ if(props.operation && !props.preview){
 function componentDynamicBind(row, col){
     let bind = {...col.componentProps}
     if(col.componentProps){
-        if(col.componentProps.onChange){
-            bind.onChange = (value) => {
-                col.componentProps.onChange(value, row)
+        for(let key in col.componentProps){
+            if(key.startsWith('on')){
+                bind[key] = (...data) => {
+                    col.componentProps[key]({...data, _row_: row})
+                }
             }
         }
     }
