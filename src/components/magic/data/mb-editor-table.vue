@@ -286,7 +286,7 @@ function componentDynamicBind(row, col){
     let bind = {...col.componentProps}
     if(col.componentProps){
         for(let key in col.componentProps){
-            if(key.startsWith('on')){
+            if(key.startsWith('on') && typeof(col.componentProps[key]) == 'function'){
                 bind[key] = (...data) => {
                     col.componentProps[key]({...data, _row_: row})
                 }
