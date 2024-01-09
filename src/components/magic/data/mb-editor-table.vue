@@ -357,6 +357,8 @@ function recursionAddIndex(children, index){
 function deleteRow(row){
     recursionDelete(tableOptions.data, row._index_)
     tableDataAddIndex()
+    let deleteAfter = props.operation?.delete?.deleteAfter;
+    deleteAfter && deleteAfter()
 }
 
 function recursionDelete(children, index){
