@@ -1236,6 +1236,7 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
 .copy-text{
     margin-top: 5px;
     float: right;
+    cursor: pointer;
 }
 .title-tools{
     display: flex;
