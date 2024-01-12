@@ -659,7 +659,7 @@ function fixCols() {
         column.realSort = col.realSort
         column.resizable = true
         column.editIcon = col.editIcon
-        let type = col.type || 'text'
+        let type = col.type
         if (!col.render && type && keys.indexOf(type) != -1) {
             renderSlot(col, type)
         } else {
@@ -673,17 +673,8 @@ function fixCols() {
         if (col.render) {
             column.render = col.render
         }else{
-            if(getNowrap.value){
-                column.render = (row) => {
-                    return h(ShowOrTooltip,{},{
-                        default: () => row[col.field]
-                    })
-                }
-            }else{
-                column.render = (row) => {
-                    return getLabel(row, col)
-                }
-            }
+            renderSlot(col, 'text')
+            column.render = col.render
         }
         if (col.props) {
             for (let key in col.props) {
