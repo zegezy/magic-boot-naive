@@ -1,6 +1,6 @@
 <style scoped>
 .edit-text{
-    min-height: 80%;
+    flex: 1;
 }
 :deep(.n-data-table-tr:hover .edit-text){
     border: var(--mb-editor-table-tr-hover-border)
@@ -16,6 +16,10 @@
 }
 :deep(.n-data-table .n-data-table-expand-trigger){
     float: left;
+}
+.copy-text{
+    margin: 0px 5px;
+    cursor: pointer;
 }
 </style>
 
@@ -33,83 +37,95 @@
                 <template v-if="col.component">
                     <!-- 设置了组件并且是非编辑模式下 -->
                     <template v-if="col.alwaysEdit !== true && !edits[row._index_ + '' + colIndex]">
-                        <!-- 如果是可以编辑，则鼠标悬浮显示边框 -->
-                        <div
-                            v-if="getIsEdit(col.edit, row)"
-                            @click="editMode(row._index_, colIndex, col)"
-                            class="edit-text"
-                            :style="col.labelStyle"
-                        >
-                            <slot
-                                :name="col.field + '-view'"
-                                :row="row"
-                                :col="col"
-                                :row-index="row._index_"
-                                :col-index="colIndex"
+                        <div v-if="getIsEdit(col.edit, row)" class="flex items-center h-4/5">
+                            <!-- 如果是可以编辑，则鼠标悬浮显示边框 -->
+                            <div
+                                @click="editMode(row._index_, colIndex, col)"
+                                class="edit-text h-full"
+                                :style="col.labelStyle"
                             >
-                                <span v-if="col.show == undefined || (col.show && col.show(row))">
-                                    {{ getLabel(row[col.field], col) }}
-                                </span>
-                            </slot>
+                                <slot
+                                    :name="col.field + '-view'"
+                                    :row="row"
+                                    :col="col"
+                                    :row-index="row._index_"
+                                    :col-index="colIndex"
+                                >
+                                    <span v-if="col.show == undefined || (col.show && col.show(row))">
+                                        {{ getLabel(row[col.field], col) }}
+                                    </span>
+                                </slot>
+                            </div>
+                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="common.copyText(getLabel(row[col.field], col))" />
                         </div>
-                        <!-- 如果不可以编辑，则鼠标悬浮显示禁止标志 -->
-                        <div v-else class="edit-text-not-allowed" :style="col.labelStyle">
-                            <slot
-                                :name="col.field + '-view'"
-                                :row="row"
-                                :col="col"
-                                :row-index="row._index_"
-                                :col-index="colIndex"
-                            >
-                                <span v-if="col.show == undefined || (col.show && col.show(row))">
-                                    {{ getLabel(row[col.field], col) || '-' }}
-                                </span>
-                            </slot>
+                        <div v-else class="flex items-center">
+                            <!-- 如果不可以编辑，则鼠标悬浮显示禁止标志 -->
+                            <div class="edit-text-not-allowed flex-1" :style="col.labelStyle">
+                                <slot
+                                    :name="col.field + '-view'"
+                                    :row="row"
+                                    :col="col"
+                                    :row-index="row._index_"
+                                    :col-index="colIndex"
+                                >
+                                    <span v-if="col.show == undefined || (col.show && col.show(row))">
+                                        {{ common.getValidValue(getLabel(row[col.field], col), '-') }}
+                                    </span>
+                                </slot>
+                            </div>
+                            <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="common.copyText(common.getValidValue(getLabel(row[col.field], col), '-'))" />
                         </div>
                     </template>
-                    <!-- edit 和 alwaysEdit 可配合使用 比如符合条件的 可以一直保持编辑模式 -->
-                    <slot
-                        v-if="(col.edit != undefined && col.edit(row) && col.alwaysEdit) || (col.edit == undefined && col.alwaysEdit) || (edits[row._index_ + '' + colIndex] && currentRowIndex == row._index_ && currentColIndex == colIndex)"
-                        :name="col.field + '-edit'"
-                        :row="row"
-                        :col="col"
-                        :row-index="row._index_"
-                        :col-index="colIndex"
-                    >
-                        <!-- edit = true（始终编辑模式） 或者激活编辑模式 显示组件 -->
-                        <component
-                            v-if="col.component.startsWith('mb-')"
-                            :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
-                            :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
-                            v-model="row[col.field]"
-                            v-bind="componentDynamicBind(row, col)"
-                            :style="col.componentStyle"
-                            @blur="componentBlur(row._index_, colIndex, col, row)"
-                        />
-                        <component
-                            v-else
-                            :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
-                            :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
-                            v-model:value="row[col.field]"
-                            v-bind="componentDynamicBind(row, col)"
-                            :style="col.componentStyle"
-                            @blur="componentBlur(row._index_, colIndex, col, row)"
-                        />
-                    </slot>
+                    <div class="flex items-center" v-if="(col.edit != undefined && col.edit(row) && col.alwaysEdit) || (col.edit == undefined && col.alwaysEdit) || (edits[row._index_ + '' + colIndex] && currentRowIndex == row._index_ && currentColIndex == colIndex)">
+                        <div class="flex-1">
+                            <!-- edit 和 alwaysEdit 可配合使用 比如符合条件的 可以一直保持编辑模式 -->
+                            <slot
+                                :name="col.field + '-edit'"
+                                :row="row"
+                                :col="col"
+                                :row-index="row._index_"
+                                :col-index="colIndex"
+                            >
+                                <!-- edit = true（始终编辑模式） 或者激活编辑模式 显示组件 -->
+                                <component
+                                    v-if="col.component.startsWith('mb-')"
+                                    :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
+                                    :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
+                                    v-model="row[col.field]"
+                                    v-bind="componentDynamicBind(row, col)"
+                                    :style="col.componentStyle"
+                                    @blur="componentBlur(row._index_, colIndex, col, row)"
+                                />
+                                <component
+                                    v-else
+                                    :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
+                                    :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
+                                    v-model:value="row[col.field]"
+                                    v-bind="componentDynamicBind(row, col)"
+                                    :style="col.componentStyle"
+                                    @blur="componentBlur(row._index_, colIndex, col, row)"
+                                />
+                            </slot>
+                        </div>
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="common.copyText(row[col.field])" />
+                    </div>
                 </template>
-                <!-- 如果没有设置组件 直接显示数据 -->
-                <div v-else :style="col.labelStyle">
-                    <slot
-                        :name="col.field + '-view'"
-                        :row="row"
-                        :col="col"
-                        :row-index="row._index_"
-                        :col-index="colIndex"
-                    >
-                        <span v-if="col.show == undefined || (col.show && col.show(row))">
-                            {{ row[col.field] }}
-                        </span>
-                    </slot>
+                <div v-else class="flex items-center">
+                    <!-- 如果没有设置组件 直接显示数据 -->
+                    <div :style="col.labelStyle" class="flex-1">
+                        <slot
+                            :name="col.field + '-view'"
+                            :row="row"
+                            :col="col"
+                            :row-index="row._index_"
+                            :col-index="colIndex"
+                        >
+                            <span v-if="col.show == undefined || (col.show && col.show(row))">
+                                {{ row[col.field] }}
+                            </span>
+                        </slot>
+                    </div>
+                    <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="common.copyText(row[col.field])" />
                 </div>
             </template>
         </template>
@@ -123,6 +139,7 @@ import { getSelectData } from "@/api/components/mb-select.js";
 import { getTreeSelectData } from "@/api/components/mb-tree-select";
 import { omit, cloneDeep } from 'lodash-es'
 import treeTable from "@/scripts/treeTable";
+import common from '@/scripts/common'
 const magicTable = ref()
 const props = defineProps({
     id: {

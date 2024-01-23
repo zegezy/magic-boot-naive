@@ -273,6 +273,17 @@ common.notEmptyNot01 = (value) => {
     return false
 }
 
+/**
+ * 获取有效数据 并且 可以设置默认值
+ */
+common.getValidValue = (value, defaultValue) => {
+    if(common.notEmptyNot01(value)){
+        return value
+    }else{
+        return common.notEmptyNot01(defaultValue) ? defaultValue : ''
+    }
+}
+
 common.stopWatchList = (watchList) => {
     for(let watchFunction of watchList){
         watchFunction()
