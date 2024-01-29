@@ -206,6 +206,7 @@ const currentCol = ref()
 // 是否可编辑单元格，可以控制某行某列
 const edits = ref({})
 const showLabelData = reactive({})
+const disableComponentCallbackFields = ref([])
 
 function setData(data){
     let newData = cloneDeep(data)
@@ -305,7 +306,9 @@ function componentDynamicBind(row, col){
         for(let key in col.componentProps){
             if(key.startsWith('on') && typeof(col.componentProps[key]) == 'function'){
                 bind[key] = (...data) => {
-                    col.componentProps[key]({...data, _row_: row})
+                    if(disableComponentCallbackFields.value.indexOf(col.field) == -1){
+                        col.componentProps[key]({...data, _row_: row})
+                    }
                 }
             }
         }
@@ -438,7 +441,9 @@ function getLabel(value, col){
 let currentEditRef = null
 function componentBlur(rowIndex, colIndex, col, row){
     edits.value[rowIndex + '' + colIndex] = false
-    col.blur && col.blur(row)
+    if(disableComponentCallbackFields.value.indexOf(col.field) == -1){
+        col.blur && col.blur(row)
+    }
 }
 
 // 动态设置ref
@@ -565,6 +570,19 @@ function getTableRef(){
     return magicTable.value
 }
 
+function disableComponentCallback(fields){
+    disableComponentCallbackFields.value.push(...fields)
+}
+
+function enableComponentCallback(fields){
+    for(let field of fields){
+        let index = disableComponentCallbackFields.value.indexOf(field)
+        if(index != -1){
+            disableComponentCallbackFields.value.splice(index, 1)
+        }
+    }
+}
+
 watch(magicTable, () => {
     if(props.rowHoverEdit){
         magicTable.value.$el.style.setProperty('--mb-editor-table-tr-hover-border', '1px dashed #ccc')
@@ -573,6 +591,6 @@ watch(magicTable, () => {
     }
 })
 
-defineExpose({ getTableRef, previewMode, editMode, getData, setData, push, unshift })
+defineExpose({ getTableRef, previewMode, editMode, getData, setData, push, unshift, disableComponentCallback, enableComponentCallback })
 
 </script>
