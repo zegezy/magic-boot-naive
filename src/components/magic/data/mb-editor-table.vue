@@ -227,7 +227,7 @@ for (let i in props.cols) {
     if(col.copyAll){
         col.copyAllCallback = (col) => {
             let labels = []
-            getData().forEach(it => {
+            treeTable.recursionRearrange(getData()).forEach(it => {
                 labels.push(common.getValidValue(getLabel(it[col.field], col), '-'))
             })
             $common.copyText(labels.join('\n'))
