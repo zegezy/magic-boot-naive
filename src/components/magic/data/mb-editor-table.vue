@@ -14,7 +14,9 @@
 :deep(.n-data-table-td){
     height: 60px;
 }
-:deep(.n-data-table .n-data-table-expand-trigger){
+:deep(.n-data-table .n-data-table-expand-trigger),
+:deep(.n-data-table .n-data-table-indent),
+:deep(.n-data-table .n-data-table-expand-placeholder){
     float: left;
 }
 .copy-text{
