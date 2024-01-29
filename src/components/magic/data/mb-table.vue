@@ -115,7 +115,7 @@
                                     </n-icon>
                                 </div>
                                 <div class="align-center">
-                                    <mb-icon style="cursor: pointer" icon="CopyOutline" v-if="col.copyAll" @click="copyAll(col.field)" />
+                                    <mb-icon style="cursor: pointer" icon="CopyOutline" v-if="col.copyAll" @click="copyAll(col)" />
                                 </div>
                             </div>
                         </div>
@@ -656,6 +656,10 @@ function fixCols() {
         column.fixed = col.fixed
         column.show = col.show == undefined ? true : col.show
         column.copyAll = col.copyAll
+        column.copyAllCallback = col.copyAllCallback
+        column.componentProps = col.componentProps
+        column.component = col.component
+        column.showLabel = col.showLabel
         column.realSort = col.realSort
         column.resizable = true
         column.editIcon = col.editIcon
@@ -906,8 +910,13 @@ function hideDropMenus(){
 function copyText(text){
     $common.copyText(text)
 }
-function copyAll(field){
-    $common.copyText(bindProps.data.map(it => it[field]).join('\n'))
+function copyAll(col){
+    if(col.copyAllCallback){
+        col.copyAllCallback(col)
+    }else{
+        let field = col.field
+        $common.copyText(bindProps.data.map(it => it[field]).join('\n'))
+    }
 }
 function dataSort(col, rule) {
     // 重置静态排序状态
