@@ -90,19 +90,22 @@
                             >
                                 <!-- edit = true（始终编辑模式） 或者激活编辑模式 显示组件 -->
                                 <component
-                                    v-if="col.component.startsWith('mb-')"
+                                    v-if="!col.component.startsWith('n-')"
                                     :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
-                                    :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
+                                    :is="col.component.startsWith('#') ? col.component.substring(1) : 'mb-' + col.component"
                                     v-model="row[col.field]"
+                                    :select-row-data="row"
                                     v-bind="componentDynamicBind(row, col)"
                                     :style="col.componentStyle"
                                     @blur="componentBlur(row._index_, colIndex, col, row)"
                                 />
+                                <!-- naive组件 大多使用 v-model:value 绑定，主要是兼容这个 -->
                                 <component
                                     v-else
                                     :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
-                                    :is="col.component.startsWith('#') ? col.component.substring(1) : col.component.startsWith('n-') ? col.component : 'mb-' + col.component"
+                                    :is="col.component"
                                     v-model:value="row[col.field]"
+                                    :select-row-data="row"
                                     v-bind="componentDynamicBind(row, col)"
                                     :style="col.componentStyle"
                                     @blur="componentBlur(row._index_, colIndex, col, row)"
