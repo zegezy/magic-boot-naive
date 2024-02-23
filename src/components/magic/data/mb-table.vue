@@ -284,6 +284,10 @@ const props = defineProps({
     onContextmenuSelect: {
         type: Function,
         default: () => {}
+    },
+    onDblclick: {
+        type: Function,
+        default: () => {}
     }
 })
 const ShowOrTooltip = defineComponent({
@@ -394,6 +398,9 @@ bindProps.rowProps = (row) => {
                 rightClickMenuY.value = e.clientY;
             });
         }
+    }
+    _rowProps['onDblclick'] = (...data) => {
+        props.onDblclick({...data, row})
     }
     return _rowProps
 }
