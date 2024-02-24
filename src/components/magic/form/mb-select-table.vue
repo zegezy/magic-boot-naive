@@ -8,16 +8,21 @@
 </style>
 
 <template>
-    <div class="list-container" ref="listContainer">
-        <mb-input ref="magicInput" @focus="inputFocus" @blur="inputBlur" v-model="inputValue" />
+    <div class="list-container" ref="listContainerRef">
+        <mb-input ref="magicInput" @click="inputClick" @blur="inputBlur" v-model="inputValue" />
         <div class="mb-list" :style="{ width: width + 'px', height: height + 'px', ...componentStyle }" v-if="showList">
             <div class="mb-search">
-                <mb-search :where="tableOptions.where" @search="reloadTable" />
+                <mb-search :where="selectTableOptions.where" @search="reloadTable" />
+            </div>
+            <div class="mb-toolbar">
+                <n-button :size="$global.uiSize.value" type="primary" @click="selectDataList">
+                    选择数据
+                </n-button>
             </div>
             <div class="mb-table">
                 <mb-table
                     ref="magicTable"
-                    v-bind="tableOptions"
+                    v-bind="selectTableOptions"
                     v-model:checked-row-keys="checkedRowKeys"
                     @dblclick="tableDblclick"
                 />
@@ -27,22 +32,18 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { clone } from 'lodash-es'
+import { clone, cloneDeep } from 'lodash-es'
 const magicTable = ref()
 const magicInput = ref()
-const listContainer = ref()
+const listContainerRef = ref()
 const checkedRowKeys = ref()
 const showList = ref(false)
 
 const props = defineProps({
     modelValue: {
         required: true
-    },
-    selectRowData: {
-        type: Object,
-        default: () => {}
     },
     width: {
         type: Number,
@@ -56,26 +57,55 @@ const props = defineProps({
         type: Object,
         default: () => {}
     },
-    selectRowCallback: {
+    onSelectData: {
         type: Function,
         default: () => {}
+    },
+    multiple: {
+        type: Boolean,
+        default: false
     }
 })
+
+const selectTableOptions = ref(cloneDeep(props.tableOptions))
+initTableOptions()
+watch(() => props.tableOptions, (value) => {
+    selectTableOptions.value = value
+    initTableOptions()
+}, { deep: true })
+function initTableOptions(){
+    selectTableOptions.value.selection = props.multiple
+}
+
 const inputValue = ref(clone(props.modelValue))
 watch(() => props.modelValue, (value) => {
     inputValue.value = value
 })
 
-watch(() => listContainer.value, () => {
-    onClickOutside(listContainer, () => showList.value = false)
+watch(() => listContainerRef.value, () => {
+    addEventListener()
+    onClickOutside(listContainerRef, () => closeTable())
 })
 
 function tableDblclick({ row }){
-    showList.value = false
-    props.selectRowCallback(props.selectRowData, row)
+    props.onSelectData({
+        selectData: row,
+        multiple: false
+    })
+    closeTable()
 }
+
+function selectDataList(){
+    let rowKey = selectTableOptions.value['rowKey'] || 'id'
+    props.onSelectData({
+        selectData: magicTable.value.getData().filter(it => checkedRowKeys.value.indexOf(it[rowKey]) != -1),
+        multiple: true
+    })
+    closeTable()
+}
+
 const componentStyle = ref()
-function inputFocus(){
+function inputClick(){
     let style = {}
     let inputRect = magicInput.value.$el.getBoundingClientRect()
     let bodyClientWidth = document.body.clientWidth
@@ -105,11 +135,34 @@ function inputFocus(){
 
 function inputBlur(){
     // setTimeout(() => magicInput.value.$refs[Object.keys(toRaw(magicInput.value.$refs))[0]].focus(), 0)
-    // showList.value = false
+    // closeTable()
 }
 
 function reloadTable() {
     magicTable.value.reload()
 }
+
+function keydown(e){
+    // esc
+    if(e && e.keyCode == 27){
+        closeTable()
+    }
+}
+
+function closeTable(){
+    showList.value = false
+}
+
+function addEventListener() {
+    listContainerRef.value.addEventListener('keydown', keydown)
+}
+
+function removeListener() {
+    listContainerRef.value.removeEventListener('keydown', keydown)
+}
+
+onBeforeUnmount(() => {
+    removeListener()
+})
 
 </script>

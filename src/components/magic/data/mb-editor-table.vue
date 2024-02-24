@@ -94,7 +94,6 @@
                                     :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
                                     :is="col.component.startsWith('#') ? col.component.substring(1) : 'mb-' + col.component"
                                     v-model="row[col.field]"
-                                    :select-row-data="row"
                                     v-bind="componentDynamicBind(row, col)"
                                     :style="col.componentStyle"
                                     @blur="componentBlur(row._index_, colIndex, col, row)"
@@ -105,7 +104,6 @@
                                     :ref="(el) => setComponentRef(row._index_, colIndex, el, col)"
                                     :is="col.component"
                                     v-model:value="row[col.field]"
-                                    :select-row-data="row"
                                     v-bind="componentDynamicBind(row, col)"
                                     :style="col.componentStyle"
                                     @blur="componentBlur(row._index_, colIndex, col, row)"
@@ -321,7 +319,19 @@ function componentDynamicBind(row, col){
             if(key.startsWith('on') && typeof(col.componentProps[key]) == 'function'){
                 bind[key] = (...data) => {
                     if(disableComponentCallbackFields.value.indexOf(col.field) == -1){
-                        col.componentProps[key]({...data, _row_: row})
+                        let _data = {
+                            editorCurrentRow: row
+                        }
+                        for(let key in data){
+                            if(data[key] instanceof Object){
+                                for(let key2 in data[key]){
+                                    _data[key2] = data[key][key2]
+                                }
+                            }else{
+                                _data[key] = data[key]
+                            }
+                        }
+                        col.componentProps[key](_data)
                     }
                 }
             }
