@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch, toRaw } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { clone, cloneDeep } from 'lodash-es'
 const magicTable = ref()
@@ -64,6 +64,10 @@ const props = defineProps({
     multiple: {
         type: Boolean,
         default: false
+    },
+    closeCurrentColEditMode: {
+        type: Function,
+        default: undefined
     }
 })
 
@@ -135,17 +139,11 @@ function inputClick(){
     showList.value = true
 }
 
-function inputBlur(){
-    // setTimeout(() => magicInput.value.$refs[Object.keys(toRaw(magicInput.value.$refs))[0]].focus(), 0)
-    // closeTable()
-}
-
 function reloadTable() {
     magicTable.value.reload()
 }
 
 function keydown(e){
-    console.log(typeof(e))
     // esc
     if(e && e.keyCode == 27){
         closeTable()
@@ -153,6 +151,7 @@ function keydown(e){
 }
 
 function closeTable(){
+    props.closeCurrentColEditMode && props.closeCurrentColEditMode()
     showList.value = false
 }
 
@@ -167,5 +166,12 @@ function removeListener() {
 onBeforeUnmount(() => {
     removeListener()
 })
+
+function focus(){
+    magicInput.value.$refs[Object.keys(toRaw(magicInput.value.$refs))[0]].focus()
+    inputClick()
+}
+
+defineExpose({ focus })
 
 </script>

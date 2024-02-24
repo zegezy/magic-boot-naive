@@ -42,7 +42,7 @@
                         <div v-if="getIsEdit(col.edit, row)" class="flex items-center h-4/5">
                             <!-- 如果是可以编辑，则鼠标悬浮显示边框 -->
                             <div
-                                @click="editMode(row._index_, colIndex, col)"
+                                @click="editMode(row._index_, colIndex, col, row)"
                                 class="edit-text h-full"
                                 :style="col.labelStyle"
                             >
@@ -97,6 +97,7 @@
                                     v-bind="componentDynamicBind(row, col)"
                                     :style="col.componentStyle"
                                     @blur="componentBlur(row._index_, colIndex, col, row)"
+                                    :close-current-col-edit-mode="closeCurrentColEditMode"
                                 />
                                 <!-- naive组件 大多使用 v-model:value 绑定，主要是兼容这个 -->
                                 <component
@@ -206,6 +207,7 @@ const tableOptions = reactive({
 const currentColIndex = ref(0)
 const currentRowIndex = ref(0)
 const currentCol = ref()
+const currentRow = ref()
 // 是否可编辑单元格，可以控制某行某列
 const edits = ref({})
 const showLabelData = reactive({})
@@ -471,6 +473,11 @@ function componentBlur(rowIndex, colIndex, col, row){
     }
 }
 
+// 关闭当前单元格编辑模式
+function closeCurrentColEditMode(){
+    componentBlur(currentRowIndex.value, currentColIndex.value, currentCol.value, currentRow.value)
+}
+
 // 动态设置ref
 function setComponentRef(rowIndex, colIndex, el, col){
     if(el && edits.value[rowIndex + '' + colIndex]){
@@ -537,12 +544,15 @@ function previewMode(rowIndex, colIndex){
 }
 
 // 让单元格变成编辑模式
-function editMode(rowIndex, colIndex, col){
+function editMode(rowIndex, colIndex, col, row){
     currentRowIndex.value = rowIndex
     currentColIndex.value = colIndex
     edits.value[rowIndex + '' + colIndex] = true
     if(col){
         currentCol.value = col
+    }
+    if(row){
+        currentRow.value = row
     }
 }
 
@@ -616,6 +626,17 @@ watch(magicTable, () => {
     }
 })
 
-defineExpose({ getTableRef, previewMode, editMode, getData, setData, push, unshift, disableComponentCallback, enableComponentCallback })
+defineExpose({
+    getTableRef,
+    previewMode,
+    editMode,
+    getData,
+    setData,
+    push,
+    unshift,
+    disableComponentCallback,
+    enableComponentCallback,
+    closeCurrentColEditMode
+})
 
 </script>
