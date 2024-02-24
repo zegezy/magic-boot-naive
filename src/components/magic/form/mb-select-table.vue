@@ -9,13 +9,13 @@
 
 <template>
     <div class="list-container" ref="listContainerRef">
-        <mb-input ref="magicInput" @click="inputClick" @blur="inputBlur" v-model="inputValue" />
+        <mb-input ref="magicInput" @click="inputClick" v-model="inputValue" />
         <div class="mb-list" :style="{ width: width + 'px', height: height + 'px', ...componentStyle }" v-if="showList">
             <div class="mb-search">
                 <mb-search :where="selectTableOptions.where" @search="reloadTable" />
             </div>
             <div class="mb-toolbar">
-                <n-button :size="$global.uiSize.value" type="primary" @click="selectDataList">
+                <n-button v-if="multiple" :size="$global.uiSize.value" type="primary" @click="selectDataList">
                     选择数据
                 </n-button>
             </div>
