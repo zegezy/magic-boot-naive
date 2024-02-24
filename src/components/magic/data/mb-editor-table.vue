@@ -323,7 +323,8 @@ function componentDynamicBind(row, col){
                             editorCurrentRow: row
                         }
                         for(let key in data){
-                            if(data[key] instanceof Object){
+                            // 如果标识了需要解构，把key赋值给_data
+                            if(data[key] instanceof Object && data[key]['_deconstruction_']){
                                 for(let key2 in data[key]){
                                     _data[key2] = data[key][key2]
                                 }

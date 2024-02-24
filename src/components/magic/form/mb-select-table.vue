@@ -90,7 +90,8 @@ watch(() => listContainerRef.value, () => {
 function tableDblclick({ row }){
     props.onSelectData({
         selectData: row,
-        multiple: false
+        multiple: false,
+        _deconstruction_: true
     })
     closeTable()
 }
@@ -99,7 +100,8 @@ function selectDataList(){
     let rowKey = selectTableOptions.value['rowKey'] || 'id'
     props.onSelectData({
         selectData: magicTable.value.getData().filter(it => checkedRowKeys.value.indexOf(it[rowKey]) != -1),
-        multiple: true
+        multiple: true,
+        _deconstruction_: true
     })
     closeTable()
 }
@@ -143,6 +145,7 @@ function reloadTable() {
 }
 
 function keydown(e){
+    console.log(typeof(e))
     // esc
     if(e && e.keyCode == 27){
         closeTable()
