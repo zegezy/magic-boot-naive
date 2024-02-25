@@ -11,7 +11,7 @@
     <div class="list-container" ref="listContainerRef">
         <mb-input ref="magicInput" @click="inputClick" v-model="inputValue" />
         <div class="mb-list" :style="{ width: width + 'px', height: height + 'px', ...componentStyle }" v-if="showList">
-            <div class="mb-search">
+            <div class="mb-search" v-if="!search">
                 <mb-search :where="selectTableOptions.where" @search="reloadTable" />
             </div>
             <div class="mb-toolbar">
@@ -68,10 +68,18 @@ const props = defineProps({
     closeCurrentColEditMode: {
         type: Function,
         default: undefined
+    },
+    search: {
+        type: Object,
+        default: undefined
     }
 })
 
 const selectTableOptions = ref(cloneDeep(props.tableOptions))
+const sourceData = ref()
+selectTableOptions.value.done = (data) => {
+    sourceData.value = data
+}
 initTableOptions()
 watch(() => props.tableOptions, (value) => {
     selectTableOptions.value = value
@@ -82,6 +90,27 @@ function initTableOptions(){
 }
 
 const inputValue = ref(clone(props.modelValue))
+if(props.search){
+    watch(inputValue, (value) => {
+        let fields = props.search.fields
+        if(props.search.static){
+            selectTableOptions.value.data = sourceData.value.filter((it) => {
+                for(let i = 0; i<fields.length; i++){
+                    if(it[fields[i]].indexOf(value) != -1){
+                        return true
+                    }
+                }
+                return false
+            })
+        }else{
+            selectTableOptions.value.where = selectTableOptions.value.where || {}
+            fields.forEach(field => {
+                selectTableOptions.value.where[field] = value
+            })
+        }
+    })
+    watch(() => selectTableOptions.value.where, () => reloadTable(), { deep: true })
+}
 watch(() => props.modelValue, (value) => {
     inputValue.value = value
 })
@@ -140,7 +169,7 @@ function inputClick(){
 }
 
 function reloadTable() {
-    magicTable.value.reload()
+    magicTable.value && magicTable.value.reload()
 }
 
 function keydown(e){
