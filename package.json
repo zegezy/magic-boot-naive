@@ -22,7 +22,13 @@
         "vue-cropper": "^1.0.2",
         "vue-router": "^4.1.6",
         "vuedraggable": "^4.1.0",
-        "xlsx": "^0.18.3"
+        "xlsx": "^0.18.3",
+        "@volar/monaco": "1.7.9",
+        "monaco-editor-core": "^0.46.0",
+        "monaco-editor-textmate": "^4.0.0",
+        "monaco-textmate": "^3.0.1",
+        "monaco-volar": "^0.4.0",
+        "onigasm": "^2.2.5"
     },
     "devDependencies": {
         "@vicons/antd": "^0.12.0",
