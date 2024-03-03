@@ -30,15 +30,18 @@
             @update:checked-keys="updateCheckedKeys"
         />
         <n-dropdown
-            trigger="manual"
             placement="bottom-start"
+            trigger="manual"
             :show="showDropdown"
-            :options="dropdownOptions"
+            :options="contextmenu"
             :x="dropdownX"
             :y="dropdownY"
-            @select="handleSelect"
-            @clickoutside="handleClickoutside"
-        />
+            @select="dropdownSelect"
+            @clickoutside="() => showDropdown = false"
+        >
+            <!-- 需要有一个空的节点，不然报错-->
+            <div></div>
+        </n-dropdown>
     </div>
 </template>
 
@@ -111,7 +114,9 @@ const props = defineProps({
         default: undefined
     }
 })
-
+const showDropdown = ref(false)
+const dropdownX = ref()
+const dropdownY = ref()
 const checkedAllKeys = ref([])
 const checkedKeys = ref([])
 
@@ -281,13 +286,18 @@ function doExpand() {
     nextTick(() => refreshTree.value = true)
 }
 
+const currentNode = ref()
 function nodeProps({option}) {
     return {
         onClick() {
             emit('node-click', option)
         },
-        onContextmenu() {
-
+        onContextmenu(e) {
+            currentNode.value = option
+            showDropdown.value = true;
+            dropdownX.value = e.clientX;
+            dropdownY.value = e.clientY;
+            e.preventDefault();
         }
     }
 }
@@ -320,6 +330,11 @@ function checkedAll(checked) {
         checkedAllKeys.value = []
     }
     updateKeys()
+}
+
+function dropdownSelect(key){
+    showDropdown.value = false
+    props.contextmenu && props.contextmenu.filter(it => it.key == key)[0].click(currentNode.value)
 }
 
 defineExpose({getTree})

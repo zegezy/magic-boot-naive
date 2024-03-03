@@ -8,9 +8,6 @@
     <n-split direction="horizontal" style="height: 100%" :default-size="0.15" :max="0.2" :min="0.1">
         <template #1>
             <div>
-
-            </div>
-            <div>
                 <mb-tree
                     url="/system/component/tree"
                     :expand="false"
@@ -20,7 +17,11 @@
                     :checkable="false"
                     show-line
                     @node-click="nodeClick"
+                    :contextmenu="treeContextmenu"
                 />
+                <mb-modal ref="addSubDialog" title="添加下级" @confirm="addSub">
+                    <mb-input v-model="nodeName" />
+                </mb-modal>
             </div>
         </template>
         <template #2>
@@ -42,10 +43,27 @@
 <script setup>
 import { ref } from 'vue'
 const monacoVolar = ref()
+const addSubDialog = ref()
+const nodeName = ref()
+const currentNodeId = ref()
+const treeContextmenu = ref([{
+    key: 'addSub',
+    label: '添加下级',
+    click: (node) => {
+        currentNodeId.value = node.id
+        addSubDialog.value.show()
+    }
+}])
+function addSub(){
+    $common.post('/system/component/save/tree',{ pid: currentNodeId.value, name: nodeName.value }).then(res => {
+        addSubDialog.value.hide()
+        nodeName.value = ''
+    })
+}
 function nodeClick(option){
     if(!option.children){
         $common.get('/system/component/getSourceCode', { name: option.name }).then(res => {
-            monacoVolar.value.setValue(res.data)
+            monacoVolar.value.setValue(res.data || '')
         })
     }
 }
