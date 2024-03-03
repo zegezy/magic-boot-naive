@@ -16,7 +16,8 @@
             virtual-scroll
             block-line
             :cascade="cascade"
-            checkable
+            :checkable="checkable"
+            :show-line="showLine"
             :style="style"
             key-field="id"
             label-field="name"
@@ -27,6 +28,16 @@
             :default-expand-all="defaultExpandAll"
             :node-props="nodeProps"
             @update:checked-keys="updateCheckedKeys"
+        />
+        <n-dropdown
+            trigger="manual"
+            placement="bottom-start"
+            :show="showDropdown"
+            :options="dropdownOptions"
+            :x="dropdownX"
+            :y="dropdownY"
+            @select="handleSelect"
+            @clickoutside="handleClickoutside"
         />
     </div>
 </template>
@@ -86,6 +97,18 @@ const props = defineProps({
     cascade: {
         type: Boolean,
         default: true
+    },
+    checkable: {
+        type: Boolean,
+        default: false
+    },
+    showLine: {
+        type: Boolean,
+        default: false
+    },
+    contextmenu: {
+        type: Array,
+        default: undefined
     }
 })
 
@@ -262,6 +285,9 @@ function nodeProps({option}) {
     return {
         onClick() {
             emit('node-click', option)
+        },
+        onContextmenu() {
+
         }
     }
 }

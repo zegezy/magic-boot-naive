@@ -7,6 +7,7 @@
         :style="{ width: size, height: size }"
     >
         <use :xlink:href="symbolId" :class="className"/>
+        <title>{{ title }}</title>
     </svg>
     <n-icon
         v-else
@@ -33,6 +34,10 @@ const props = defineProps({
     color: {
         type: String,
         default: 'currentColor'
+    },
+    title: {
+        type: String,
+        default: ''
     }
 });
 const symbolId = computed(() => props.icon&&props.icon.startsWith('#') ? props.icon : `#${props.prefix}-${props.icon}`)
