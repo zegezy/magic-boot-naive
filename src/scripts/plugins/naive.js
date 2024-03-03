@@ -89,6 +89,7 @@ const naive = NaiveUI.create({
         NaiveUI.NSkeleton,
         NaiveUI.NImage,
         NaiveUI.NImageGroup,
+        NaiveUI.NSplit
     ]
 });
 
