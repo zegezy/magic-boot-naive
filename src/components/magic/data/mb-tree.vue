@@ -1,34 +1,37 @@
 <template>
-    <div>
-        <div style="margin-bottom: 5px;" v-if="expand || checked">
-            <n-space>
-                <n-button :size="$global.uiSize.value"  v-if="expand" type="primary" @click="doExpand">展开/折叠</n-button>
-                <n-button :size="$global.uiSize.value"  v-if="checked" type="primary"
-                          @click="() => { treeAllChecked = !treeAllChecked; checkedAll(treeAllChecked) }">全选/全不选
-                </n-button>
-            </n-space>
+    <div class="h-full w-full">
+        <div class="flex flex-col h-full w-full">
+            <div style="margin-bottom: 5px;" v-if="expand || checked">
+                <n-space>
+                    <n-button :size="$global.uiSize.value"  v-if="expand" type="primary" @click="doExpand">展开/折叠</n-button>
+                    <n-button :size="$global.uiSize.value"  v-if="checked" type="primary"
+                              @click="() => { treeAllChecked = !treeAllChecked; checkedAll(treeAllChecked) }">全选/全不选
+                    </n-button>
+                </n-space>
+            </div>
+            <div style="margin-bottom: 5px;" v-if="search">
+                <n-input :size="$global.uiSize.value"  v-model:value="searchValue" placeholder="输入关键字进行过滤"/>
+            </div>
+            <n-tree
+                class="flex-1"
+                v-bind="props.props"
+                virtual-scroll
+                block-line
+                :cascade="cascade"
+                :checkable="checkable"
+                :show-line="showLine"
+                :style="style"
+                key-field="id"
+                label-field="name"
+                :data="treeData"
+                :checked-keys="checkedKeys"
+                :pattern="searchValue"
+                :show-irrelevant-nodes="false"
+                :default-expand-all="defaultExpandAll"
+                :node-props="nodeProps"
+                @update:checked-keys="updateCheckedKeys"
+            />
         </div>
-        <div style="margin-bottom: 5px;" v-if="search">
-            <n-input :size="$global.uiSize.value"  v-model:value="searchValue" placeholder="输入关键字进行过滤"/>
-        </div>
-        <n-tree
-            v-bind="props.props"
-            virtual-scroll
-            block-line
-            :cascade="cascade"
-            :checkable="checkable"
-            :show-line="showLine"
-            :style="style"
-            key-field="id"
-            label-field="name"
-            :data="treeData"
-            :checked-keys="checkedKeys"
-            :pattern="searchValue"
-            :show-irrelevant-nodes="false"
-            :default-expand-all="defaultExpandAll"
-            :node-props="nodeProps"
-            @update:checked-keys="updateCheckedKeys"
-        />
         <n-dropdown
             placement="bottom-start"
             trigger="manual"
@@ -246,8 +249,8 @@ const refreshTree = ref(false)
 const treeAllChecked = ref(false)
 const searchValue = ref('')
 
-onBeforeMount(async () => {
-    await loadTreeData()
+onBeforeMount(() => {
+    loadTreeData()
 })
 
 function updateKeys(){
@@ -302,19 +305,22 @@ function nodeProps({option}) {
     }
 }
 
-async function loadTreeData() {
-    if (treeData.value.length == 0) {
-        await $common.get(props.url, props.params).then((res) => {
-            treeTable.deleteEmptyChildren(res.data.list)
-            treeData.value = res.data.list
-            loadSourceData(treeData.value)
-        })
+function loadTreeData() {
+    $common.get(props.url, props.params).then((res) => {
+        treeTable.deleteEmptyChildren(res.data.list)
+        treeData.value = res.data.list
+        loadSourceData(treeData.value)
+
         refreshTree.value = true
-        await nextTick(() => selectIds(props.modelValue))
+        nextTick(() => selectIds(props.modelValue))
         watch(() => props.modelValue, (value) => {
             nextTick(() => selectIds(value))
         })
-    }
+    })
+}
+
+function reload(){
+    loadTreeData()
 }
 
 function getTree() {
@@ -337,7 +343,7 @@ function dropdownSelect(key){
     props.contextmenu && props.contextmenu.filter(it => it.key == key)[0].click(currentNode.value)
 }
 
-defineExpose({getTree})
+defineExpose({getTree, reload})
 
 </script>
 

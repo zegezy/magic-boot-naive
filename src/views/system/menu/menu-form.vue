@@ -38,6 +38,10 @@
                 <n-tree-select
                     v-model:value="temp.componentName"
                     :options="componentTree"
+                    key-field="id"
+                    label-field="name"
+                    check-strategy="child"
+                    default-expand-all
                 />
             </n-form-item>
             <n-form-item label="权限标识" path="permission" v-if="menuType == 'button'">
@@ -124,8 +128,9 @@ const getTemp = () => {
     }
 }
 
-$common.get('/system/component/select').then(res => {
-    componentTree.value = res.data
+$common.get('/system/component/tree').then(res => {
+    $treeTable.deleteEmptyChildren(res.data.list)
+    componentTree.value = res.data.list
 })
 
 const temp = ref(getTemp())

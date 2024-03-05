@@ -4,7 +4,14 @@ import {
     Menu,
     Accessibility,
     Camera,
-    CopyOutline
+    CopyOutline,
+    Folder,
+    FolderOpenOutline,
+    LogoVue,
+    Search,
+    TrashOutline,
+    AddOutline,
+    ArrowDownOutline
 } from '@vicons/ionicons5'
 import {
     Organization12Filled,
@@ -21,6 +28,13 @@ export default {
     Accessibility,
     Camera,
     CopyOutline,
+    Folder,
+    FolderOpenOutline,
+    LogoVue,
+    Search,
+    TrashOutline,
+    AddOutline,
+    ArrowDownOutline,
     // fluent
     Organization12Filled,
     BookLetter24Filled,
