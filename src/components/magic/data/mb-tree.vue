@@ -9,7 +9,7 @@
                     </n-button>
                 </n-space>
             </div>
-            <div style="margin-bottom: 5px;" v-if="search">
+            <div style="padding: 5px" v-if="search">
                 <n-input :size="$global.uiSize.value"  v-model:value="searchValue" placeholder="输入关键字进行过滤"/>
             </div>
             <n-tree
@@ -30,6 +30,7 @@
                 :default-expand-all="defaultExpandAll"
                 :node-props="nodeProps"
                 @update:checked-keys="updateCheckedKeys"
+                @update:expanded-keys="updatePrefixWithExpaned"
             />
         </div>
         <n-dropdown
@@ -50,9 +51,10 @@
 
 <script setup>
 
-import {watch, ref, nextTick, onBeforeMount} from 'vue'
+import {watch, ref, nextTick, onBeforeMount, h} from 'vue'
 import treeTable from '@/scripts/treeTable'
 import { clone, uniq, pull, pullAll, isEmpty } from 'lodash-es'
+import MbIcon from "@/components/magic/basic/mb-icon.vue";
 
 const emit = defineEmits(['update:modelValue', 'check-change', 'node-click'])
 
@@ -115,6 +117,10 @@ const props = defineProps({
     contextmenu: {
         type: Array,
         default: undefined
+    },
+    icon: {
+        type: Object,
+        default: undefined
     }
 })
 const showDropdown = ref(false)
@@ -176,6 +182,21 @@ function updateCheckedKeys(keys, option, meta) {
         checkedAllKeys.value = uniq(checkedAllKeys.value)
     }
     updateKeys()
+}
+
+function updatePrefixWithExpaned(_keys, _option, meta){
+    if(props.icon){
+        if (!meta.node)
+            return;
+        switch (meta.action) {
+            case "expand":
+                meta.node.prefix = () => h(MbIcon, { icon: props.icon.expand })
+                break;
+            case "collapse":
+                meta.node.prefix = () => h(MbIcon, { icon: props.icon.collapse })
+                break;
+        }
+    }
 }
 
 function upRecursionCheck(pid){
@@ -305,9 +326,23 @@ function nodeProps({option}) {
     }
 }
 
+function recursionRenderIcon(children, icon){
+    children.forEach(it => {
+        if(it.children && it.children.length){
+            it.prefix = () => h(MbIcon, { icon: icon })
+            recursionRenderIcon(it.children, icon)
+        }else{
+            it.prefix = () => h(MbIcon, { icon: props.icon.node, color: '#42b883' })
+        }
+    })
+}
+
 function loadTreeData() {
     $common.get(props.url, props.params).then((res) => {
         treeTable.deleteEmptyChildren(res.data.list)
+        if(props.icon){
+            recursionRenderIcon(res.data.list, defaultExpandAll.value ? props.icon.expand : props.icon.collapse)
+        }
         treeData.value = res.data.list
         loadSourceData(treeData.value)
 

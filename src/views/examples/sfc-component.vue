@@ -20,6 +20,7 @@
                         show-line
                         @node-click="nodeClick"
                         :contextmenu="treeContextmenu"
+                        :icon="{ expand: 'FolderOpenOutline', collapse: 'Folder', node: 'LogoVue' }"
                     />
                     <mb-modal ref="nameModal" :title="updateComponent ? '修改': '添加下级'" @confirm="saveComponent">
                         <mb-input v-model="nodeNameInput" />
@@ -27,38 +28,40 @@
                 </div>
             </template>
             <template #2>
-                <n-tabs
-                    v-model:value="tabId"
-                    type="card"
-                    closable
-                    tab-style="min-width: 80px;"
-                    @close="tabClose"
-                    class="h-full w-full"
-                >
-                    <n-tab-pane
-                        v-for="tab in tabs"
-                        :key="tab.id"
-                        :tab="tab.name"
-                        :name="tab.id"
-                        display-directive="show"
+                <div style="padding: 5px;height: 100%; box-sizing: border-box;">
+                    <n-tabs
+                        v-model:value="tabId"
+                        type="card"
+                        closable
+                        tab-style="min-width: 80px;"
+                        @close="tabClose"
                         class="h-full w-full"
-                        style="padding: 0px"
                     >
-                        <div class="flex flex-col h-full">
-                            <div class="tools flex flex-row items-center" style="padding:0px 5px; height: 30px;">
-                                <mb-icon icon="save" color="black" size="1.5em" title="编译并保存" @click="saveCode(tab.id)" />
+                        <n-tab-pane
+                            v-for="tab in tabs"
+                            :key="tab.id"
+                            :tab="tab.name"
+                            :name="tab.id"
+                            display-directive="show"
+                            class="h-full w-full"
+                            style="padding: 0px"
+                        >
+                            <div class="flex flex-col h-full">
+                                <div class="tools flex flex-row items-center" style="padding:0px 5px; height: 30px;">
+                                    <mb-icon icon="save" color="black" size="1.5em" title="编译并保存" @click="saveCode(tab.id)" />
+                                </div>
+                                <div style="flex: 1">
+                                    <mb-monaco-volar
+                                        :ref="(el) => setComponentRef(el, tab.id)"
+                                        :code="tab.code"
+                                        :file-name="tab.id"
+                                        @save="saveCode(tab.id)"
+                                    />
+                                </div>
                             </div>
-                            <div style="flex: 1">
-                                <mb-monaco-volar
-                                    :ref="(el) => setComponentRef(el, tab.id)"
-                                    :code="tab.code"
-                                    :file-name="tab.id"
-                                    @save="saveCode(tab.id)"
-                                />
-                            </div>
-                        </div>
-                    </n-tab-pane>
-                </n-tabs>
+                        </n-tab-pane>
+                    </n-tabs>
+                </div>
             </template>
         </n-split>
         <mb-modal ref="errorInfoModal" width="900px" title="错误信息" :show-footer="false">
