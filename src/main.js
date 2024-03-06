@@ -8,8 +8,7 @@ import {
     setupNaiveDiscreteApi,
     setupDirectives,
     setupGlobalProperties,
-    setupMonacoVolar,
-    setupDynamicComponent
+    setupMonacoVolar
 } from '@/scripts/plugins'
 import {setupRouter} from '@/scripts/router'
 import {setupStore} from '@/store'
@@ -25,7 +24,6 @@ async function start() {
     setupNaiveDiscreteApi()
     setupDirectives(app)
     setupGlobalProperties(app)
-    await setupDynamicComponent(app)
     await setupRouter(app)
     await setupMonacoVolar()
     setupComponents(app)

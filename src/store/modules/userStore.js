@@ -4,6 +4,7 @@ import {sha256} from "js-sha256"
 import {useDictStore} from "@/store/modules/dictStore";
 import {generateRoutes} from "@/scripts/router/loadRouter";
 import router from "@/scripts/router"
+import {loadDynamicComponent} from '@/scripts/compiler/dynamicComponent'
 
 export const useUserStore = defineStore('user', () => {
     const tokenKey = 'magic_boot_token'
@@ -64,13 +65,14 @@ export const useUserStore = defineStore('user', () => {
         })
     }
 
-    async function loadData() {
+    async function loadData(app) {
         const userStore = useUserStore()
         const dictStore = useDictStore()
 
         await userStore.getUserInfo()
         await dictStore.getDictData()
         await $common.loadConfig()
+        await loadDynamicComponent(app)
 
         await generateRoutes().then(({ layoutMenus, notLayoutMenus, showMenus }) => {
             userStore.pushPermissionRouter(showMenus)
@@ -80,7 +82,7 @@ export const useUserStore = defineStore('user', () => {
         })
     }
 
-    function login(data) {
+    function login(data, app) {
         return new Promise((resolve, reject) => {
             $common.postJson('/system/security/login', {
                 username: data.username,
@@ -90,7 +92,7 @@ export const useUserStore = defineStore('user', () => {
             }).then(async res => {
                 let token = res.data
                 setToken(token)
-                await loadData()
+                await loadData(app)
                 resolve(token)
             }).catch((e) => {
                 reject(e)

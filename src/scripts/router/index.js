@@ -82,7 +82,7 @@ export async function setupRouter(app) {
     const token = userStore.getToken()
     if (token) {
         try {
-            await userStore.loadData()
+            await userStore.loadData(app)
         } catch (error) {
             await router.push({ path: '/login' })
             userStore.removeToken()

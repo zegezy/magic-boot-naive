@@ -9,7 +9,7 @@ function appComponent(app, item){
     app.component(item.name, eval(item.compileJs))
 }
 
-export async function setupDynamicComponent(app) {
+export async function loadDynamicComponent(app) {
     await $common.post('/system/component/list').then((res) => {
         res.data.forEach(it => {
             appComponent(app, it)

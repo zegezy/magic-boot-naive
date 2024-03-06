@@ -50,7 +50,8 @@
 <script setup>
 import router from '@/scripts/router'
 import {useUserStore} from '@/store/modules/userStore'
-import {reactive, ref} from 'vue'
+import {reactive, ref, getCurrentInstance} from 'vue'
+const app = getCurrentInstance().appContext.app
 
 const userStore = useUserStore()
 const codeImg = ref()
@@ -88,7 +89,7 @@ function handleLogin() {
         return
     } else {
         loading.value = true
-        userStore.login(loginForm).then(token => {
+        userStore.login(loginForm, app).then(token => {
             if (token) {
                 router.push({path: '/home'})
             } else {
