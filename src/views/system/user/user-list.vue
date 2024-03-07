@@ -26,6 +26,7 @@
                 :expand="false"
                 search
                 search-width="100%"
+                checkable
                 :checked="false"
                 @check-change="checkChange"
             />
@@ -36,9 +37,7 @@
                     <mb-search :where="tableOptions.where" @search="reloadTable">
                         <template #buttons>
                             <n-button type="primary" @click="table.exportExcel({ fileName: '用户数据' })">
-                                <n-icon>
-                                    <DownloadOutline/>
-                                </n-icon>
+                                <mb-icon icon="DownloadOutline" />
                                 导出
                             </n-button>
                         </template>
@@ -47,9 +46,7 @@
 
                 <div class="mb-toolbar">
                     <n-button :size="$global.uiSize.value"  v-permission="'user:save'" type="primary" @click="handleCreate">
-                        <n-icon>
-                            <add-outline/>
-                        </n-icon>
+                        <mb-icon icon="AddOutline" />
                         添加用户
                     </n-button>
                     <!--          <mb-button v-permission="'user:delete'" plain :request-url="'/system/user/delete'" :btn-type="'delete'" :request-data="{ id: ids }" :after-handler="reloadTable" />-->
@@ -83,9 +80,8 @@
 <script setup>
 import UserForm from './user-form.vue'
 
-import {ref, reactive, nextTick, onActivated, watch} from 'vue'
+import {ref, reactive, nextTick} from 'vue'
 import {useRoute} from 'vue-router'
-import {Search, TrashOutline, AddOutline, ArrowDownOutline, DownloadOutline} from "@vicons/ionicons5";
 
 const route = useRoute()
 

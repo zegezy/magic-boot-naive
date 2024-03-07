@@ -32,9 +32,7 @@
             <div>
                 <n-dropdown :options="options" @select="handleSelect">
                     <n-button text style="font-size: 20px;text-align: center">
-                        <n-icon>
-                            <SettingsOutline/>
-                        </n-icon>
+                        <mb-icon icon="SettingsOutline" />
                     </n-button>
                 </n-dropdown>
             </div>
@@ -59,11 +57,9 @@
 </template>
 
 <script setup>
-import {SettingsOutline} from "@vicons/ionicons5"
 import {ref} from 'vue'
 import {useUserStore} from "@/store/modules/userStore";
 import router from '@/scripts/router'
-import UserForm from "@/views/system/user/user-form.vue";
 
 const userStore = useUserStore()
 

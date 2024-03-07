@@ -11,9 +11,7 @@
         </div>
         <div class="mb-toolbar">
             <n-button :size="$global.uiSize.value"  v-permission="'role:save'" type="primary" @click="handleCreate">
-                <n-icon>
-                    <AddOutline/>
-                </n-icon>
+                <mb-icon icon="AddOutline" />
                 添加角色
             </n-button>
         </div>
@@ -49,15 +47,27 @@
                 <n-grid :cols="24">
                     <n-gi :span="12">
                         <n-form-item label="菜单权限" path="menus">
-                            <mb-tree ref="tree" v-model="temp.menus" style="height: 270px; overflow: auto"
-                                     url="/system/menu/tree" :search="true"/>
+                            <mb-tree
+                                ref="tree"
+                                v-model="temp.menus"
+                                style="height: 270px; overflow: auto"
+                                url="/system/menu/tree"
+                                checkable
+                                search
+                            />
                         </n-form-item>
                     </n-gi>
                     <n-gi :span="12">
                         <n-form-item label="数据权限" path="permission">
                             <mb-select v-model="temp.permission" :options="permissionData" style="margin-bottom: 5px"/>
-                            <mb-tree v-if="temp.permission == 1" style="height: 270px; overflow: auto;" ref="office"
-                                     url="/system/office/tree" v-model="temp.offices"/>
+                            <mb-tree
+                                v-if="temp.permission == 1"
+                                style="height: 270px; overflow: auto;"
+                                ref="office"
+                                checkable
+                                url="/system/office/tree"
+                                v-model="temp.offices"
+                            />
                         </n-form-item>
                     </n-gi>
                 </n-grid>
@@ -77,7 +87,6 @@
 import {ref, reactive, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
-import {AddOutline} from "@vicons/ionicons5";
 
 const permissionData = reactive([{
     label: '全部',

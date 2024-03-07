@@ -11,7 +11,9 @@ import {
     Search,
     TrashOutline,
     AddOutline,
-    ArrowDownOutline
+    ArrowDownOutline,
+    DownloadOutline,
+    SaveSharp
 } from '@vicons/ionicons5'
 import {
     Organization12Filled,
@@ -35,6 +37,8 @@ export default {
     TrashOutline,
     AddOutline,
     ArrowDownOutline,
+    DownloadOutline,
+    SaveSharp,
     // fluent
     Organization12Filled,
     BookLetter24Filled,

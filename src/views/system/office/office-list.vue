@@ -5,15 +5,11 @@
                 <n-input :size="$global.uiSize.value" v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识"
                          style="width: 200px"></n-input>
                 <n-button :size="$global.uiSize.value" type="primary" @click="searchOffice">
-                    <n-icon>
-                        <Search/>
-                    </n-icon>
+                    <mb-icon icon="Search" />
                     搜索
                 </n-button>
                 <n-button :size="$global.uiSize.value" @click="() => { searchValue = ''; searchOffice() }">
-                    <n-icon>
-                        <TrashOutline/>
-                    </n-icon>
+                    <mb-icon icon="TrashOutline" />
                     清空
                 </n-button>
             </n-space>
@@ -21,15 +17,11 @@
         <div class="mb-toolbar">
             <n-space>
                 <n-button :size="$global.uiSize.value" type="primary" @click="addSubOffice('0')" v-permission="'office:save'">
-                    <n-icon>
-                        <AddOutline/>
-                    </n-icon>
+                    <mb-icon icon="AddOutline" />
                     添加机构
                 </n-button>
                 <n-button :size="$global.uiSize.value" type="primary" @click="() => table.toggleExpand()">
-                    <n-icon>
-                        <ArrowDownOutline/>
-                    </n-icon>
+                    <mb-icon icon="ArrowDownOutline" />
                     展开/折叠
                 </n-button>
             </n-space>
@@ -81,8 +73,6 @@
 <script setup>
 import {ref, reactive, onMounted, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
-import treeTable from '@/scripts/treeTable'
-import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
 const officeData = ref([])
 const officeTree = ref([])
@@ -222,13 +212,13 @@ watch(officeData, () => {
     officeTree.value = [{
         label: '根节点',
         key: '0',
-        children: treeTable.genTree(officeData.value)
+        children: $treeTable.genTree(officeData.value)
     }]
 })
 
 function searchOffice() {
     if (searchValue.value) {
-        tableOptions.data = treeTable.recursionSearch(['name', 'code'], $common.copyNew(officeData.value), searchValue.value)
+        tableOptions.data = $treeTable.recursionSearch(['name', 'code'], $common.copyNew(officeData.value), searchValue.value)
     } else {
         tableOptions.data = officeData.value
     }
@@ -275,7 +265,7 @@ function save(d) {
                 $message.warning('上级机构不能选当前机构')
                 return
             }
-            if (treeTable.isChildren(treeTable.queryChildren(officeData.value, temp.value.id), temp.value.pid)) {
+            if ($treeTable.isChildren($treeTable.queryChildren(officeData.value, temp.value.id), temp.value.pid)) {
                 $message.warning('上级机构不能选当前机构子级')
                 return
             }
@@ -302,7 +292,7 @@ function handleUpdate(row) {
     for (let t in temp.value) {
         temp.value[t] = row[t]
     }
-    treeTable.clearFont(temp.value, ['name', 'code'])
+    $treeTable.clearFont(temp.value, ['name', 'code'])
     dialogTitle.value = '修改'
     officeFormDialog.value.show()
     nextTick(() => {

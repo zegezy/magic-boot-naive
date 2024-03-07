@@ -6,9 +6,7 @@
         <div class="mb-toolbar">
             <n-space>
                 <n-button :size="$global.uiSize.value" v-permission="'dict:save'" type="primary" @click="handleCreate">
-                    <n-icon>
-                        <AddOutline/>
-                    </n-icon>
+                    <mb-icon icon="AddOutline" />
                     添加字典
                 </n-button>
             </n-space>
@@ -57,7 +55,6 @@
 import DictItems from './dict-items'
 import {ref, reactive, nextTick} from 'vue'
 import {useDictStore} from "@/store/modules/dictStore";
-import {AddOutline} from "@vicons/ionicons5";
 
 const dictStore = useDictStore()
 

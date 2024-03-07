@@ -21,9 +21,7 @@
                     <n-input v-model:value="temp.confirmPassword" type="password" autocomplete="new-password"/>
                 </n-form-item>
                 <n-button type="primary" size="large" block round @click="save">
-                    <n-icon style="margin-right: 4px">
-                        <SaveSharp/>
-                    </n-icon>
+                    <m-icon style="margin-right: 4px" icon="SaveSharp" />
                     保存信息
                 </n-button>
             </n-form>
@@ -32,7 +30,6 @@
 </template>
 
 <script setup>
-import {SaveSharp} from '@vicons/ionicons5'
 import {ref, reactive, nextTick} from 'vue'
 import {useUserStore} from "@/store/modules/userStore";
 

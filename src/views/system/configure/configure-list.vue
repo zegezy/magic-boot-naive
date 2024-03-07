@@ -6,9 +6,7 @@
         <div class="mb-toolbar">
             <n-space>
                 <n-button :size="$global.uiSize.value" v-permission="'configure:save'" type="primary" @click="handleCreate">
-                    <n-icon>
-                        <AddOutline />
-                    </n-icon>
+                    <mb-icon icon="AddOutline" />
                     添加配置
                 </n-button>
             </n-space>
@@ -90,7 +88,6 @@
 
 import {ref, reactive, nextTick} from 'vue'
 import {useDictStore} from "@/store/modules/dictStore";
-import {AddOutline} from '@vicons/ionicons5'
 
 const dictStore = useDictStore()
 
