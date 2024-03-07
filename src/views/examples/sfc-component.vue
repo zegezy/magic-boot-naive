@@ -48,14 +48,14 @@
                         >
                             <div class="flex flex-col h-full">
                                 <div class="tools flex flex-row items-center" style="padding:0px 5px; height: 30px;">
-                                    <mb-icon icon="save" color="black" size="1.5em" title="编译并保存" @click="saveCode(tab.id)" />
+                                    <mb-icon icon="save" color="black" size="1.5em" title="编译并保存" @click="saveCode()" />
                                 </div>
                                 <div style="flex: 1">
                                     <mb-monaco-volar
                                         :ref="(el) => setComponentRef(el, tab.id)"
                                         :code="tab.code"
                                         :file-name="tab.id"
-                                        @save="saveCode(tab.id)"
+                                        @save="saveCode()"
                                     />
                                 </div>
                             </div>
@@ -67,6 +67,30 @@
         <mb-modal ref="errorInfoModal" width="900px" title="错误信息" :show-footer="false">
             <textarea v-model="errorInfo" :rows="40" style="width: 100%" />
         </mb-modal>
+        <n-drawer
+            v-model:show="showDrawer"
+            :default-height="800"
+            placement="bottom"
+            resizable
+            @after-leave="drawerClose"
+        >
+            <n-drawer-content closable :title="currentNode.name + ' - 历史记录'">
+                <div class="flex h-full">
+                    <div style="width: 400px" class="h-full">
+                        <mb-table v-bind="historyTableOptions" @selected-row="historyTableSelect" />
+                    </div>
+                    <div class="compare flex-1">
+                        <mb-monaco-volar
+                            compare
+                            ref="historyEditorRef"
+                            :code="historyCode"
+                            :old-code="historyOldCode"
+                            :file-name="currentNodeId"
+                        />
+                    </div>
+                </div>
+            </n-drawer-content>
+        </n-drawer>
     </div>
 </template>
 
@@ -77,10 +101,37 @@ const monacoVolarRefs = reactive({})
 const nameModal = ref()
 const nodeNameInput = ref()
 const currentNodeId = ref()
+const currentNode = ref()
 const treeRef = ref()
 const errorInfoModal = ref()
 const errorInfo = ref()
 const updateComponent = ref(false)
+const showDrawer = ref(false)
+const historyEditorRef = ref()
+const historyCode = ref()
+const historyOldCode = ref()
+const historyTableWhere = reactive({})
+const historyTableOptions = reactive({
+    url: '/system/component/history',
+    page: false,
+    where: historyTableWhere,
+    cols: [{
+        label: '时间',
+        field: 'createDate'
+    }, {
+        label: '操作人',
+        field: 'createBy',
+        width: 150
+    }]
+})
+function historyTableSelect(row){
+    $common.get('/system/component/history/detail', { id: row.id }).then(res => {
+        historyOldCode.value = res.data
+    })
+}
+function drawerClose(){
+    historyEditorRef.value.dispose()
+}
 const treeContextmenu = ref([{
     key: 'addSub',
     label: '添加下级',
@@ -110,6 +161,20 @@ const treeContextmenu = ref([{
                 treeRef.value.reload()
             }
         })
+    }
+}, {
+    key: 'history',
+    label: '历史记录',
+    click: (node) => {
+        currentNodeId.value = node.id
+        currentNode.value = node
+        showDrawer.value = true
+        historyTableWhere.componentId = node.id
+        if(monacoVolarRefs[currentNodeId.value]){
+            historyCode.value = monacoVolarRefs[currentNodeId.value].getValue()
+        }else{
+            // todo 获取最后一次的代码更新
+        }
     }
 }])
 function saveComponent(){
@@ -158,7 +223,8 @@ function tabClose(id){
 function setComponentRef(el, id){
     monacoVolarRefs[id] = el
 }
-function saveCode(id){
+function saveCode(){
+    let id = tabId.value
     let sourceCode = monacoVolarRefs[id].getValue()
     try{
         const { compileJs, compileCss } = compileCode(sourceCode)
