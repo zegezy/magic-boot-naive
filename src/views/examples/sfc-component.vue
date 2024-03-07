@@ -2,6 +2,18 @@
 .tools svg{
     cursor: pointer;
 }
+.logo-content {
+    text-align: center;
+    width: 400px;
+    margin: 0 auto;
+    padding-top: 30vh;
+}
+.title-bg{
+    background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.25;
+}
 </style>
 
 <template>
@@ -29,7 +41,20 @@
             </template>
             <template #2>
                 <div style="padding: 5px;height: 100%; box-sizing: border-box;">
+                    <div class="logo-content" v-if="tabs.length == 0">
+                        <div class="text-6xl mt-0 mb-0 italic font-black title-bg">
+                            {{ $global.title }}
+                        </div>
+                        <p class="text-base" style="color: #213547">【有些事情本来很遥远，你争取，它就会离你越来越近】</p>
+                        <n-button type="primary" color="#42b883" @click="createFile('0')">新建文件夹/文件</n-button>
+                        <div class="flex flex-wrap justify-between mt-4" style="color: #b6b6b6">
+                            <div class="text-base w-1/2 mb-4">保存Ctrl + S</div>
+                            <div class="text-base w-1/2">撤销Ctrl + Z</div>
+                            <div class="text-base w-1/2">反撤销Ctrl + Shift + Z</div>
+                        </div>
+                    </div>
                     <n-tabs
+                        v-else
                         v-model:value="tabId"
                         type="card"
                         closable
@@ -136,10 +161,7 @@ const treeContextmenu = ref([{
     key: 'addSub',
     label: '添加下级',
     click: (node) => {
-        nodeNameInput.value = ''
-        updateComponent.value = false
-        currentNodeId.value = node.id
-        nameModal.value.show()
+        createFile(node.id)
     }
 }, {
     key: 'updateComponent',
@@ -177,6 +199,12 @@ const treeContextmenu = ref([{
         }
     }
 }])
+function createFile(id){
+    nodeNameInput.value = ''
+    updateComponent.value = false
+    currentNodeId.value = id
+    nameModal.value.show()
+}
 function saveComponent(){
     $common.post('/system/component/save/tree',{
         [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
