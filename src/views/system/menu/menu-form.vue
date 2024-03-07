@@ -33,10 +33,10 @@
                     <n-radio-button key="2" value="2" label="iframe"/>
                 </n-radio-group>
             </n-form-item>
-            <n-form-item label="关联组件" path="componentName"
+            <n-form-item label="关联组件" path="componentId"
                          v-if="menuType == 'menu' && !(temp.url.startsWith('http') || (temp.url.startsWith('/') && temp.url.indexOf('.htm') != -1))">
                 <n-tree-select
-                    v-model:value="temp.componentName"
+                    v-model:value="temp.componentId"
                     :options="componentTree"
                     key-field="id"
                     label-field="name"
@@ -92,7 +92,6 @@
 <script setup>
 import {ref, reactive, watch, nextTick} from 'vue'
 import MenuIcons from './menu-icons'
-import treeTable from '@/scripts/treeTable'
 
 const props = defineProps({
     menuTree: {
@@ -123,7 +122,7 @@ const getTemp = () => {
         pid: 0,
         icon: '',
         keepAlive: 0,
-        componentName: '',
+        componentId: '',
         openMode: '0'
     }
 }
@@ -198,7 +197,7 @@ function save(d) {
                 d.hideLoading()
                 return
             }
-            if (treeTable.isChildren(treeTable.queryChildren(props.menuData, temp.value.id), temp.value.pid)) {
+            if ($treeTable.isChildren($treeTable.queryChildren(props.menuData, temp.value.id), temp.value.pid)) {
                 $message.warning('上级菜单不能选当前菜单子级')
                 d.hideLoading()
                 return
@@ -238,7 +237,7 @@ function getInfo(row) {
     }
     openModeRef.value = temp.value.openMode || '0'
     menuType.value = temp.value.url ? 'menu' : 'button'
-    treeTable.clearFont(temp.value, ['name', 'url', 'permission'])
+    $treeTable.clearFont(temp.value, ['name', 'url', 'permission'])
     nextTick(() => {
         dataForm.value.restoreValidation()
     })

@@ -1,6 +1,13 @@
 <template>
-    <mb-tree ref="tree" v-model="menus" style="height: 320px" url="/system/menu/tree" :search="true"
-             search-width="230px"/>
+    <mb-tree
+        ref="tree"
+        v-model="menus"
+        style="height: 320px"
+        url="/system/menu/tree"
+        search
+        checkable
+        search-width="230px"
+    />
 </template>
 
 <script setup>

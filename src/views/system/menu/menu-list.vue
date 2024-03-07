@@ -2,18 +2,14 @@
     <div class="mb-list">
         <div class="mb-search">
             <n-space>
-                <n-input v-model:value="searchValue" :size="$global.uiSize.value" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识"
-                         style="width: 200px"></n-input>
+                <n-input v-model:value="searchValue" :size="$global.uiSize.value" @keyup.enter="searchMenu" placeholder="菜单名称、链接、权限标识、关联组件"
+                         style="width: 270px"></n-input>
                 <n-button type="primary" :size="$global.uiSize.value" @click="searchMenu">
-                    <n-icon>
-                        <Search/>
-                    </n-icon>
+                    <mb-icon icon="Search" />
                     搜索
                 </n-button>
                 <n-button :size="$global.uiSize.value" @click="() => { searchValue = ''; searchMenu() }">
-                    <n-icon>
-                        <TrashOutline/>
-                    </n-icon>
+                    <mb-icon icon="TrashOutline" />
                     清空
                 </n-button>
             </n-space>
@@ -21,15 +17,11 @@
         <div class="mb-toolbar">
             <n-space>
                 <n-button :size="$global.uiSize.value" type="primary" @click="addSubMenu('0')" v-permission="'menu:save'">
-                    <n-icon>
-                        <AddOutline/>
-                    </n-icon>
+                    <mb-icon icon="AddOutline" />
                     添加菜单
                 </n-button>
                 <n-button :size="$global.uiSize.value" type="primary" @click="() => table.toggleExpand()">
-                    <n-icon>
-                        <ArrowDownOutline/>
-                    </n-icon>
+                    <mb-icon icon="ArrowDownOutline" />
                     展开/折叠
                 </n-button>
             </n-space>
@@ -47,10 +39,8 @@
 
 import {ref, reactive, onMounted, nextTick, watch, h} from 'vue'
 import MenuForm from './menu-form'
-import treeTable from '@/scripts/treeTable'
 import MbIcon from '@/components/magic/basic/mb-icon.vue';
 import { isEmpty } from 'lodash-es'
-import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
 
 
 let menuTree = ref([])
@@ -77,6 +67,12 @@ const tableOptions = reactive({
         {
             field: 'permission',
             label: '权限标识',
+            width: 150,
+            type: 'html'
+        },
+        {
+            field: 'componentName',
+            label: '关联组件',
             width: 150,
             type: 'html'
         },
@@ -214,7 +210,7 @@ function reloadTable() {
 function searchMenu() {
     table.value.expand()
     if (searchValue.value) {
-        tableOptions.data = treeTable.recursionSearch(['name', 'url', 'permission'], $common.copyNew(menuData.value), searchValue.value)
+        tableOptions.data = $treeTable.recursionSearch(['name', 'url', 'permission', 'componentName'], $common.copyNew(menuData.value), searchValue.value)
     } else {
         tableOptions.data = menuData.value
     }
@@ -242,7 +238,7 @@ watch(menuData, () => {
     menuTree.value = [{
         label: '根节点',
         key: '0',
-        children: treeTable.genTree(menuData.value)
+        children: $treeTable.genTree(menuData.value)
     }]
 })
 
