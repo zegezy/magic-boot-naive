@@ -13,6 +13,7 @@
         v-else
         :color="color"
         :size="size"
+        :title="title"
     >
         <component :is="xicons[icon]" />
     </n-icon>

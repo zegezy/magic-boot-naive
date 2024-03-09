@@ -1,4 +1,5 @@
 <style scoped>
+.tools i,
 .tools svg{
     cursor: pointer;
 }
@@ -65,7 +66,7 @@
                         <n-tab-pane
                             v-for="tab in tabs"
                             :key="tab.id"
-                            :tab="tab.name"
+                            :tab="tab.name + (tab.isSave && tab.isSave == 1 ? ' *' : '')"
                             :name="tab.id"
                             display-directive="show"
                             class="h-full w-full"
@@ -73,13 +74,15 @@
                         >
                             <div class="flex flex-col h-full">
                                 <div class="tools flex flex-row items-center" style="padding:0px 5px; height: 30px;">
-                                    <mb-icon icon="save" color="black" size="1.5em" title="编译并保存" @click="saveCode()" />
+                                    <mb-icon icon="SaveSharp" color="black" size="1.25em" title="编译并保存" @click="saveCode()" />
+                                    <mb-icon icon="History24Filled" color="black" size="1.5em" title="查看历史" @click="openHistory(tabs.filter(it => it.id == tabId)[0])" />
                                 </div>
                                 <div style="flex: 1">
                                     <mb-monaco-volar
                                         :ref="(el) => setComponentRef(el, tab.id)"
                                         :code="tab.code"
                                         :file-name="tab.id"
+                                        @didChangeModelContent="onDidChangeModelContent(tab)"
                                         @save="saveCode()"
                                     />
                                 </div>
@@ -104,14 +107,27 @@
                     <div style="width: 400px" class="h-full">
                         <mb-table v-bind="historyTableOptions" @selected-row="historyTableSelect" />
                     </div>
-                    <div class="compare flex-1">
-                        <mb-monaco-volar
-                            compare
-                            ref="historyEditorRef"
-                            :code="historyCode"
-                            :old-code="historyOldCode"
-                            :file-name="currentNodeId"
-                        />
+                    <div class="compare flex-1  h-full">
+                        <div class="flex flex-col h-full">
+                            <div class="flex items-center">
+                                <div class="flex-1 flex items-center">
+                                    <div class="flex-1">
+                                        {{ currentHistoryOldDate }} by {{ currentHistoryOldCreateBy }}
+                                    </div>
+                                    <div style="padding: 0px 40px 5px 0px">
+                                        <n-button type="primary" @click="restoreToThisVersion">还原到此版本</n-button>
+                                    </div>
+                                </div>
+                                <div class="flex-1">当前版本</div>
+                            </div>
+                            <mb-monaco-volar
+                                compare
+                                ref="historyEditorRef"
+                                :code="historyCode"
+                                :old-code="historyOldCode"
+                                :file-name="currentNodeId"
+                            />
+                        </div>
                     </div>
                 </div>
             </n-drawer-content>
@@ -136,6 +152,8 @@ const historyEditorRef = ref()
 const historyCode = ref()
 const historyOldCode = ref()
 const historyTableWhere = reactive({})
+const currentHistoryOldDate = ref()
+const currentHistoryOldCreateBy = ref()
 const historyTableOptions = reactive({
     url: '/system/component/history',
     page: false,
@@ -150,6 +168,8 @@ const historyTableOptions = reactive({
     }]
 })
 function historyTableSelect(row){
+    currentHistoryOldDate.value = row.createDate
+    currentHistoryOldCreateBy.value = row.createBy
     $common.get('/system/component/history/detail', { id: row.id }).then(res => {
         historyOldCode.value = res.data
     })
@@ -159,7 +179,7 @@ function drawerClose(){
 }
 const treeContextmenu = ref([{
     key: 'addSub',
-    label: '添加下级',
+    label: '添加',
     click: (node) => {
         createFile(node.id)
     }
@@ -187,18 +207,33 @@ const treeContextmenu = ref([{
 }, {
     key: 'history',
     label: '历史记录',
+    if(node){
+        if(!node.children || (node.children && node.children.length == 0)){
+            return true
+        }
+        return false
+    },
     click: (node) => {
-        currentNodeId.value = node.id
-        currentNode.value = node
-        showDrawer.value = true
-        historyTableWhere.componentId = node.id
+        openHistory(node)
+    }
+}])
+function openHistory(node){
+    currentNodeId.value = node.id
+    currentNode.value = node
+    showDrawer.value = true
+    historyTableWhere.componentId = node.id
+    $common.get('/system/component/getLastCode', { componentId: node.id }).then(res => {
+        const { sourceCode, createDate, createBy } = res.data
+        currentHistoryOldDate.value = createDate
+        currentHistoryOldCreateBy.value = createBy
+        historyOldCode.value = sourceCode
         if(monacoVolarRefs[currentNodeId.value]){
             historyCode.value = monacoVolarRefs[currentNodeId.value].getValue()
         }else{
-            // todo 获取最后一次的代码更新
+            historyCode.value = sourceCode
         }
-    }
-}])
+    })
+}
 function createFile(id){
     nodeNameInput.value = ''
     updateComponent.value = false
@@ -206,20 +241,24 @@ function createFile(id){
     nameModal.value.show()
 }
 function saveComponent(){
-    $common.post('/system/component/save/tree',{
-        [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
-        name: nodeNameInput.value
-    }).then(() => {
-        nameModal.value.hide()
-        if(updateComponent.value){
-            tabs.value.forEach(it => {
-                if(it.id == currentNodeId.value){
-                    it.name = nodeNameInput.value
-                }
-            })
-        }
-        treeRef.value.reload()
-    })
+    if(/^[a-zA-Z0-9\-_]+$/.test(nodeNameInput.value)){
+        $common.post('/system/component/save/tree',{
+            [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
+            name: nodeNameInput.value
+        }).then(() => {
+            nameModal.value.hide()
+            if(updateComponent.value){
+                tabs.value.forEach(it => {
+                    if(it.id == currentNodeId.value){
+                        it.name = nodeNameInput.value
+                    }
+                })
+            }
+            treeRef.value.reload()
+        })
+    }else{
+        $message.error('只能包含大小写英文、数字和-_')
+    }
 }
 function nodeClick(option){
     if(!option.children){
@@ -230,7 +269,8 @@ function nodeClick(option){
                 tabs.value.push({
                     id: option.id,
                     name: option.name,
-                    code: res.data || ''
+                    code: res.data || '',
+                    isSave: 0
                 })
                 tabId.value = option.id
             })
@@ -253,20 +293,36 @@ function setComponentRef(el, id){
 }
 function saveCode(){
     let id = tabId.value
-    let sourceCode = monacoVolarRefs[id].getValue()
-    try{
-        const { compileJs, compileCss } = compileCode(sourceCode)
-        $common.post('/system/component/saveCode', {
-            id,
-            sourceCode,
-            compileJs,
-            compileCss
-        }).then(() => {
-            $message.success('编译并保存成功')
-        })
-    }catch (e){
-        errorInfo.value = e
-        errorInfoModal.value.show()
+    let tab = tabs.value.filter(it => it.id == id)[0]
+    if(tab.isSave == 1){
+        let sourceCode = monacoVolarRefs[id].getValue()
+        tab.code = sourceCode
+        tab.isSave = 0
+        try{
+            const { compileJs, compileCss } = compileCode(sourceCode)
+            $common.post('/system/component/saveCode', {
+                id,
+                sourceCode,
+                compileJs,
+                compileCss
+            }).then(() => {
+                $message.success('编译并保存成功')
+            })
+        }catch (e){
+            errorInfo.value = e
+            errorInfoModal.value.show()
+        }
     }
+}
+function onDidChangeModelContent(tab){
+    if(monacoVolarRefs[tab.id].getValue() != tab.code){
+        tab.isSave = 1
+    }else{
+        tab.isSave = 0
+    }
+}
+function restoreToThisVersion(){
+    monacoVolarRefs[tabId.value].setValue(historyOldCode.value)
+    showDrawer.value = false
 }
 </script>

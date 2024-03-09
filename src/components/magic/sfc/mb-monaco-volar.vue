@@ -28,6 +28,10 @@ const props = defineProps({
         type: Function,
         default: () => {}
     },
+    onDidChangeModelContent: {
+        type: Function,
+        default: () => {}
+    },
     compare: {
         type: Boolean,
         default: false
@@ -43,8 +47,9 @@ watch(() => props.oldCode, (value) => {
 })
 const monacoVolarClass = ref('monaco-volar' + $common.uuid())
 
-function getModelUri(value){
-    return monaco.Uri.parse(value ? `file:///${value}.vue` : `file:///${props.fileName}.vue`)
+function getModelUri(){
+    let fileName = props.compare ? (props.fileName + 'compare') : props.fileName
+    return monaco.Uri.parse(`file:///${fileName}.vue`)
 }
 
 function getOldModelUri(){
@@ -62,7 +67,7 @@ let editorInstance = null
 let editorModel = null
 let editorOldModel = null
 function afterReady(theme) {
-    editorModel = monaco.editor.createModel(props.code, 'vue', getModelUri(props.compare ? (props.fileName + 'compare') : ''));
+    editorModel = monaco.editor.createModel(props.code, 'vue', getModelUri());
     if(props.compare){
         editorInstance = monaco.editor.createDiffEditor(document.querySelector(`.${monacoVolarClass.value}`), {
             theme,
@@ -95,9 +100,12 @@ function afterReady(theme) {
             },
             "semanticHighlighting.enabled": true,
         })
+        editorInstance.onDidChangeModelContent((e) => {
+            props.onDidChangeModelContent(e)
+        })
+        addCommands()
+        loadGrammars(monaco, editorInstance);
     }
-    addCommands()
-    loadGrammars(monaco, editorInstance);
 }
 
 function addCommands(){

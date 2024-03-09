@@ -318,6 +318,9 @@ function nodeProps({option}) {
         },
         onContextmenu(e) {
             currentNode.value = option
+            props.contextmenu.forEach(it => {
+                it.show = (it.if && it.if(currentNode.value))
+            })
             showDropdown.value = true;
             dropdownX.value = e.clientX;
             dropdownY.value = e.clientY;

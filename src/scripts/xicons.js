@@ -20,7 +20,8 @@ import {
     BookLetter24Filled,
     ContentSettings24Filled,
     ClipboardCode24Filled,
-    Delete24Regular
+    Delete24Regular,
+    History24Filled
 } from '@vicons/fluent'
 export default {
     // ionicons5
@@ -44,5 +45,6 @@ export default {
     BookLetter24Filled,
     ContentSettings24Filled,
     ClipboardCode24Filled,
-    Delete24Regular
+    Delete24Regular,
+    History24Filled
 }
