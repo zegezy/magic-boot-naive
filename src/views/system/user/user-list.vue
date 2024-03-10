@@ -68,8 +68,8 @@
                     <mb-table v-bind="importUserTableOptions"/>
                 </mb-modal>
 
-                <mb-modal ref="userFormDialog" :title="dialogTitle" @confirm="userForm.save($event)" width="670px">
-                    <user-form ref="userForm" :key="'userForm'" @reload-table="reloadTable"/>
+                <mb-modal ref="userFormDialog" :title="dialogTitle" @confirm="userFormRef.save($event)" width="670px">
+                    <user-form ref="userFormRef" :key="'userForm'" @reload-table="reloadTable"/>
                 </mb-modal>
             </div>
         </div>
@@ -231,7 +231,7 @@ const dialogTitle = ref('')
 const ids = ref([])
 const userFormDialog = ref()
 const table = ref()
-const userForm = ref()
+const userFormRef = ref()
 
 function setWhere() {
     if (route.query.roleId) {
@@ -258,7 +258,7 @@ function handleCreate() {
     dialogTitle.value = '添加'
     userFormDialog.value.show()
     nextTick(() => {
-        userForm.value.resetTemp()
+        userFormRef.value.resetTemp()
     })
 }
 
@@ -266,7 +266,7 @@ function handleUpdate(row) {
     dialogTitle.value = '修改'
     userFormDialog.value.show()
     nextTick(() => {
-        userForm.value.getInfo(row)
+        userFormRef.value.getInfo(row)
     })
 }
 
