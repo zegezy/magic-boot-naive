@@ -89,30 +89,16 @@
                         <div @contextmenu.prevent="headerClick($event, col)" class="relative">
                             <div @click="dataSort(col)">
                                 <label>{{ col.label }}</label>
-                                <n-icon v-if="col.editIcon">
-                                    <EditFilled />
-                                </n-icon>
-                                <n-icon v-if="col.dataSortRule">
-                                    <CaretUpOutline />
-                                </n-icon>
-                                <n-icon v-if="col.dataSortRule == false">
-                                    <CaretDownOutline />
-                                </n-icon>
-                                <n-icon color="#248EF4" v-if="col.realSort && !col.realSortRule">
-                                    <ArrowSort16Filled />
-                                </n-icon>
-                                <n-icon color="#248EF4" v-if="col.realSortRule == '0'">
-                                    <ArrowSortUp16Filled />
-                                </n-icon>
-                                <n-icon color="#248EF4" v-if="col.realSortRule == '1'">
-                                    <ArrowSortDown16Filled />
-                                </n-icon>
+                                <mb-icon icon="EditFilled" v-if="col.editIcon" />
+                                <mb-icon v-if="col.dataSortRule" icon="CaretUpOutline" />
+                                <mb-icon v-if="col.dataSortRule == false" icon="CaretDownOutline" />
+                                <mb-icon color="#248EF4" v-if="col.realSort && !col.realSortRule" icon="ArrowSort16Filled" />
+                                <mb-icon color="#248EF4" v-if="col.realSortRule == '0'" icon="ArrowSortUp16Filled" />
+                                <mb-icon color="#248EF4" v-if="col.realSortRule == '1'" icon="ArrowSortDown16Filled" />
                             </div>
                             <div class="title-tools">
                                 <div class="down-menus">
-                                    <n-icon @click="headerClick($event, col)">
-                                        <ChevronDown />
-                                    </n-icon>
+                                    <mb-icon icon="ChevronDown" @click="headerClick($event, col)" />
                                 </div>
                                 <div class="align-center">
                                     <mb-icon style="cursor: pointer" icon="CopyOutline" v-if="col.copyAll" @click="copyAll(col)" />
@@ -160,9 +146,6 @@
 <script setup>
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
-import { ChevronDown, CaretUpOutline, CaretDownOutline } from '@vicons/ionicons5'
-import { ArrowSort16Filled, ArrowSortUp16Filled, ArrowSortDown16Filled } from '@vicons/fluent'
-import { EditFilled } from '@vicons/antd'
 import global from '@/scripts/global'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'

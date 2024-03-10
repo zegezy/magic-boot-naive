@@ -14,15 +14,11 @@
         <template #action>
             <slot name="action" v-if="showFooter">
                 <n-button :size="$global.uiSize.value" @click="() => showModal = false">
-                    <n-icon>
-                        <Close />
-                    </n-icon>
+                    <mb-icon icon="Close" />
                     关闭
                 </n-button>
                 <n-button :size="$global.uiSize.value" type="primary" :loading="confirmLoading" @click="confirm">
-                    <n-icon>
-                        <Checkmark />
-                    </n-icon>
+                    <mb-icon icon="Checkmark" />
                     确定
                 </n-button>
             </slot>
@@ -32,8 +28,6 @@
 
 <script setup>
 import {ref} from 'vue'
-import {Close,Checkmark} from '@vicons/ionicons5'
-
 const emit = defineEmits(['confirm'])
 const props = defineProps({
     title: {
