@@ -18,7 +18,8 @@ import {
     CaretUpOutline,
     CaretDownOutline,
     Close,
-    Checkmark
+    Checkmark,
+    SettingsOutline
 } from '@vicons/ionicons5'
 import {
     Organization12Filled,
@@ -56,6 +57,7 @@ export default {
     CaretDownOutline,
     Close,
     Checkmark,
+    SettingsOutline,
     // fluent
     Organization12Filled,
     BookLetter24Filled,
