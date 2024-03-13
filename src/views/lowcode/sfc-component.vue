@@ -223,14 +223,16 @@ function openHistory(node){
     showDrawer.value = true
     historyTableWhere.componentId = node.id
     $common.get('/system/component/getLastCode', { componentId: node.id }).then(res => {
-        const { sourceCode, createDate, createBy } = res.data
-        currentHistoryOldDate.value = createDate
-        currentHistoryOldCreateBy.value = createBy
-        historyOldCode.value = sourceCode
-        if(monacoVolarRefs[currentNodeId.value]){
-            historyCode.value = monacoVolarRefs[currentNodeId.value].getValue()
-        }else{
-            historyCode.value = sourceCode
+        if(res.data){
+            const { sourceCode, createDate, createBy } = res.data
+            currentHistoryOldDate.value = createDate
+            currentHistoryOldCreateBy.value = createBy
+            historyOldCode.value = sourceCode
+            if(monacoVolarRefs[currentNodeId.value]){
+                historyCode.value = monacoVolarRefs[currentNodeId.value].getValue()
+            }else{
+                historyCode.value = sourceCode
+            }
         }
     })
 }
