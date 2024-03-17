@@ -26,12 +26,14 @@ export function watchValue(componentValue, props, emit){
         }else if(isString(value)){
             join = multiple
             componentValue.value = props.multiple ? value.split(',') : value
+        }else{
+            componentValue.value = value
         }
         if (!componentValueWatch) {
             watchList.push(watch(componentValue, (value) => {
                 if (join) {
-                    emit('update:modelValue', value.join(','))
-                    emit('change', value.join(','))
+                    emit('update:modelValue', value && value.join(','))
+                    emit('change', value && value.join(','))
                 } else {
                     emit('update:modelValue', value)
                     emit('change', value)
