@@ -38,19 +38,19 @@
                         <ShowOrTooltip>
                             <span v-html="getLabel(row, col)"></span>
                         </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(getValueByPath(row, col.field))" />
                     </template>
                     <template #templet="{ row, col, index }">
                         <ShowOrTooltip>
                             <span v-html="col.templet(row, col, index)"></span>
                         </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(col.templet(row, col, index))" />
                     </template>
                     <template #text="{ row, col }">
                         <ShowOrTooltip>
                             <span v-html="getLabel(row, col)"></span>
                         </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(getLabel(row, col))" />
                     </template>
                     <template #buttons="{ row, col }">
                         <n-space>
@@ -78,9 +78,9 @@
                     </template>
                     <template #dictType="{ row, col }">
                         <ShowOrTooltip>
-                            <span>{{ dictStore.getDictLabel(col.dictType, row[col.field] + '') }}</span>
+                            <span>{{ dictStore.getDictLabel(col.dictType, getValueByPath(row, col.field) + '') }}</span>
                         </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(row[col.field])" />
+                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(dictStore.getDictLabel(col.dictType, getValueByPath(row, col.field) + ''))" />
                     </template>
                     <template #dynamic="{ row, col, index }">
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
