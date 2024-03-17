@@ -150,7 +150,7 @@ import global from '@/scripts/global'
 import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
 import { NEllipsis } from 'naive-ui'
-import { cloneDeep, isEqual } from 'lodash-es'
+import { cloneDeep, isEqual, get as getValueByPath } from 'lodash-es'
 import { useMouse, onClickOutside } from "@vueuse/core";
 
 const dictStore = useDictStore()
@@ -626,7 +626,7 @@ function renderShowColumns() {
     calcScrollX()
 }
 function getLabel(row, col){
-    return $common.notEmptyNot01(row[col.field]) ? row[col.field] : $common.notEmptyNot01(col.defaultValue) ? col.defaultValue : ''
+    return $common.notEmptyNot01(getValueByPath(row, col.field)) ? getValueByPath(row, col.field) : $common.notEmptyNot01(col.defaultValue) ? col.defaultValue : ''
 }
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
