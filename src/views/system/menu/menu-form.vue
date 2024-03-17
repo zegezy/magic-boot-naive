@@ -42,6 +42,7 @@
                     label-field="name"
                     check-strategy="child"
                     default-expand-all
+                    clearable
                 />
             </n-form-item>
             <n-form-item label="权限标识" path="permission" v-if="menuType == 'button'">
