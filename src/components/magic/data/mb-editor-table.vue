@@ -30,7 +30,6 @@
         ref="magicTable"
         v-bind="tableOptions"
         @scroll="onScroll"
-        @load="onLoad"
         @dynamicSettingContextmenu="dynamicSettingContextmenu"
         @contextmenuSelect="contextmenuSelect"
     >
@@ -181,10 +180,6 @@ const props = defineProps({
     preview: {
         type: Boolean,
         default: false
-    },
-    onLoad: {
-        type: Function,
-        default: () => {}
     },
     rowHoverEdit: {
         type: Boolean,
