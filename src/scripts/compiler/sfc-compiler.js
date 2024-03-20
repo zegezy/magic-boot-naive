@@ -47,7 +47,6 @@ export function compileFile(code, compiled) {
     if (
         (descriptor.script && descriptor.script.lang) ||
         (descriptor.scriptSetup && descriptor.scriptSetup.lang) ||
-        descriptor.styles.some((s) => s.lang) ||
         (descriptor.template && descriptor.template.lang)
     ) {
         compiled.errors = [
