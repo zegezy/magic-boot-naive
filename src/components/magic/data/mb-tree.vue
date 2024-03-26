@@ -121,6 +121,10 @@ const props = defineProps({
     icon: {
         type: Object,
         default: undefined
+    },
+    defaultExpandAll: {
+        type: Boolean,
+        default: true
     }
 })
 const showDropdown = ref(false)
@@ -265,7 +269,7 @@ function loadSourceData(children){
 const tree = ref()
 const treeData = ref([])
 const sourceData = ref([])
-const defaultExpandAll = ref(true)
+const defaultExpandAll = ref(props.defaultExpandAll)
 const refreshTree = ref(false)
 const treeAllChecked = ref(false)
 const searchValue = ref('')
