@@ -262,29 +262,26 @@ if(props.operation && !props.preview){
             deleteRow(row)
         }
     }
-    let deleteOption = {
+    let deleteType = props.operation.delete instanceof Object
+    let subType = props.operation.sub instanceof Object
+    let sameType = props.operation.same instanceof Object
+    buttons.push(...[{
         label: '删除',
         link: true,
         icon: 'Delete24Regular',
-        if: () => props.operation.delete,
-    }
-    if(typeof(props.operation.delete) == 'object'){
-        const { confirm } = props.operation.delete
-        buttons.push({
-            ...deleteOption,
-            click: (row) => deleteClick(row, confirm)
-        })
-    }else if(typeof(props.operation.delete) == 'boolean'){
-        buttons.push({
-            ...deleteOption,
-            click: (row) => deleteClick(row)
-        })
-    }
-    buttons.push(...[{
+        if: (row) => {
+            return deleteType ? props.operation.delete.if && props.operation.delete.if(row) : props.operation.delete
+        },
+        click: (row) => {
+            deleteType ? deleteClick(row, props.operation.delete.confirm) : deleteClick(row)
+        }
+    }, {
         label: '添加下级',
         link: true,
         icon: 'sub-level',
-        if: () => props.operation.sub,
+        if: (row) => {
+            return subType ? props.operation.sub.if && props.operation.sub.if(row) : props.operation.sub
+        },
         click: (row) => {
             addChildrenRow(row)
         }
@@ -292,7 +289,9 @@ if(props.operation && !props.preview){
         label: '添加同级',
         link: true,
         icon: 'same-level',
-        if: () => props.operation.same,
+        if: (row) => {
+            return sameType ? props.operation.same.if && props.operation.same.if(row) : props.operation.same
+        },
         click: (row) => {
             addRow(row)
         }
