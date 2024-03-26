@@ -5,7 +5,7 @@ import router from "@/scripts/router";
 export const useTabsStore = defineStore('tabs', () => {
 
     const currentTab = ref('')
-    const tabs = ref([])
+    const tabs = ref([{ path: '/home', meta: { title: '首页' } }])
     const isShow = ref(true)
 
     function setCurrentTab(value) {
