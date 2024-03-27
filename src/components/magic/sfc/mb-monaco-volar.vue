@@ -75,7 +75,7 @@ function afterReady(theme) {
             automaticLayout: true,
             scrollBeyondLastLine: false,
             minimap: {
-                enabled: true,
+                enabled: false,
             },
             inlineSuggest: {
                 enabled: false,
@@ -94,7 +94,7 @@ function afterReady(theme) {
             automaticLayout: true,
             scrollBeyondLastLine: false,
             minimap: {
-                enabled: false,
+                enabled: true,
             },
             inlineSuggest: {
                 enabled: false,
