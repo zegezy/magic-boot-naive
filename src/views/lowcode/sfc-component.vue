@@ -65,16 +65,16 @@
                     >
                         <template #suffix>
                             <div class="tools flex flex-row items-center" style="padding:5px 5px;">
-                                <n-button class="mr-2" type="primary" size="small">
+                                <n-button class="mr-2" type="primary" size="small" @click="saveCode()">
                                     <template #icon>
-                                        <mb-icon icon="SaveSharp" color="#fff" @click="saveCode()" />
+                                        <mb-icon icon="SaveSharp" color="#fff" />
                                     </template>
                                     编译并保存
                                 </n-button>
 
-                                <n-button type="primary" secondary size="small">
+                                <n-button type="primary" secondary size="small" @click="openHistory(tabs.filter(it => it.id == tabId)[0])">
                                     <template #icon>
-                                        <mb-icon icon="History24Filled" color="#2d8cf0" @click="openHistory(tabs.filter(it => it.id == tabId)[0])" />
+                                        <mb-icon icon="History24Filled" color="#2d8cf0" />
                                     </template>
                                     历史记录
                                 </n-button>
