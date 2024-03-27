@@ -6,6 +6,7 @@
 import { onMounted, ref, watch } from "vue";
 import * as monaco from "monaco-editor-core";
 import {loadGrammars, loadTheme} from "monaco-volar";
+import {registerNaiveMonacoCompletionProvider} from "../../../scripts/monaco/naiveui-monaco-prompt";
 
 const props = defineProps({
     theme: {
@@ -74,7 +75,7 @@ function afterReady(theme) {
             automaticLayout: true,
             scrollBeyondLastLine: false,
             minimap: {
-                enabled: false,
+                enabled: true,
             },
             inlineSuggest: {
                 enabled: false,
@@ -105,6 +106,8 @@ function afterReady(theme) {
         })
         addCommands()
         loadGrammars(monaco, editorInstance);
+        // 注册naive-ui组件自动提示
+        registerNaiveMonacoCompletionProvider(monaco);
     }
 }
 

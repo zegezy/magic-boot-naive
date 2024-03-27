@@ -63,6 +63,23 @@
                         @close="tabClose"
                         class="h-full w-full"
                     >
+                        <template #suffix>
+                            <div class="tools flex flex-row items-center" style="padding:5px 5px;">
+                                <n-button class="mr-2" type="primary" size="small">
+                                    <template #icon>
+                                        <mb-icon icon="SaveSharp" color="#fff" @click="saveCode()" />
+                                    </template>
+                                    编译并保存
+                                </n-button>
+
+                                <n-button type="primary" secondary size="small">
+                                    <template #icon>
+                                        <mb-icon icon="History24Filled" color="#2d8cf0" @click="openHistory(tabs.filter(it => it.id == tabId)[0])" />
+                                    </template>
+                                    历史记录
+                                </n-button>
+                            </div>
+                        </template>
                         <n-tab-pane
                             v-for="tab in tabs"
                             :key="tab.id"
@@ -73,10 +90,6 @@
                             style="padding: 0px"
                         >
                             <div class="flex flex-col h-full">
-                                <div class="tools flex flex-row items-center" style="padding:0px 5px; height: 30px;">
-                                    <mb-icon icon="SaveSharp" color="black" size="1.25em" title="编译并保存" @click="saveCode()" />
-                                    <mb-icon icon="History24Filled" color="black" size="1.5em" title="查看历史" @click="openHistory(tabs.filter(it => it.id == tabId)[0])" />
-                                </div>
                                 <div style="flex: 1">
                                     <mb-monaco-volar
                                         :ref="(el) => setComponentRef(el, tab.id)"
