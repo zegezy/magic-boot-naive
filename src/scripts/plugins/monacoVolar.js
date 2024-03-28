@@ -4,6 +4,7 @@ import * as monaco from "monaco-editor-core";
 import * as volar from "@volar/monaco";
 import editorWorker from "monaco-editor-core/esm/vs/editor/editor.worker?worker";
 import vueWorker from "monaco-volar/vue.worker?worker";
+import {registerNaiveMonacoCompletionProvider} from "@/scripts/monaco/naiveui-monaco-prompt";
 
 // 高亮代码
 function loadOnigasm() {
@@ -51,4 +52,6 @@ export async function setupMonacoVolar(app) {
     await loadOnigasm()
     monaco.languages.register({id: "vue", extensions: [".vue"]});
     monaco.languages.onLanguage("vue", editorInit);
+    // 注册naive-ui组件自动提示
+    registerNaiveMonacoCompletionProvider(monaco);
 }
