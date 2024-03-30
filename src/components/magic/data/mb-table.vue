@@ -23,72 +23,22 @@
                     @unstable-column-resize="unstableColumnResize"
                     @scroll="onScroll"
                 >
-                    <template #switch="{ row, col }">
-                        <mb-switch
-                            v-model="row[col.field]"
-                            @change="col.change(row)"
-                            v-if="col.if != undefined ? col.if(row) : true"
-                            :checked-value="col.checkedValue"
-                            :unchecked-value="col.uncheckedValue"
-                            v-bind="col.props"
-                        />
-                        <span v-else>-</span>
-                    </template>
-                    <template #html="{ row, col }">
-                        <ShowOrTooltip>
-                            <span v-html="getLabel(row, col)"></span>
-                        </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(getValueByPath(row, col.field))" />
-                    </template>
-                    <template #templet="{ row, col, index }">
-                        <ShowOrTooltip>
-                            <span v-html="col.templet(row, col, index)"></span>
-                        </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(col.templet(row, col, index))" />
-                    </template>
-                    <template #text="{ row, col }">
-                        <ShowOrTooltip>
-                            <span v-html="getLabel(row, col)"></span>
-                        </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(getLabel(row, col))" />
-                    </template>
-                    <template #buttons="{ row, col }">
-                        <n-space>
-                            <template v-for="it in col.buttons">
-                                <n-button
-                                    v-if="it.if != undefined ? it.if(row) : true"
-                                    v-permission="it.permission"
-                                    :type="it.type"
-                                    :text="it.link"
-                                    :dashed="it.dashed"
-                                    :href="it.href"
-                                    :color="it.color"
-                                    :target="it.target"
-                                    :tag="it.tag || (it.link ? 'a' : 'button')"
-                                    :text-color="it.textColor || '#2D8CF0'"
-                                    @click="it.click(row)"
-                                >
-                                    <template #icon v-if="it.icon">
-                                        <mb-icon :icon="it.icon" />
-                                    </template>
-                                    {{ it.label }}
-                                </n-button>
-                            </template>
-                        </n-space>
-                    </template>
-                    <template #dictType="{ row, col }">
-                        <ShowOrTooltip>
-                            <span>{{ dictStore.getDictLabel(col.dictType, getValueByPath(row, col.field) + '') }}</span>
-                        </ShowOrTooltip>
-                        <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(dictStore.getDictLabel(col.dictType, getValueByPath(row, col.field) + ''))" />
-                    </template>
                     <template #dynamic="{ row, col, index }">
                         <slot :name="col.field" :row="row" :col="col" :index="index" />
                     </template>
                     <template #title="{ col }">
                         <div @contextmenu.prevent="headerClick($event, col)" class="relative">
-                            <div @click="dataSort(col)">
+                            <div @click="dataSort(col)" class="flex items-center">
                                 <label>{{ col.label }}</label>
+                                <n-tooltip trigger="hover" v-if="col.titleTooltip">
+                                    <template #trigger>
+                                        <mb-icon
+                                            :icon="(col.titleTooltip.iconProps && col.titleTooltip.iconProps.icon) || componentProperties.table.titleTooltip.iconProps.icon"
+                                            :color="(col.titleTooltip.iconProps && col.titleTooltip.iconProps.color) || componentProperties.table.titleTooltip.iconProps.color"
+                                        />
+                                    </template>
+                                    <span v-html="col.titleTooltip.content"></span>
+                                </n-tooltip>
                                 <mb-icon icon="EditFilled" v-if="col.editIcon" />
                                 <mb-icon v-if="col.dataSortRule" icon="CaretUpOutline" />
                                 <mb-icon v-if="col.dataSortRule == false" icon="CaretDownOutline" />
@@ -105,13 +55,6 @@
                                 </div>
                             </div>
                         </div>
-                    </template>
-                    <template #image="{ row, col }">
-                        <n-image-group v-if="row[col.field]">
-                            <n-space>
-                                <n-image v-for="it in row[col.field].split(',')" width="30" height="30" :src="it && it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)" />
-                            </n-space>
-                        </n-image-group>
                     </template>
                 </n-data-table>
             </div>
@@ -147,13 +90,10 @@
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
 import global from '@/scripts/global'
-import {useDictStore} from "@/store/modules/dictStore";
 import componentProperties from '@/components/magic-component-properties'
-import { NEllipsis } from 'naive-ui'
 import { cloneDeep, isEqual, get as getValueByPath } from 'lodash-es'
 import { useMouse, onClickOutside } from "@vueuse/core";
-
-const dictStore = useDictStore()
+import MbTableColumn from "@/components/magic/data/mb-table-column.vue";
 
 const props = defineProps({
     props: {
@@ -271,58 +211,6 @@ const props = defineProps({
     onDblclick: {
         type: Function,
         default: () => {}
-    }
-})
-const ShowOrTooltip = defineComponent({
-    setup (props, { slots }) {
-        const tooltip = ref()
-        tooltip.value = false
-        let timers
-        let duration
-        if (typeof props.tooltip === 'object') {
-            duration = props.tooltip.duration
-        }
-        return () =>
-            h(
-                'span',
-                {
-                    onMouseover: () => {
-                        clearTimeout(timers)
-                        const onUpdateShow = (value) => {
-                            if (!value) {
-                                timers = setTimeout(() => {
-                                    tooltip.value = false
-                                }, (duration ?? 100) + 1000)
-                            }
-                        }
-                        let tooltipProps = cloneDeep(props.tooltip)
-                        if (typeof tooltipProps === 'object') {
-                            if (tooltipProps.onUpdateShow) {
-                                const _onUpdateShow = tooltipProps.onUpdateShow
-                                tooltipProps.onUpdateShow = (value) => {
-                                    call(_onUpdateShow, value)
-                                    call(onUpdateShow, value)
-                                }
-                            } else {
-                                tooltipProps.onUpdateShow = onUpdateShow
-                            }
-                        } else {
-                            if (props.tooltip === true) {
-                                tooltipProps = { onUpdateShow }
-                            }
-                        }
-                        tooltip.value = tooltipProps
-                    }
-                },
-                h(
-                    NEllipsis,
-                    {
-                        ...props,
-                        tooltip: tooltip.value
-                    },
-                    { default: slots.default }
-                )
-            )
     }
 })
 const emit = defineEmits(['update:checked-row-keys', 'selected-row', 'update:checked-row-datas'])
@@ -625,50 +513,24 @@ function renderShowColumns() {
     showColumns.value = columns.value.filter(it => it.show)
     calcScrollX()
 }
-function getLabel(row, col){
-    return $common.notEmptyNot01(getValueByPath(row, col.field)) ? getValueByPath(row, col.field) : $common.notEmptyNot01(col.defaultValue) ? col.defaultValue : ''
-}
 function fixCols() {
     tableSlots.value = tableRef.value.$slots
-    const keys = Object.keys(tableSlots.value)
     let colWidth = getColWidth()
-    props.cols.forEach((col) => {
-        let column = {}
+    props.cols.forEach((col, i) => {
+        let column = cloneDeep(col)
+        column.tree = (i == 0)
         column.field = col.field || $common.uuid()
         column.key = column.field
-        column.label = col.label
         column.title = (col) => {
             return h(tableSlots.value['title'], {col})
         }
-        column.align = col.align
         column.width = col.width || colWidth
         column.minWidth = col.minWidth || column.width
-        column.fixed = col.fixed
         column.show = col.show == undefined ? true : col.show
-        column.copyAll = col.copyAll
-        column.copyAllCallback = col.copyAllCallback
-        column.componentProps = col.componentProps
-        column.component = col.component
-        column.showLabel = col.showLabel
-        column.realSort = col.realSort
         column.resizable = true
-        column.editIcon = col.editIcon
-        let type = col.type
-        if (!col.render && type && keys.indexOf(type) != -1) {
-            renderSlot(col, type)
-        } else {
-            if (col.dictType) {
-                renderSlot(col, 'dictType')
-            }
-            if(col.templet){
-                renderSlot(col, 'templet')
-            }
-        }
-        if (col.render) {
-            column.render = col.render
-        }else{
-            renderSlot(col, 'text')
-            column.render = col.render
+        if(!col.render){
+            let type = col.dictType ? 'dictType' : col.templet ? 'templet' : col.type
+            renderSlot(column, type)
         }
         if (col.props) {
             for (let key in col.props) {
@@ -702,7 +564,10 @@ function fixCols() {
 
 function renderSlot(col, type) {
     col.render = (row, index) => {
-        return h(tableSlots.value[type], {row, index, col})
+        if(type === 'dynamic'){
+            return h(tableSlots.value[type], {row, index, col})
+        }
+        return h(MbTableColumn, {type, row, index, col, nowrap: getNowrap.value})
     }
 }
 
@@ -897,9 +762,6 @@ function headerClick(e, col) {
 function hideDropMenus(){
     showMenus.value = false
 }
-function copyText(text){
-    $common.copyText(text)
-}
 function copyAll(col){
     if(col.copyAllCallback){
         col.copyAllCallback(col)
@@ -1038,6 +900,8 @@ function columnDrop() {
                     unFixedColumn()
                     fixedColumn(fixedIndex)
                 }
+                // 如果是树形结构数据，保证展开按钮在第一列
+                columns.value.forEach((it , i) => it.tree = (i == 0))
             })
         },
         onMove: evt => {

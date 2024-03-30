@@ -33,7 +33,8 @@ import {
     ArrowSortDown16Filled
 } from '@vicons/fluent'
 import {
-    EditFilled
+    EditFilled,
+    QuestionCircleFilled
 } from '@vicons/antd'
 export default {
     // ionicons5
@@ -69,5 +70,6 @@ export default {
     ArrowSortUp16Filled,
     ArrowSortDown16Filled,
     // antd
-    EditFilled
+    EditFilled,
+    QuestionCircleFilled
 }
