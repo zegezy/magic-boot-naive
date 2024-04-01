@@ -43,10 +43,18 @@ const props = defineProps({
     props: Object
 })
 
-selectValue.value = props.modelValue
+function handlerValue(value){
+    if(value.indexOf(',')){
+        return value.split(',')
+    }
+    return value
+}
+
+selectValue.value = handlerValue(props.modelValue)
 watch(() => props.modelValue, (value) => {
-    console.log(value)
-    selectValue.value = value
+    if(!$common.arrayStringEq(value, selectValue.value)){
+        selectValue.value = handlerValue(value)
+    }
 })
 const valueFormat = ref()
 if (!props.format) {
@@ -60,6 +68,6 @@ if (!props.format) {
     valueFormat.value = props.format
 }
 watch(selectValue, (value) => {
-    emit('update:modelValue', value)
+    emit('update:modelValue', value instanceof Array ? value.join(',') : value)
 })
 </script>

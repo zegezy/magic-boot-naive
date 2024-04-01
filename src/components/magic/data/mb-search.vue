@@ -88,13 +88,6 @@ function search() {
 	}
 	nextTick(() => {
 		emit('search')
-		for (let key in props.where) {
-			if (props.where[key] instanceof Object) {
-				if (props.where[key].component && props.where[key].component.startsWith('date') && props.where[key].value) {
-					props.where[key].value = props.where[key].value.split(',')
-				}
-			}
-		}
 	})
 }
 
