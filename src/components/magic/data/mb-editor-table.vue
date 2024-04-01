@@ -270,7 +270,7 @@ if(props.operation && !props.preview){
         link: true,
         icon: 'Delete24Regular',
         if: (row) => {
-            return deleteType ? props.operation.delete.if && props.operation.delete.if(row) : props.operation.delete
+            return deleteType ? props.operation.delete.if === undefined || (props.operation.delete.if && props.operation.delete.if(row)) : props.operation.delete
         },
         click: (row) => {
             deleteType ? deleteClick(row, props.operation.delete.confirm) : deleteClick(row)
@@ -280,7 +280,7 @@ if(props.operation && !props.preview){
         link: true,
         icon: 'sub-level',
         if: (row) => {
-            return subType ? props.operation.sub.if && props.operation.sub.if(row) : props.operation.sub
+            return subType ? props.operation.sub.if === undefined || (props.operation.sub.if && props.operation.sub.if(row)) : props.operation.sub
         },
         click: (row) => {
             addChildrenRow(row)
@@ -290,7 +290,7 @@ if(props.operation && !props.preview){
         link: true,
         icon: 'same-level',
         if: (row) => {
-            return sameType ? props.operation.same.if && props.operation.same.if(row) : props.operation.same
+            return sameType ? props.operation.same.if === undefined || (props.operation.same.if && props.operation.same.if(row)) : props.operation.same
         },
         click: (row) => {
             addRow(row)
