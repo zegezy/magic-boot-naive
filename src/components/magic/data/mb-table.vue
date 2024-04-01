@@ -37,7 +37,7 @@
                                             :color="(col.titleTooltip.iconProps && col.titleTooltip.iconProps.color) || componentProperties.table.titleTooltip.iconProps.color"
                                         />
                                     </template>
-                                    <span v-html="col.titleTooltip.content"></span>
+                                    <span v-html="col.titleTooltip instanceof Object ? col.titleTooltip.content : col.titleTooltip"></span>
                                 </n-tooltip>
                                 <mb-icon icon="EditFilled" v-if="col.editIcon" />
                                 <mb-icon v-if="col.dataSortRule" icon="CaretUpOutline" />
@@ -88,10 +88,10 @@
 
 <script setup>
 import Sortable from 'sortablejs'
-import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, defineComponent, computed} from 'vue'
+import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed} from 'vue'
 import global from '@/scripts/global'
 import componentProperties from '@/components/magic-component-properties'
-import { cloneDeep, isEqual, get as getValueByPath } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 import { useMouse, onClickOutside } from "@vueuse/core";
 import MbTableColumn from "@/components/magic/data/mb-table-column.vue";
 
@@ -324,6 +324,7 @@ function paginationUpdatePage(page){
 }
 
 function paginationUpdatePageSize(pageSize){
+    componentProperties.table.savePage && componentProperties.table.savePage(pageSize,props.id)
     paginationParams.pageSize = pageSize
     paginationParams.page = 1
     loadData()
@@ -901,7 +902,7 @@ function columnDrop() {
                     fixedColumn(fixedIndex)
                 }
                 // 如果是树形结构数据，保证展开按钮在第一列
-                columns.value.forEach((it , i) => it.tree = (i == 0))
+                columns.value.forEach((it , i) => it.tree = (i == getFixedCount()))
             })
         },
         onMove: evt => {
@@ -952,7 +953,14 @@ function getData(){
     return bindProps.data
 }
 
-onMounted(() => {
+onMounted(async () => {
+    if(props.page && props.id){
+        if(componentProperties.table.getPage){
+            await componentProperties.table.getPage(props.id, pageSize => {
+                paginationParams.pageSize = pageSize
+            })
+        }
+    }
     fixCols()
     reload()
     bindProps.size = global.uiSize;
