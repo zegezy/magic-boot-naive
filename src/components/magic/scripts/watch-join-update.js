@@ -1,5 +1,5 @@
 import {computed, watch} from 'vue'
-import {isArray, isNumber, isString, omit} from "lodash-es";
+import {isArray, isNumber, isString} from "lodash-es";
 
 export function watchValue(componentValue, props, emit){
     let watchList = []
