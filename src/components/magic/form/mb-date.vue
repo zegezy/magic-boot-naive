@@ -44,7 +44,7 @@ const props = defineProps({
 })
 
 function handlerValue(value){
-    if(value.indexOf(',')){
+    if(value && value.indexOf(',') !== -1){
         return value.split(',')
     }
     return value

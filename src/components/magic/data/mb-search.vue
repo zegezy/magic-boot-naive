@@ -1,31 +1,23 @@
 <template>
     <n-form :size="$global.uiSize.value"  inline label-placement="left" @keyup.enter="search" style="flex-wrap:wrap">
         <template v-for="(it, i) in where">
-            <n-form-item v-if="it && it.label" :label="it.label" :key="i" :show-feedback="false">
+            <n-form-item v-if="formItemIf(it)" :label="it.label" :key="i" :show-feedback="false">
                 <component
-                        :is="
-                        !it.component ? 'mb-input' : it.component.startsWith('n-') ||
-                        // $global.dynamicComponentNames.indexOf(it.component) != -1 ? it.component :
-                        'mb-' + it.component
-                    "
-                        v-model="it.value"
-                        :item-label="it.label"
-                        v-bind="it.componentProps || it.props"
+                    :is="!it.component ? 'mb-input' : it.component.startsWith('n-') || 'mb-' + it.component"
+                    v-model="it.value"
+                    :item-label="it.label"
+                    v-bind="it.componentProps || it.props"
                 />
             </n-form-item>
         </template>
         <n-form-item :show-feedback="false">
             <n-space>
                 <n-button :size="$global.uiSize.value"  type="primary" @click="search">
-                    <n-icon>
-                        <Search/>
-                    </n-icon>
+                    <mb-icon icon="Search" />
                     搜索
                 </n-button>
                 <n-button :size="$global.uiSize.value"  @click="reset">
-                    <n-icon>
-                        <TrashOutline/>
-                    </n-icon>
+                    <mb-icon icon="TrashOutline" />
                     清空
                 </n-button>
                 <slot name="buttons"/>
@@ -35,8 +27,7 @@
 </template>
 
 <script setup>
-import {nextTick} from 'vue'
-import {Search, TrashOutline, AddOutline, ArrowDownOutline} from "@vicons/ionicons5";
+import {nextTick, watch} from 'vue'
 
 const props = defineProps({
 	where: {
@@ -50,15 +41,33 @@ const props = defineProps({
 	}
 })
 
+function formItemIf(it){
+    if(it){
+        it.show = it.show === undefined ? !!it.label : it.show
+        return it.show
+    }
+    return false
+}
+
+function reRenderComponent(key){
+    props.where[key].show = false
+    nextTick(() => {
+        props.where[key].show = true
+    })
+}
+
 for (let key in props.where) {
 	if (props.where[key] instanceof Object) {
-		if (props.where[key].value == undefined) {
+		if (props.where[key].value === undefined) {
 			props.where[key].value = null
 		}
-		if (props.where[key].component == 'date') {
+        watch(() => props.where[key].value, (value) => {
+            props.where[key].valueChange && props.where[key].valueChange({value, reRenderComponent, where: props.where})
+        })
+		if (props.where[key].component === 'date') {
 			let isResetValue = false
 			for (let k in props.where[key]) {
-				if (k == 'resetValue') {
+				if (k === 'resetValue') {
 					isResetValue = true
 				}
 			}
@@ -93,11 +102,11 @@ function search() {
 
 function reset() {
 	for (let key in props.where) {
-		if (props.notReset.indexOf(key) == -1) {
+		if (props.notReset.indexOf(key) === -1) {
 			if (props.where[key] instanceof Object) {
 				let isResetValue = false
 				for (let k in props.where[key]) {
-					if (k == 'resetValue') {
+					if (k === 'resetValue') {
 						isResetValue = true
 					}
 				}
@@ -121,6 +130,8 @@ function reset() {
 	}
 	nextTick(() => emit('search'))
 }
+
+defineExpose({ reRenderComponent })
 
 </script>
 
