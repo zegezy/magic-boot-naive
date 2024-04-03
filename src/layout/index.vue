@@ -49,6 +49,12 @@
                                 :url="$common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
                                 v-show="com.path == $route.path"
                             />
+                            <component
+                                v-for="com in keepaliveDynamicComponents"
+                                :is="ShowComponent"
+                                :name="com.meta.componentName"
+                                v-show="com.path == $route.path"
+                            />
                             <nested-router />
                         </div>
                     </n-layout-content>
@@ -68,6 +74,7 @@ import {useUserStore} from "@/store/modules/userStore"
 import {useTabsStore} from "@/store/modules/tabsStore"
 import LayoutHeader from "@/layout/layout-header.vue";
 import IframeComponent from '@/views/common/iframe.vue'
+import ShowComponent from '@/views/common/show-component.vue'
 import { isEmpty } from 'lodash-es'
 
 const tabsStore = useTabsStore()
@@ -79,6 +86,8 @@ selectMenu(currentTab)
 watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
 // 单独处理 "iframe" 并且开启缓存的页面
 const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => $common.filterIframeTabs(it)))
+// 缓存“动态组件”
+const keepaliveDynamicComponents = computed(() => tabsStore.getTabs.filter(it => it.meta.componentName))
 
 function selectMenu(key) {
     selectedKey.value = key

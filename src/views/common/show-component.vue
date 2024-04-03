@@ -8,5 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <component :is="props.name"></component>
+    <transition name="fade" mode="out-in" appear>
+        <component :is="props.name"></component>
+    </transition>
 </template>

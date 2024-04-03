@@ -12,6 +12,6 @@
 import {useTabsStore} from '@/store/modules/tabsStore'
 import {computed} from "vue";
 const tabsStore = useTabsStore()
-const keepAliveInclude = computed(() => tabsStore.getTabs.filter(it => it.meta.keepAlive).map(it => it.path.substring(it.path.lastIndexOf('/') + 1)))
+const keepAliveInclude = computed(() => tabsStore.getTabs.filter(it => it.meta.keepAlive && !it.meta.componentName).map(it => it.path.substring(it.path.lastIndexOf('/') + 1)))
 const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => $common.filterIframeTabs(it)))
 </script>
