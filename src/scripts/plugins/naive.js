@@ -2,22 +2,6 @@ import * as NaiveUI from 'naive-ui';
 
 const naive = NaiveUI.create({
     components: [
-        // NaiveUI.NConfigProvider,
-        // NaiveUI.NLayout,
-        // NaiveUI.NLayoutHeader,
-        // NaiveUI.NLayoutSider,
-        // NaiveUI.NLayoutContent,
-        // NaiveUI.NLayoutFooter,
-        // NaiveUI.NMenu,
-        // NaiveUI.NSpace,
-        // NaiveUI.NIcon,
-        // NaiveUI.NSwitch,
-        // NaiveUI.NTag,
-        // NaiveUI.NForm,
-        // NaiveUI.NFormItem,
-        // NaiveUI.NInput,
-        // NaiveUI.NButton
-
         NaiveUI.NMessageProvider,
         NaiveUI.NDialogProvider,
         NaiveUI.NConfigProvider,
@@ -89,7 +73,8 @@ const naive = NaiveUI.create({
         NaiveUI.NSkeleton,
         NaiveUI.NImage,
         NaiveUI.NImageGroup,
-        NaiveUI.NSplit
+        NaiveUI.NSplit,
+        NaiveUI.NEllipsis
     ]
 });
 

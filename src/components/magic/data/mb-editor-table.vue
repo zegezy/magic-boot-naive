@@ -115,7 +115,7 @@
                 </template>
                 <div v-else class="flex items-center">
                     <!-- 如果没有设置组件 直接显示数据 -->
-                    <div :style="col.labelStyle" class="flex-1">
+                    <div :style="col.labelStyle" class="flex-1 w-full">
                         <slot
                             :name="col.field + '-view'"
                             :row="row"
@@ -123,9 +123,9 @@
                             :row-index="row._index_"
                             :col-index="colIndex"
                         >
-                            <span v-if="col.show == undefined || (col.show && col.show(row))">
+                            <mb-table-tooltip v-if="col.show == undefined || (col.show && col.show(row))">
                                 {{ row[col.field] }}
-                            </span>
+                            </mb-table-tooltip>
                         </slot>
                     </div>
                     <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="common.copyText(row[col.field])" />

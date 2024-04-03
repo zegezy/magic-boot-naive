@@ -12,15 +12,15 @@
             <span v-else>-</span>
         </template>
         <template v-else-if="type === 'html'">
-            <ShowOrTooltip>
+            <mb-table-tooltip :nowrap="nowrap">
                 <span v-html="getLabel(row, col)"></span>
-            </ShowOrTooltip>
+            </mb-table-tooltip>
             <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(getValueByPath(row, col.field))" />
         </template>
         <template v-else-if="type === 'templet'">
-            <ShowOrTooltip>
+            <mb-table-tooltip :nowrap="nowrap">
                 <span v-html="col.templet(row, col, index)"></span>
-            </ShowOrTooltip>
+            </mb-table-tooltip>
             <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(col.templet(row, col, index))" />
         </template>
         <template v-else-if="type === 'buttons'">
@@ -48,9 +48,9 @@
             </n-space>
         </template>
         <template v-else-if="type === 'dictType'">
-            <ShowOrTooltip>
+            <mb-table-tooltip :nowrap="nowrap">
                 <span>{{ dictStore.getDictLabel(col.dictType, getValueByPath(row, col.field) + '') }}</span>
-            </ShowOrTooltip>
+            </mb-table-tooltip>
             <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(dictStore.getDictLabel(col.dictType, getValueByPath(row, col.field) + ''))" />
         </template>
         <template v-else-if="type === 'image'">
@@ -66,18 +66,16 @@
             </n-image-group>
         </template>
         <template v-else>
-            <ShowOrTooltip>
+            <mb-table-tooltip :nowrap="nowrap">
                 <span v-html="getLabel(row, col)"></span>
-            </ShowOrTooltip>
+            </mb-table-tooltip>
             <mb-icon v-if="col.copyText" class="copy-text" icon="CopyOutline" @click="copyText(getLabel(row, col))" />
         </template>
     </span>
 </template>
 
 <script setup>
-import {defineComponent, h, ref} from "vue";
-import {cloneDeep, get as getValueByPath} from "lodash-es";
-import {NEllipsis} from "naive-ui";
+import {get as getValueByPath} from "lodash-es";
 import componentProperties from '@/components/magic-component-properties'
 import {useDictStore} from "@/store/modules/dictStore";
 
@@ -110,59 +108,4 @@ function copyText(text){
 function getLabel(row, col){
     return $common.notEmptyNot01(getValueByPath(row, col.field)) ? getValueByPath(row, col.field) : $common.notEmptyNot01(col.defaultValue) ? col.defaultValue : ''
 }
-const ShowOrTooltip = defineComponent({
-    setup (_props, { slots }) {
-        if(props.nowrap === false){
-            return () => h('span', {}, h('span',{},{ default: slots.default }))
-        }
-        const tooltip = ref()
-        tooltip.value = false
-        let timers
-        let duration
-        if (typeof _props.tooltip === 'object') {
-            duration = _props.tooltip.duration
-        }
-        return () =>
-            h(
-                'span',
-                {
-                    onMouseover: () => {
-                        clearTimeout(timers)
-                        const onUpdateShow = (value) => {
-                            if (!value) {
-                                timers = setTimeout(() => {
-                                    tooltip.value = false
-                                }, (duration ?? 100) + 1000)
-                            }
-                        }
-                        let tooltipProps = cloneDeep(_props.tooltip)
-                        if (typeof tooltipProps === 'object') {
-                            if (tooltipProps.onUpdateShow) {
-                                const _onUpdateShow = tooltipProps.onUpdateShow
-                                tooltipProps.onUpdateShow = (value) => {
-                                    call(_onUpdateShow, value)
-                                    call(onUpdateShow, value)
-                                }
-                            } else {
-                                tooltipProps.onUpdateShow = onUpdateShow
-                            }
-                        } else {
-                            if (_props.tooltip === true) {
-                                tooltipProps = { onUpdateShow }
-                            }
-                        }
-                        tooltip.value = tooltipProps
-                    }
-                },
-                h(
-                    NEllipsis,
-                    {
-                        ..._props,
-                        tooltip: tooltip.value
-                    },
-                    { default: slots.default }
-                )
-            )
-    }
-})
 </script>
