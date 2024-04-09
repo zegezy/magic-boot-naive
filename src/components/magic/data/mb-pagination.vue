@@ -8,6 +8,7 @@
             @updatePage="emit('update-page', $event)"
             @updatePageSize="emit('update-page-size', $event)"
             show-quick-jumper
+            show-size-picker
             style="margin: 0 auto;"
         />
     </div>
