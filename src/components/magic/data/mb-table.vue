@@ -91,7 +91,7 @@ import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed} from 'vue'
 import global from '@/scripts/global'
 import componentProperties from '@/components/magic-component-properties'
-import { cloneDeep, isEqual } from 'lodash-es'
+import { cloneDeep, isEqual, isEmpty } from 'lodash-es'
 import { useMouse, onClickOutside } from "@vueuse/core";
 import MbTableColumn from "@/components/magic/data/mb-table-column.vue";
 
@@ -190,6 +190,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    summary: {
+        type: Object,
+        default: undefined
+    },
     onScroll: {
         type: Function,
         default: () => {}
@@ -225,6 +229,17 @@ const showColumns = ref([])
 const bindProps = reactive(props.props || {})
 const getNowrap = computed(() => props.nowrap != undefined ? props.nowrap : componentProperties.table.nowrap != undefined ? componentProperties.table.nowrap : false)
 let currentRowDom = null
+const summaryData = ref()
+watch(summaryData, () => {
+    bindProps.summary = () => {
+        return {
+            [showColumns.value[getFixedCount()].field]: {
+                value: '合计'
+            },
+            ...summaryData.value,
+        }
+    }
+})
 
 bindProps.rowProps = (row) => {
     let _rowProps = {}
@@ -347,6 +362,7 @@ function handlerData(){
     bindProps.data = currPageData
     sourceData.value = cloneDeep(currPageData)
     bindProps.loading = false
+    dataDone()
 }
 
 function createTable() {
@@ -366,6 +382,52 @@ function createTable() {
     })
 }
 
+function handlerSummaryData(data){
+    let newData = cloneDeep(data)
+    for(let key in newData){
+        if(!(newData[key] instanceof Object)){
+            newData[key] = {
+                value: newData[key]
+            }
+        }
+    }
+    return newData
+}
+
+function loadRemoteSummary(){
+    if(props.summary){
+        const { url, data } = props.summary
+        if(data){
+            summaryData.value = handlerSummaryData(data)
+        }
+        if(url){
+            $common.request(props.summary.method)(url, $common.renderWhere(props.where)).then((res) => {
+                summaryData.value = handlerSummaryData(res.data)
+            })
+        }
+    }
+}
+loadRemoteSummary()
+
+function loadStaticSummary(){
+    if(!props.summary) {
+        let data = {}
+        showColumns.value.forEach((col, i) => {
+            if (col.summary) {
+                let colTotal = bindProps.data.reduce((total, it) => total + Number(it[col.field]), 0)
+                if (col.summary instanceof Object) {
+                    data[col.field] = (col.summary.prefix || '') + colTotal + (col.summary.suffix || '')
+                } else {
+                    data[col.field] = colTotal
+                }
+            }
+        })
+        if (!isEmpty(data)) {
+            summaryData.value = handlerSummaryData(data)
+        }
+    }
+}
+
 function loadData(options) {
     if (props.url) {
         let where = $common.renderWhere(props.where)
@@ -381,7 +443,6 @@ function loadData(options) {
     }
     if (props.data) {
         handlerData()
-        dataDone()
     }
     if(options){
         if(!options.notClearChecked){
@@ -391,6 +452,7 @@ function loadData(options) {
 }
 
 function dataDone(){
+    loadStaticSummary()
     props.done(bindProps.data)
     if(props.defaultSelectedRow && props.selectedRowEnable && bindProps.data.length > 0){
         nextTick(() => {
@@ -422,13 +484,7 @@ function requestData({ where, loading }) {
         }
         dataDone()
     }
-    if (props.method.toLowerCase() == 'post') {
-        $common.post(props.url, where).then(processData)
-    } else if(props.method.toLowerCase() == 'postjson') {
-        $common.postJson(props.url, where).then(processData)
-    } else {
-        $common.get(props.url, where).then(processData)
-    }
+    $common.request(props.method)(props.url, where).then(processData)
 }
 createTable()
 
@@ -1106,5 +1162,9 @@ defineExpose({expand, toggleExpand, reload, exportExcel, getData, expandByKeys})
     right: 0px;
     top: 0px;
     bottom: 0px;
+}
+:deep(.n-data-table-tr--summary) td {
+    position: sticky;
+    bottom: 0;
 }
 </style>

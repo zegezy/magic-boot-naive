@@ -37,6 +37,10 @@ const formatJson = (list, filterVal) => {
     }))
 }
 
+common.request = (method) => {
+    return common[common.requestMethod.indexOf(method) !== -1 ? method : 'get']
+}
+common.requestMethod = ['get','post','postJson','delete']
 common.get = (url, data) => request({url, params: data})
 common.delete = (url, data) => request({url, method: 'delete', params: data})
 common.post = (url, data) => request.post(url, data, {
