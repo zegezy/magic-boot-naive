@@ -54,7 +54,7 @@
                             {{ $global.title }}
                         </div>
                         <p class="text-base" style="color: #213547">【有些事情本来很遥远，你争取，它就会离你越来越近】</p>
-                        <n-button type="primary" color="#42b883" @click="createFile('0', 0)">新建文件夹</n-button>
+                        <n-button type="primary" color="#42b883" @click="createFile('0', 0)">新建分组</n-button>
                         <div class="flex flex-wrap justify-between mt-4" style="color: #b6b6b6">
                             <div class="text-base w-1/2 mb-4">保存Ctrl + S</div>
                             <div class="text-base w-1/2">撤销Ctrl + Z</div>
