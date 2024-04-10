@@ -19,7 +19,7 @@
 
 <template>
     <div class="h-full">
-        <n-split direction="horizontal" style="height: 100%" :default-size="0.15" :max="0.2" :min="0.1">
+        <n-split direction="horizontal" style="height: 100%" :default-size="0.15" :max="0.3" :min="0.1">
             <template #1>
                 <div class="h-full">
                     <mb-tree
@@ -35,8 +35,15 @@
                         :contextmenu="treeContextmenu"
                         :icon="{ expand: 'FolderOpenOutline', collapse: 'Folder', node: 'LogoVue' }"
                     />
-                    <mb-modal ref="nameModal" :title="updateComponent ? '修改': '添加下级'" @confirm="saveComponent">
-                        <mb-input v-model="nodeNameInput" />
+                    <mb-modal ref="nameModal" :title="updateComponent ? '修改': '添加'" @confirm="saveComponent">
+                        <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="formData" label-placement="left" label-width="60px">
+                            <n-form-item label="名称" path="name">
+                                <n-input v-model:value="formData.name"/>
+                            </n-form-item>
+                            <n-form-item label="备注" path="remark">
+                                <n-input v-model:value="formData.remark"/>
+                            </n-form-item>
+                        </n-form>
                     </mb-modal>
                 </div>
             </template>
@@ -47,7 +54,7 @@
                             {{ $global.title }}
                         </div>
                         <p class="text-base" style="color: #213547">【有些事情本来很遥远，你争取，它就会离你越来越近】</p>
-                        <n-button type="primary" color="#42b883" @click="createFile('0')">新建文件夹/文件</n-button>
+                        <n-button type="primary" color="#42b883" @click="createFile('0', 0)">新建文件夹</n-button>
                         <div class="flex flex-wrap justify-between mt-4" style="color: #b6b6b6">
                             <div class="text-base w-1/2 mb-4">保存Ctrl + S</div>
                             <div class="text-base w-1/2">撤销Ctrl + Z</div>
@@ -153,7 +160,11 @@ import { ref, reactive } from 'vue'
 import {compileCode} from "@/scripts/compiler/sfc-compiler";
 const monacoVolarRefs = reactive({})
 const nameModal = ref()
-const nodeNameInput = ref()
+const formData = reactive({
+    remark: '',
+    name: '',
+    type: 0
+})
 const currentNodeId = ref()
 const currentNode = ref()
 const treeRef = ref()
@@ -192,15 +203,26 @@ function drawerClose(){
 }
 const treeContextmenu = ref([{
     key: 'addSub',
-    label: '添加',
+    label: '添加分组',
     click: (node) => {
-        createFile(node.id)
+        createFile(node.id, 0)
+    }
+}, {
+    key: 'addComponent',
+    label: '添加组件',
+    click: (node) => {
+        createFile(node.id, 1)
     }
 }, {
     key: 'updateComponent',
     label: '修改',
     click: (node) => {
-        nodeNameInput.value = node.name
+        if(node.name.indexOf('(') !== -1){
+            formData.name = analyzeName(node.name, true)
+            formData.remark = analyzeName(node.name, false)
+        }else{
+            formData.name = node.name
+        }
         updateComponent.value = true
         currentNodeId.value = node.id
         nameModal.value.show()
@@ -221,10 +243,7 @@ const treeContextmenu = ref([{
     key: 'history',
     label: '历史记录',
     if(node){
-        if(!node.children || (node.children && node.children.length == 0)){
-            return true
-        }
-        return false
+        return !node.isGroup;
     },
     click: (node) => {
         openHistory(node)
@@ -249,34 +268,51 @@ function openHistory(node){
         }
     })
 }
-function createFile(id){
-    nodeNameInput.value = ''
+// 解析name
+function analyzeName(str, outside){
+    const regexStr = outside ? /(.*?)(?=\()/ : /\((.*?)\)/;
+    const match = str.match(regexStr);
+    if (match) {
+        return outside ? match[0].trim() : match[1];
+    }
+}
+function createFile(id, type){
+    formData.type = type
+    formData.name = ''
     updateComponent.value = false
     currentNodeId.value = id
     nameModal.value.show()
 }
 function saveComponent(){
-    if(/^[a-zA-Z0-9\-_]+$/.test(nodeNameInput.value)){
-        $common.post('/system/component/save/tree',{
-            [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
-            name: nodeNameInput.value
-        }).then(() => {
-            nameModal.value.hide()
-            if(updateComponent.value){
-                tabs.value.forEach(it => {
-                    if(it.id == currentNodeId.value){
-                        it.name = nodeNameInput.value
-                    }
+    dataForm.value.validate((errors) => {
+        if (!errors) {
+            if(/^[a-zA-Z0-9\-_]+$/.test(formData.name)){
+                console.log({
+                    [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
+                    ...formData
                 })
+                $common.post('/system/component/save/tree',{
+                    [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
+                    ...formData
+                }).then(() => {
+                    nameModal.value.hide()
+                    if(updateComponent.value){
+                        tabs.value.forEach(it => {
+                            if(it.id == currentNodeId.value){
+                                it.name = formData.name
+                            }
+                        })
+                    }
+                    treeRef.value.reload()
+                })
+            }else{
+                $message.error('只能包含大小写英文、数字和-_')
             }
-            treeRef.value.reload()
-        })
-    }else{
-        $message.error('只能包含大小写英文、数字和-_')
-    }
+        }
+    })
 }
 function nodeClick(option){
-    if(!option.children){
+    if(!option.isGroup){
         if(tabs.value.some(it => it.id == option.id)){
             tabId.value = option.id
         }else{
@@ -292,6 +328,11 @@ function nodeClick(option){
         }
     }
 }
+
+const dataForm = ref()
+const rules = reactive({
+    name: {required: true, message: '请输入名称', trigger: 'change'}
+})
 
 const tabs = ref([])
 const tabId = ref()

@@ -333,11 +333,15 @@ function nodeProps({option}) {
     }
 }
 
-function recursionRenderIcon(children, icon){
+function recursionRenderIcon(children){
     children.forEach(it => {
-        if(it.children && it.children.length){
-            it.prefix = () => h(MbIcon, { icon: icon })
-            recursionRenderIcon(it.children, icon)
+        if(it.isGroup){
+            if(it.children && it.children.length){
+                it.prefix = () => h(MbIcon, { icon: defaultExpandAll.value ? props.icon.expand : props.icon.collapse })
+                recursionRenderIcon(it.children)
+            }else{
+                it.prefix = () => h(MbIcon, { icon: props.icon.collapse })
+            }
         }else{
             it.prefix = () => h(MbIcon, { icon: props.icon.node, color: '#42b883' })
         }
@@ -348,7 +352,7 @@ function loadTreeData() {
     $common.get(props.url, props.params).then((res) => {
         treeTable.deleteEmptyChildren(res.data.list)
         if(props.icon){
-            recursionRenderIcon(res.data.list, defaultExpandAll.value ? props.icon.expand : props.icon.collapse)
+            recursionRenderIcon(res.data.list)
         }
         treeData.value = res.data.list
         loadSourceData(treeData.value)
