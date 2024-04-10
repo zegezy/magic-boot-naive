@@ -202,7 +202,7 @@ function drawerClose(){
     historyEditorRef.value.dispose()
 }
 const treeContextmenu = ref([{
-    key: 'addSub',
+    key: 'addGroup',
     label: '添加分组',
     click: (node) => {
         createFile(node.id, 0)
@@ -270,6 +270,7 @@ function openHistory(node){
 }
 // 解析name
 function analyzeName(str, outside){
+    // 获取括号外 or 括号内
     const regexStr = outside ? /(.*?)(?=\()/ : /\((.*?)\)/;
     const match = str.match(regexStr);
     if (match) {
@@ -286,28 +287,20 @@ function createFile(id, type){
 function saveComponent(){
     dataForm.value.validate((errors) => {
         if (!errors) {
-            if(/^[a-zA-Z0-9\-_]+$/.test(formData.name)){
-                console.log({
-                    [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
-                    ...formData
-                })
-                $common.post('/system/component/save/tree',{
-                    [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
-                    ...formData
-                }).then(() => {
-                    nameModal.value.hide()
-                    if(updateComponent.value){
-                        tabs.value.forEach(it => {
-                            if(it.id == currentNodeId.value){
-                                it.name = formData.name
-                            }
-                        })
-                    }
-                    treeRef.value.reload()
-                })
-            }else{
-                $message.error('只能包含大小写英文、数字和-_')
-            }
+            $common.post('/system/component/save/tree',{
+                [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
+                ...formData
+            }).then(() => {
+                nameModal.value.hide()
+                if(updateComponent.value){
+                    tabs.value.forEach(it => {
+                        if(it.id == currentNodeId.value){
+                            it.name = formData.name
+                        }
+                    })
+                }
+                treeRef.value.reload()
+            })
         }
     })
 }
@@ -331,7 +324,22 @@ function nodeClick(option){
 
 const dataForm = ref()
 const rules = reactive({
-    name: {required: true, message: '请输入名称', trigger: 'change'}
+    name: [{required: true, message: '请输入名称', trigger: 'change'}, {
+        trigger: 'change',
+        message: '名称只能包含大小写英文、数字和-_',
+        validator: (rule, value) => {
+            if(value){
+                return /^[a-zA-Z0-9\-_]+$/.test(value)
+            }
+        }
+    }],
+    remark: [{
+        trigger: 'change',
+        message: '备注不能包含()',
+        validator: (rule, value) => {
+            return !/\(|\)/g.test(value)
+        }
+    }],
 })
 
 const tabs = ref([])
