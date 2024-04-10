@@ -394,7 +394,8 @@ function handlerSummaryData(data){
     return newData
 }
 
-function loadRemoteSummary(){
+let isWatchRemoteSummaryData = false
+function loadGlobalSummary(){
     if(props.summary){
         const { url, data } = props.summary
         if(data){
@@ -405,11 +406,16 @@ function loadRemoteSummary(){
                 summaryData.value = handlerSummaryData(res.data)
             })
         }
+        if(!isWatchRemoteSummaryData){
+            isWatchRemoteSummaryData = true
+            watch([props.summary.data, () => props.summary.url], () => {
+                loadGlobalSummary()
+            }, { deep: true })
+        }
     }
 }
-loadRemoteSummary()
 
-function loadStaticSummary(){
+function loadColumnSummary(){
     if(!props.summary) {
         let data = {}
         showColumns.value.forEach((col, i) => {
@@ -429,6 +435,8 @@ function loadStaticSummary(){
 }
 
 function loadData(options) {
+    // 如果合计数据来自接口，可以提前请求。否则需要等待列表数据加载后再加载合计
+    loadGlobalSummary()
     if (props.url) {
         let where = $common.renderWhere(props.where)
         if(options){
@@ -452,7 +460,8 @@ function loadData(options) {
 }
 
 function dataDone(){
-    loadStaticSummary()
+    // 数据加载完，算列的合计
+    loadColumnSummary()
     props.done(bindProps.data)
     if(props.defaultSelectedRow && props.selectedRowEnable && bindProps.data.length > 0){
         nextTick(() => {
