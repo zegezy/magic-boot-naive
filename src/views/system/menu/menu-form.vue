@@ -13,6 +13,8 @@
                 <n-gi :span="12">
                     <n-form-item label="上级菜单" path="pid">
                         <n-tree-select
+                            filterable
+                            :default-expanded-keys="parentMenuKeys"
                             v-model:value="temp.pid"
                             :options="menuTree"
                         />
@@ -73,13 +75,13 @@
                 </div>
                 <div style="width: 50%">
                     <n-form-item label="图标" path="icon">
-                        <a @click="openIcons">
-                            <n-input v-model:value="temp.icon">
-                                <template #suffix>
-                                    <mb-icon :icon="temp.icon" />
-                                </template>
-                            </n-input>
-                        </a>
+                        <n-input-group>
+                            <n-input v-model:value="temp.icon" />
+                            <n-input-group-label @click="openIcons" style="display: flex;align-items: center; cursor: pointer">
+                                <mb-icon v-if="temp.icon" :icon="temp.icon" />
+                                <span v-else>选择</span>
+                            </n-input-group-label>
+                        </n-input-group>
                     </n-form-item>
                 </div>
             </div>
@@ -232,10 +234,22 @@ function addSubMenu(id) {
     })
 }
 
+const parentMenuKeys = ref([])
+const menuList = $treeTable.recursionRearrange(props.menuTree)
+function upRecursionGetKeys(pid){
+    menuList.forEach(it => {
+        if(it.key == pid){
+            parentMenuKeys.value.push(it.key)
+            upRecursionGetKeys(it.pid)
+        }
+    })
+}
+
 function getInfo(row) {
     for (let t in temp.value) {
         temp.value[t] = row[t]
     }
+    upRecursionGetKeys(temp.value.pid)
     openModeRef.value = temp.value.openMode || '0'
     menuType.value = temp.value.url ? 'menu' : 'button'
     $treeTable.clearFont(temp.value, ['name', 'url', 'permission'])

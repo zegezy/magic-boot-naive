@@ -55,6 +55,7 @@ treeTable.genTree = (children) => {
         let chi = {}
         chi.label = children[i].name
         chi.key = children[i].id
+        chi.pid = children[i].pid
         if (children[i].children && children[i].children.length > 0) {
             chi.children = treeTable.genTree(children[i].children)
         }

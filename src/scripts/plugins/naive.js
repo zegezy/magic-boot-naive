@@ -6,6 +6,8 @@ const naive = NaiveUI.create({
         NaiveUI.NDialogProvider,
         NaiveUI.NConfigProvider,
         NaiveUI.NInput,
+        NaiveUI.NInputGroup,
+        NaiveUI.NInputGroupLabel,
         NaiveUI.NButton,
         NaiveUI.NForm,
         NaiveUI.NFormItem,

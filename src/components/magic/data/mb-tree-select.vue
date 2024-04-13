@@ -9,6 +9,7 @@
         :label-field="labelField"
         v-bind="props.props"
         default-expand-all
+        filterable
     />
 </template>
 
