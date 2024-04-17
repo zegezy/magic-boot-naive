@@ -42,7 +42,7 @@ const props = defineProps({
 })
 
 function formItemIf(it){
-    if(it){
+    if(it && it instanceof Object){
         it.show = it.show === undefined ? !!it.label : it.show
         return it.show
     }
@@ -134,9 +134,3 @@ function reset() {
 defineExpose({ reRenderComponent })
 
 </script>
-
-<style scoped>
-:deep(.n-form-item){
-    margin-bottom:10px;
-}
-</style>
