@@ -3,7 +3,7 @@
         <div class="mb-search">
             <mb-search v-if="table.where" :where="table.where" :no-reset="search && search.noReset" @search="reload"/>
         </div>
-        <div class="mb-toolbar">
+        <div class="mb-toolbar" v-if="tools && tools.length > 0">
             <template v-for="(it, i) in tools" :key="i">
                 <n-button v-if="it.type == 'add'" v-permission="it.permission" type="primary" @click="it.click">
                     {{ it.label || '添加' }}

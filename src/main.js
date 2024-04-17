@@ -8,12 +8,12 @@ import {
     setupNaiveDiscreteApi,
     setupDirectives,
     setupGlobalProperties,
-    setupMonacoVolar
+    setupMonacoVolar,
+    setupTheme
 } from '@/scripts/plugins'
 import {setupRouter} from '@/scripts/router'
 import {setupStore} from '@/store'
 import {setupComponents} from '@/components'
-import './styles/magic-compact-ui.less'
 import '@/scripts/compiler/magic-import'
 
 const app = createApp(App)
@@ -27,6 +27,7 @@ async function start() {
     await setupRouter(app)
     await setupMonacoVolar()
     setupComponents(app)
+    await setupTheme()
     app.mount('#app')
 }
 

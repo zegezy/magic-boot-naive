@@ -7,5 +7,14 @@ export default {
     filePrefix: '',
     dynamicComponentNames: [],
     config: {},
-    uiSize: ref('medium')
+    uiSize: ref('medium'),
+    selectTheme: {
+        name: 'default',
+        themeOverrides: {}
+    },
+    themeList: [{
+        name: 'default',
+        themeOverrides: 'defaultOverrides',
+        style: 'defaultStyle'
+    }]
 }
