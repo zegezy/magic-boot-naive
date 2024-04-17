@@ -250,11 +250,7 @@ bindProps.rowProps = (row) => {
                     let _color = color
                     if(d){
                         if(!_color){
-                            if(d.className.indexOf('n-data-table-tr--striped') != -1){
-                                _color = 'var(--n-merged-td-color-striped)'
-                            }else{
-                                _color = 'var(--n-merged-td-color)'
-                            }
+                            _color = 'unset'
                         }
                         d.querySelectorAll('td').forEach(it => {
                             it.style['background-color'] = _color
