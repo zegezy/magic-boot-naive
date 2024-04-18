@@ -1,7 +1,15 @@
 ##
 
-后端：[ **https://gitee.com/ssssssss-team/magic-boot** ](https://gitee.com/ssssssss-team/magic-boot)  
-前端：[ **https://gitee.com/ssssssss-team/magic-boot-naive** ](https://gitee.com/ssssssss-team/magic-boot-naive)
+后端：  
+<span style="margin-right: 5px">
+    <a href="https://gitee.com/ssssssss-team/magic-boot" target="_blank"><img src="https://gitee.com/ssssssss-team/magic-boot/badge/star.svg?theme=white"></a>
+</span>
+<a href="https://github.com/zegezy/magic-boot" target="_blank"><img src="https://img.shields.io/github/stars/zegezy/magic-boot.svg?style=social"></a>  
+前端：  
+<span style="margin-right: 5px">
+    <a href="https://gitee.com/ssssssss-team/magic-boot-naive" target="_blank"><img src="https://gitee.com/ssssssss-team/magic-boot-naive/badge/star.svg?theme=white"></a>
+</span>
+<a href="https://github.com/zegezy/magic-boot-naive" target="_blank"><img src="https://img.shields.io/github/stars/zegezy/magic-boot-naive.svg?style=social"></a>  
 
 ## 简介
 
@@ -28,8 +36,8 @@ QQ群（[ **576433387** ](https://jq.qq.com/?_wv=1027&k=KD6DPvB0)）
 
 ## 在线体验
 - 演示地址：  
-  前台：[ **https://preview.magicboot.net/** ](https://preview.magicboot.net/)  
-  后台：[ **https://api.magicboot.net:8443/magic/web/index.html** ](https://api.magicboot.net:8443/magic/web/index.html)
+前台：[ **https://preview.magicboot.net/** ](https://preview.magicboot.net/)  
+后台：[ **https://api.magicboot.net:8443/magic/web/index.html** ](https://api.magicboot.net:8443/magic/web/index.html)  
 - 文档地址：[ **https://magicboot.net/** ](https://magicboot.net/)
 - 账号：system/123456
 
