@@ -45,12 +45,14 @@
                         <div style="width: 100%;height: 100%">
                             <component
                                 v-for="com in keepaliveIframes"
+                                :key="com.path"
                                 :is="IframeComponent"
-                                :url="$common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
+                                :url="common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
                                 v-show="com.path == $route.path"
                             />
                             <component
                                 v-for="com in keepaliveDynamicComponents"
+                                :key="com.path"
                                 :is="ShowComponent"
                                 :name="com.meta.componentName"
                                 v-show="com.path == $route.path"
@@ -69,7 +71,8 @@ import {ref, h, watch, computed} from 'vue';
 import tabs from './tabs.vue'
 import NestedRouter from './nested-router.vue'
 import {RouterLink} from 'vue-router'
-import MbIcon from '@/components/magic/basic/mb-icon.vue';
+// 此页面template内 不能直接使用$common 需要这里导入 才能使用 原因未知
+import common from '@/scripts/common'
 import {useUserStore} from "@/store/modules/userStore"
 import {useTabsStore} from "@/store/modules/tabsStore"
 import LayoutHeader from "@/layout/layout-header.vue";
@@ -87,7 +90,7 @@ watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
 // 单独处理 "iframe" 并且开启缓存的页面
 const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => $common.filterIframeTabs(it)))
 // 缓存“动态组件”
-const keepaliveDynamicComponents = computed(() => tabsStore.getTabs.filter(it => it.meta.componentName))
+const keepaliveDynamicComponents = computed(() => tabsStore.getTabs.filter(it => it.meta.componentName && it.meta.keepAlive))
 
 function selectMenu(key) {
     selectedKey.value = key

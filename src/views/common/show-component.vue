@@ -9,6 +9,6 @@ const props = defineProps({
 
 <template>
     <transition name="fade" mode="out-in" appear>
-        <component :is="props.name"></component>
+        <component :is="props.name" />
     </transition>
 </template>
