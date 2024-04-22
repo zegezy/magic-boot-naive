@@ -10,7 +10,7 @@ export function watchValue(componentValue, props, emit){
     }
     const getComponentValue = computed(() => {
         if (join) {
-            return componentValue.value.join(',')
+            return componentValue.value && componentValue.value.join(',')
         } else {
             return componentValue.value
         }
