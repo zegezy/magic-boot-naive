@@ -9,7 +9,8 @@ import {
     setupDirectives,
     setupGlobalProperties,
     setupMonacoVolar,
-    setupTheme
+    setupTheme,
+    setupLayer
 } from '@/scripts/plugins'
 import {setupRouter} from '@/scripts/router'
 import {setupStore} from '@/store'
@@ -28,6 +29,7 @@ async function start() {
     await setupMonacoVolar()
     setupComponents(app)
     await setupTheme()
+    setupLayer(app)
     app.mount('#app')
 }
 

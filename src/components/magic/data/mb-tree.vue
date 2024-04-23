@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full w-full">
+    <div class="h-full w-full" :style="style">
         <div class="flex flex-col h-full w-full">
             <div style="margin-bottom: 5px;" v-if="expand || checked">
                 <n-space>
@@ -20,7 +20,7 @@
                 :cascade="cascade"
                 :checkable="checkable"
                 :show-line="showLine"
-                :style="style"
+                :style="treeStyle"
                 key-field="id"
                 label-field="name"
                 :data="treeData"
@@ -73,6 +73,10 @@ const props = defineProps({
         default: ''
     },
     style: {
+        type: String,
+        default: ''
+    },
+    treeStyle: {
         type: Object,
         default: () => {
         }

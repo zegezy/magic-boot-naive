@@ -1,33 +1,14 @@
 <template>
-    <n-modal
-        v-model:show="showModal"
-        preset="dialog"
-        :title="title"
-        :show-icon="false"
-        :mask-closable="maskClosable"
-        :style="{ width }"
-        :size="$global.uiSize.value"
-    >
-        <div style="margin-top:24px">
-            <slot/>
+    <lay-layer v-model="showModal" v-bind="layerOptions">
+        <div style="padding: 20px" @keyup.esc="esc">
+            <slot />
         </div>
-        <template #action>
-            <slot name="action" v-if="showFooter">
-                <n-button :size="$global.uiSize.value" @click="() => showModal = false">
-                    <mb-icon icon="Close" />
-                    关闭
-                </n-button>
-                <n-button :size="$global.uiSize.value" type="primary" :loading="confirmLoading" @click="confirm">
-                    <mb-icon icon="Checkmark" />
-                    确定
-                </n-button>
-            </slot>
-        </template>
-    </n-modal>
+    </lay-layer>
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import { ref, reactive, watch } from 'vue'
+import { layer } from '@layui/layer-vue';
 const emit = defineEmits(['confirm'])
 const props = defineProps({
     title: {
@@ -36,17 +17,69 @@ const props = defineProps({
     },
     width: {
         type: String,
-        default: ''
+        default: 'auto'
     },
-    maskClosable: {
+    height: {
+        type: String,
+        default: 'auto'
+    },
+    shadeClose: {
+        type: Boolean,
+        default: false
+    },
+    shade: {
         type: Boolean,
         default: true
+    },
+    resize: {
+        type: Boolean,
+        default: true
+    },
+    maxmin: {
+        type: Boolean,
+        default: true
+    },
+    shadeOpacity: {
+        type: String,
+        default: '.4'
     },
     showFooter: {
         type: Boolean,
         default: true
+    },
+    buttons: {
+        type: Array,
+        default: undefined
     }
 })
+const layerOptions = reactive({
+    title: props.title,
+    zIndex: 666,
+    shade: props.shade,
+    resize: props.resize,
+    maxmin: props.maxmin,
+    shadeOpacity: props.shadeOpacity,
+    shadeClose: props.shadeClose,
+    area: [props.width, props.height],
+    btn: !props.showFooter ? [] : props.buttons !== undefined ? props.buttons : [
+        {
+            text: "确定",
+            callback: () => {
+                confirm()
+            }
+        },
+        {
+            text: "取消",
+            callback: () => {
+                hide()
+            }
+        }
+    ]
+})
+watch(() => props.title, (value) => {
+    layerOptions.title = value
+})
+
 const showModal = ref(false)
 const confirmLoading = ref(false)
 
@@ -59,11 +92,11 @@ function hide() {
 }
 
 function loading() {
-    confirmLoading.value = true
+    confirmLoading.value = layer.load(1)
 }
 
 function hideLoading() {
-    confirmLoading.value = false
+    layer.close(confirmLoading.value)
 }
 
 function confirm() {
@@ -75,5 +108,24 @@ function confirm() {
     })
 }
 
+function esc(){
+    hide()
+}
+
 defineExpose({show, hide, loading, hideLoading})
 </script>
+
+<style>
+.layui-layer-title{
+    font-size: 16px;
+}
+
+.layui-layer-btn .layui-layer-btn0 {
+    background-color: #2D8CF0FF;
+    border-color: #2D8CF0FF;
+}
+
+.layui-layer-setwin i:hover {
+    color: #2D8CF0FF
+}
+</style>
