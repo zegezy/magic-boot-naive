@@ -94,6 +94,8 @@ import componentProperties from '@/components/magic-component-properties'
 import { cloneDeep, isEqual, isEmpty } from 'lodash-es'
 import { useMouse, onClickOutside } from "@vueuse/core";
 import MbTableColumn from "@/components/magic/data/mb-table-column.vue";
+import {useUserStore} from "@/store/modules/userStore";
+const permissionList = useUserStore().getAuths
 
 const props = defineProps({
     props: {
@@ -572,7 +574,7 @@ function getColWidth(){
     return ((tableWidth - totalWidth) / (props.cols.length - widths)) - 2
 }
 function renderShowColumns() {
-    showColumns.value = columns.value.filter(it => it.show)
+    showColumns.value = columns.value.filter(it => it.show && (it.permission === undefined || (it.permission && permissionList.includes(it.permission))))
     calcScrollX()
 }
 function fixCols() {
