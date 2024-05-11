@@ -72,8 +72,8 @@ for (let key in props.where) {
 				}
 			}
 			if (!isResetValue) {
-				// date 组件 要reset为 undefined 要不然报错
-				props.where[key].resetValue = undefined
+				// date 组件 要reset为 null 
+				props.where[key].resetValue = null
 			}
 		}
 	}
