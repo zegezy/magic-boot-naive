@@ -217,6 +217,7 @@ const treeContextmenu = ref([{
     key: 'updateComponent',
     label: '修改',
     click: (node) => {
+        formData.type = node.isGroup === 0 ? 1 : 0
         if(node.name.indexOf('(') !== -1){
             formData.name = analyzeName(node.name, true)
             formData.remark = analyzeName(node.name, false)
