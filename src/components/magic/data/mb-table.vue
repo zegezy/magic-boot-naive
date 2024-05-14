@@ -252,7 +252,7 @@ bindProps.rowProps = (row) => {
                     let _color = color
                     if(d){
                         if(!_color){
-                            _color = 'unset'
+                            _color = ''
                         }
                         d.querySelectorAll('td').forEach(it => {
                             it.style['background-color'] = _color
