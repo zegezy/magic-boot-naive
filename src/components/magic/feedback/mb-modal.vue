@@ -119,13 +119,15 @@ defineExpose({show, hide, loading, hideLoading})
 .layui-layer-title{
     font-size: 16px;
 }
-
 .layui-layer-btn .layui-layer-btn0 {
     background-color: #2D8CF0FF;
     border-color: #2D8CF0FF;
 }
-
 .layui-layer-setwin i:hover {
     color: #2D8CF0FF
+}
+.layui-layer{
+    max-height: 100%;
+    max-width: 100%;
 }
 </style>
