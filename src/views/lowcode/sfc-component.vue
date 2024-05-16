@@ -291,7 +291,31 @@ function saveComponent(){
             $common.post('/system/component/save/tree',{
                 [updateComponent.value ? 'id' : 'pid']: currentNodeId.value,
                 ...formData
-            }).then(() => {
+            }).then((res) => {
+                // 如果是组件，添加默认值
+                if(formData.type == 1){
+                    let sourceCode = `<template>
+
+</template>
+
+<script setup>
+
+<\/script>`
+                    let compileJs = `const __sfc__ = {}
+function render(_ctx, _cache) {
+  return null
+}
+__sfc__.render = render
+__sfc__.__file = "mb-sfc-compiler.vue"
+return __sfc__`
+                    let compileCss = `/* No <style> tags present */`
+                    $common.post('/system/component/saveCode', {
+                        id: res.data,
+                        sourceCode,
+                        compileJs,
+                        compileCss
+                    })
+                }
                 nameModal.value.hide()
                 if(updateComponent.value){
                     tabs.value.forEach(it => {
@@ -357,14 +381,14 @@ function setComponentRef(el, id){
     monacoVolarRefs[id] = el
 }
 function saveCode(){
-    let id = tabId.value
-    let tab = tabs.value.filter(it => it.id == id)[0]
-    if(tab.isSave == 1){
+    try{
+        let id = tabId.value
         let sourceCode = monacoVolarRefs[id].getValue()
-        tab.code = sourceCode
-        tab.isSave = 0
-        try{
-            const { compileJs, compileCss } = compileCode(sourceCode)
+        const { compileJs, compileCss } = compileCode(sourceCode)
+        let tab = tabs.value.filter(it => it.id == id)[0]
+        if(tab.isSave == 1){
+            tab.code = sourceCode
+            tab.isSave = 0
             $common.post('/system/component/saveCode', {
                 id,
                 sourceCode,
@@ -373,10 +397,10 @@ function saveCode(){
             }).then(() => {
                 $message.success('编译并保存成功')
             })
-        }catch (e){
-            errorInfo.value = e
-            errorInfoModal.value.show()
         }
+    }catch (e){
+        errorInfo.value = e
+        errorInfoModal.value.show()
     }
 }
 function onDidChangeModelContent(tab){
