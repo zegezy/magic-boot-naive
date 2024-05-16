@@ -44,6 +44,13 @@ export function compileFile(code, compiled) {
         return
     }
 
+    if(hasVueCompositionFunctions(code) && !hasScriptSetup(code)){
+        compiled.errors = [
+            'defineProps、defineExpose、defineEmits、defineSlots、defineOptions、defineModel需要在<script setup>下使用'
+        ]
+        return
+    }
+
     if (
         (descriptor.script && descriptor.script.lang) ||
         (descriptor.scriptSetup && descriptor.scriptSetup.lang) ||
@@ -194,4 +201,23 @@ function doCompileTemplate(descriptor, id, bindingMetadata, compiled) {
 
 function hashId(filename) {
     return btoa(filename).slice(0, 8)
+}
+
+function hasVueCompositionFunctions(content) {
+    const regexPatterns = [
+        /defineExpose\s*/,
+        /defineProps\s*/,
+        /defineEmits\s*/
+    ];
+    for (const pattern of regexPatterns) {
+        if (pattern.test(content)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function hasScriptSetup(content) {
+    const regex = /<script\s+setup[^>]*>/;
+    return regex.test(content);
 }
