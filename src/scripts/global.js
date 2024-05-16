@@ -1,6 +1,9 @@
-import {ref} from "vue";
+import { ref, reactive } from "vue";
 
 const baseApi = import.meta.env.VITE_APP_BASE_API;
+const modalIndex = ref(2000)
+const modalMap = reactive({})
+
 export default {
     title: 'Magic Boot',
     baseApi: baseApi,
@@ -16,5 +19,23 @@ export default {
         name: 'default',
         themeOverrides: 'defaultOverrides',
         style: 'defaultStyle'
-    }]
+    }],
+    modal: {
+        modalMap,
+        create(id){
+            modalMap[id] = {}
+            modalMap[id].vlaue = false
+        },
+        show(id){
+            modalMap[id].value = true
+        },
+        hide(id){
+            modalMap[id].value = false
+        },
+        getIndex(id){
+            modalIndex.value = modalIndex.value + 1
+            modalMap[id].index = modalIndex.value
+            return modalIndex.value
+        }
+    }
 }

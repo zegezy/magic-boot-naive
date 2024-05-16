@@ -1,6 +1,6 @@
 <template>
-    <lay-layer v-model="showModal" v-bind="layerOptions">
-        <div style="padding: 20px" @keyup.esc="esc">
+    <lay-layer v-model="$global.modal.modalMap[modalId].value" v-bind="layerOptions">
+        <div style="padding: 20px">
             <slot />
         </div>
     </lay-layer>
@@ -9,6 +9,8 @@
 <script setup>
 import { ref, reactive, watch } from 'vue'
 import { layer } from '@layui/layer-vue';
+const modalId = $common.uuid()
+$global.modal.create(modalId);
 const emit = defineEmits(['confirm'])
 const props = defineProps({
     title: {
@@ -54,7 +56,7 @@ const props = defineProps({
 })
 const layerOptions = reactive({
     title: props.title,
-    zIndex: 666,
+    zIndex: $global.modal.getIndex(modalId),
     shade: props.shade,
     resize: props.resize,
     maxmin: props.maxmin,
@@ -80,15 +82,14 @@ watch(() => props.title, (value) => {
     layerOptions.title = value
 })
 
-const showModal = ref(false)
 const confirmLoading = ref(false)
 
 function show() {
-    showModal.value = true
+    $global.modal.show(modalId)
 }
 
 function hide() {
-    showModal.value = false
+    $global.modal.hide(modalId)
 }
 
 function loading() {
@@ -108,9 +109,6 @@ function confirm() {
     })
 }
 
-function esc(){
-    hide()
-}
 
 defineExpose({show, hide, loading, hideLoading})
 </script>

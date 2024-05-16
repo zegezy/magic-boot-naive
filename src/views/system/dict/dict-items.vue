@@ -15,7 +15,7 @@
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
 
-        <mb-modal :size="$global.uiSize.value" ref="formDialog" :title="dialogTitle" width="520px" @confirm="save($event)">
+        <mb-modal ref="formDialog" :title="dialogTitle" width="520px" @confirm="save($event)">
             <n-form ref="dataForm" :size="$global.uiSize.value" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24">
                     <n-gi :span="12">

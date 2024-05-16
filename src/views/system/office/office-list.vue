@@ -29,7 +29,7 @@
         <div class="mb-table">
             <mb-table ref="table" v-bind="tableOptions"/>
         </div>
-        <mb-modal :size="$global.uiSize.value" ref="officeFormDialog" width="700px" :title="dialogTitle" @confirm="save($event)">
+        <mb-modal ref="officeFormDialog" width="700px" :title="dialogTitle" @confirm="save($event)">
             <n-form :size="$global.uiSize.value" ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
                 <n-grid :cols="24" :x-gap="24">
                     <n-gi :span="12">
