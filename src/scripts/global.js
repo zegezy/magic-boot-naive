@@ -1,7 +1,7 @@
 import { ref, reactive } from "vue";
 
 const baseApi = import.meta.env.VITE_APP_BASE_API;
-const modalIndex = ref(2000)
+const modalIndex = ref(10)
 const modalMap = reactive({})
 
 export default {
