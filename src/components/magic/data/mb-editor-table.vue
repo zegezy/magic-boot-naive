@@ -184,6 +184,10 @@ const props = defineProps({
     rowHoverEdit: {
         type: Boolean,
         default: true
+    },
+    keepCurrentPage: {
+        type: Boolean,
+        default: true
     }
 })
 // 深拷贝对象，取消对象引用
@@ -194,7 +198,7 @@ const tableOptions = reactive({
     selectedRowEnable: false,
     contextmenuEnable: true,
     rowKey: props.rowKey,
-    keepCurrentPage: true,
+    keepCurrentPage: props.keepCurrentPage,
     data: [],
     cols: [],
     props: props.props
