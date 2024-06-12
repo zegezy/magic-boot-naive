@@ -187,10 +187,10 @@ const textMap = reactive({
     create: '添加'
 })
 const rules = reactive({
-    configureName: {required: true, message: '请输入配置名称', trigger: 'change'},
-    configureKey: {required: true, message: '请输入配置键值', trigger: 'change'},
-    configureValue: {required: true, message: '请输入配置数据', trigger: 'change'},
-    configureType: {required: true, message: '请选择类型', trigger: 'change'}
+    configureName: {required: true, message: '请输入配置名称', trigger: 'blur'},
+    configureKey: {required: true, message: '请输入配置键值', trigger: 'blur'},
+    configureValue: {required: true, message: '请输入配置数据', trigger: 'blur'},
+    configureType: {required: true, message: '请选择类型', trigger: 'blur'}
 })
 const table = ref()
 const dataForm = ref()

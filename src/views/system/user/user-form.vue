@@ -41,8 +41,8 @@ import {ref, reactive, nextTick} from 'vue'
 const emit = defineEmits(['reload-table'])
 
 const rules = reactive({
-    name: {required: true, message: '请输入姓名/昵称', trigger: 'change'},
-    username: {required: true, message: '请输入登录名称', trigger: 'change'},
+    name: {required: true, message: '请输入姓名/昵称', trigger: 'blur'},
+    username: {required: true, message: '请输入登录名称', trigger: 'blur'},
     roles: {required: true, message: '请选择角色', trigger: 'blur'},
     officeId: {required: true, message: '请选择组织机构', trigger: 'blur'}
 })
@@ -63,7 +63,7 @@ function getTemp() {
 }
 
 function resetTemp() {
-    rules.password = [{required: true, message: '请输入密码', trigger: 'change'}]
+    rules.password = [{required: true, message: '请输入密码', trigger: 'blur'}]
     temp.value = getTemp()
     nextTick(() => {
         nextTick(() => {

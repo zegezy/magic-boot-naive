@@ -147,13 +147,13 @@
 <!--    }-->
 <!--}-->
 <!--const genInfoRules = reactive({-->
-<!--    tableName: [{required: true, message: '请选择表', trigger: 'change'}],-->
-<!--    tableComment: [{required: true, message: '请输入描述', trigger: 'change'}],-->
-<!--    'info.template': [{required: true, message: '请选择模板', trigger: 'change'}],-->
-<!--    'info.moduleName': [{required: true, message: '请输入模块名称', trigger: 'change'}],-->
-<!--    'info.modulePath': [{required: true, message: '请输入模块路径', trigger: 'change'}, {validator: validatePath}],-->
-<!--    'info.businessName': [{required: true, message: '请输入功能名称', trigger: 'change'}],-->
-<!--    'info.businessPath': [{required: true, message: '请输入功能路径', trigger: 'change'}, {validator: validatePath}]-->
+<!--    tableName: [{required: true, message: '请选择表', trigger: 'blur'}],-->
+<!--    tableComment: [{required: true, message: '请输入描述', trigger: 'blur'}],-->
+<!--    'info.template': [{required: true, message: '请选择模板', trigger: 'blur'}],-->
+<!--    'info.moduleName': [{required: true, message: '请输入模块名称', trigger: 'blur'}],-->
+<!--    'info.modulePath': [{required: true, message: '请输入模块路径', trigger: 'blur'}, {validator: validatePath}],-->
+<!--    'info.businessName': [{required: true, message: '请输入功能名称', trigger: 'blur'}],-->
+<!--    'info.businessPath': [{required: true, message: '请输入功能路径', trigger: 'blur'}, {validator: validatePath}]-->
 <!--})-->
 <!--const genInfo = ref({-->
 <!--    datasource: '',-->

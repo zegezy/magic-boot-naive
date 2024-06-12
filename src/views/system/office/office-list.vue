@@ -198,10 +198,10 @@ const tableOptions = reactive({
 const dialogTitle = ref('')
 const temp = ref(getTemp())
 const rules = reactive({
-    type: {required: true, message: '请选择机构类型', trigger: 'change'},
-    pid: {required: true, message: '请选择上级机构', trigger: 'change'},
-    name: {required: true, message: '请输入机构名称', trigger: 'change'},
-    code: {required: true, message: '请输入机构编码', trigger: 'change'}
+    type: {required: true, message: '请选择机构类型', trigger: 'blur'},
+    pid: {required: true, message: '请选择上级机构', trigger: 'blur'},
+    name: {required: true, message: '请输入机构名称', trigger: 'blur'},
+    code: {required: true, message: '请输入机构编码', trigger: 'blur'}
 })
 const officeFormDialog = ref()
 const dataForm = ref()

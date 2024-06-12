@@ -170,10 +170,10 @@ let validatePermission = (rule, value, callback) => {
 }
 
 const rules = reactive({
-    pid: {required: true, message: '请选择上级菜单', trigger: 'change'},
-    name: {required: true, message: '请输入菜单名称', trigger: 'change'},
-    url: {required: true, trigger: 'change', validator: validateUrl},
-    permission: {required: true, trigger: 'change', validator: validatePermission}
+    pid: {required: true, message: '请选择上级菜单', trigger: 'blur'},
+    name: {required: true, message: '请输入菜单名称', trigger: 'blur'},
+    url: {required: true, trigger: 'blur', validator: validateUrl},
+    permission: {required: true, trigger: 'blur', validator: validatePermission}
 })
 
 watch(menuType, (type) => {

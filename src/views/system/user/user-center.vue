@@ -51,8 +51,8 @@ let validatePass2 = (rule, value, callback) => {
     }
 }
 const rules = reactive({
-    password: [{required: true, message: '请输入原密码', trigger: 'change'}, {min: 6, message: '密码不少于6位'}],
-    phone: [{min: 11, message: '请输入11位手机号', trigger: 'change'}],
+    password: [{required: true, message: '请输入原密码', trigger: 'blur'}, {min: 6, message: '密码不少于6位'}],
+    phone: [{min: 11, message: '请输入11位手机号', trigger: 'blur'}],
     newPassword: [{min: 6, message: '密码不少于6位'}],
     confirmPassword: [{min: 6, message: '密码不少于6位'}, {validator: validatePass2}],
 })

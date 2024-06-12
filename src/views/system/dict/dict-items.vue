@@ -159,9 +159,9 @@ const tableOptions = reactive({
 })
 const dialogTitle = ref('')
 const rules = reactive({
-    value: {required: true, message: '请输入值', trigger: 'change'},
-    label: {required: true, message: '请输入标签名', trigger: 'change'},
-    sort: {type: 'number', required: true, message: '请输入排序', trigger: 'change'}
+    value: {required: true, message: '请输入值', trigger: 'blur'},
+    label: {required: true, message: '请输入标签名', trigger: 'blur'},
+    sort: {type: 'number', required: true, message: '请输入排序', trigger: 'blur'}
 })
 const temp = ref(getTemp())
 const table = ref()

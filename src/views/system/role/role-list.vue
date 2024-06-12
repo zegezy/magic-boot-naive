@@ -187,8 +187,8 @@ const tableOptions = reactive({
 const dialogTitle = ref('')
 const temp = ref(getTemp())
 const rules = reactive({
-    name: {required: true, message: '请输入角色名称', trigger: 'change'},
-    code: {required: true, message: '请输入角色编码', trigger: 'change'}
+    name: {required: true, message: '请输入角色名称', trigger: 'blur'},
+    code: {required: true, message: '请输入角色编码', trigger: 'blur'}
 })
 
 watch(() => temp.value.permission, () => {

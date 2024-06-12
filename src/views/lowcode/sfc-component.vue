@@ -349,8 +349,8 @@ function nodeClick(option){
 
 const dataForm = ref()
 const rules = reactive({
-    name: [{required: true, message: '请输入名称', trigger: 'change'}, {
-        trigger: 'change',
+    name: [{required: true, message: '请输入名称', trigger: 'blur'}, {
+        trigger: 'blur',
         message: '名称只能包含大小写英文、数字和-_',
         validator: (rule, value) => {
             if(value){
@@ -359,7 +359,7 @@ const rules = reactive({
         }
     }],
     remark: [{
-        trigger: 'change',
+        trigger: 'blur',
         message: '备注不能包含()',
         validator: (rule, value) => {
             return !/\(|\)/g.test(value)
