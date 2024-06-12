@@ -26,8 +26,9 @@
         <template v-else-if="type === 'buttons'">
             <n-space>
                 <template v-for="it in col.buttons">
+                    <slot v-if="it.type == 'dynamic'" :name="it.field" :row="row" :index="index" />
                     <n-button
-                        v-if="it.if != undefined ? it.if(row) : true"
+                        v-else-if="it.if != undefined ? it.if(row) : true"
                         v-permission="it.permission"
                         :type="it.type"
                         :text="it.link"

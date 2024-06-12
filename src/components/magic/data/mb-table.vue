@@ -88,7 +88,7 @@
 
 <script setup>
 import Sortable from 'sortablejs'
-import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed} from 'vue'
+import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed, useSlots} from 'vue'
 import global from '@/scripts/global'
 import componentProperties from '@/components/magic-component-properties'
 import { cloneDeep, isEqual, isEmpty } from 'lodash-es'
@@ -97,6 +97,7 @@ import MbTableColumn from "@/components/magic/data/mb-table-column.vue";
 import {useUserStore} from "@/store/modules/userStore";
 const permissionList = useUserStore().getAuths
 
+const slots = useSlots()
 const props = defineProps({
     props: {
         type: Object,
@@ -631,7 +632,7 @@ function renderSlot(col, type) {
         if(type === 'dynamic'){
             return h(tableSlots.value[type], {row, index, col})
         }
-        return h(MbTableColumn, {type, row, index, col, nowrap: getNowrap.value})
+        return h(MbTableColumn, {type, row, index, col, nowrap: getNowrap.value}, slots)
     }
 }
 
@@ -879,11 +880,11 @@ function dataSort(col, rule) {
             bindProps.data = cloneDeep(sourceData.value)
         }else{
             bindProps.data.sort((a, b) => {
-                if (typeof (a[col.field]) == 'number') {
+                if (!isNaN(parseFloat(a[col.field]))) {
                     if (col.dataSortRule) {
-                        return a[col.field] - (b[col.field] || 0)
+                        return parseFloat(a[col.field]) - (parseFloat(b[col.field]) || 0)
                     }
-                    return (b[col.field] || 0) - a[col.field]
+                    return (parseFloat(b[col.field]) || 0) - parseFloat(a[col.field])
                 } else {
                     if (col.dataSortRule) {
                         return (a[col.field] || '').localeCompare(b[col.field] || '')
