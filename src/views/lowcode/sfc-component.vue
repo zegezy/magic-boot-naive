@@ -217,6 +217,7 @@ const treeContextmenu = ref([{
     key: 'updateComponent',
     label: '修改',
     click: (node) => {
+        formData.remark = ''
         formData.type = node.isGroup === 0 ? 1 : 0
         if(node.name.indexOf('(') !== -1){
             formData.name = analyzeName(node.name, true)
@@ -281,6 +282,7 @@ function analyzeName(str, outside){
 function createFile(id, type){
     formData.type = type
     formData.name = ''
+    formData.remark = ''
     updateComponent.value = false
     currentNodeId.value = id
     nameModal.value.show()
