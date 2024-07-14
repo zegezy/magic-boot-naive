@@ -59,6 +59,7 @@
                 <n-space>
                     <n-image
                         v-for="it in row[col.field].split(',')"
+                        lazy
                         :width="componentProperties.table.image.width"
                         :height="componentProperties.table.image.height"
                         :src="it && it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)"
