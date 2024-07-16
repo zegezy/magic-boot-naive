@@ -48,7 +48,7 @@ async function editorInit() {
     );
 }
 
-export async function setupMonacoVolar(app) {
+export async function setupMonacoVolar() {
     await loadOnigasm()
     monaco.languages.register({id: "vue", extensions: [".vue"]});
     monaco.languages.onLanguage("vue", editorInit);
