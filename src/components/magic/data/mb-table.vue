@@ -678,8 +678,12 @@ function recursionGetTreeIds(children, ids){
     })
 }
 function initRenderTable(){
-    columns.value = cloneDeep(sourceColumns.value)
-    renderShowColumns()
+    showTable.value = false
+    nextTick(() => {
+        columns.value = cloneDeep(sourceColumns.value)
+        renderShowColumns()
+        showTable.value = true
+    })
 }
 
 function reload(options) {
