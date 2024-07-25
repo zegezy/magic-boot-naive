@@ -1,31 +1,29 @@
 <template>
     <div class="user-center">
-        <div style="widthL:35%">
-            <mb-upload-image v-model="temp.headPortrait"/>
-        </div>
-        <div style="width: 65%">
-            <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
-                <n-form-item label="姓名/昵称" path="name">
-                    <n-input v-model:value="temp.name" disabled/>
-                </n-form-item>
-                <n-form-item label="手机号码" path="phone">
-                    <n-input v-model:value="temp.phone" maxlength="11" autocomplete="new-password"/>
-                </n-form-item>
-                <n-form-item label="当前密码" path="password">
-                    <n-input v-model:value="temp.password" type="password" autocomplete="new-password"/>
-                </n-form-item>
-                <n-form-item label="新设密码" path="newPassword">
-                    <n-input v-model:value="temp.newPassword" type="password" autocomplete="new-password"/>
-                </n-form-item>
-                <n-form-item label="确认密码" path="confirmPassword">
-                    <n-input v-model:value="temp.confirmPassword" type="password" autocomplete="new-password"/>
-                </n-form-item>
-                <n-button type="primary" size="large" block round @click="save">
-                    <m-icon style="margin-right: 4px" icon="SaveSharp" />
-                    保存信息
-                </n-button>
-            </n-form>
-        </div>
+        <n-form ref="dataForm" :rules="rules" :model="temp" label-placement="left" label-width="80px">
+            <n-form-item label="头像" path="headPortrait">
+                <mb-upload-image v-model="temp.headPortrait"/>
+            </n-form-item>
+            <n-form-item label="姓名/昵称" path="name">
+                <n-input v-model:value="temp.name" disabled/>
+            </n-form-item>
+            <n-form-item label="手机号码" path="phone">
+                <n-input v-model:value="temp.phone" maxlength="11" autocomplete="new-password"/>
+            </n-form-item>
+            <n-form-item label="当前密码" path="password">
+                <n-input v-model:value="temp.password" type="password" autocomplete="new-password"/>
+            </n-form-item>
+            <n-form-item label="新设密码" path="newPassword">
+                <n-input v-model:value="temp.newPassword" type="password" autocomplete="new-password"/>
+            </n-form-item>
+            <n-form-item label="确认密码" path="confirmPassword">
+                <n-input v-model:value="temp.confirmPassword" type="password" autocomplete="new-password"/>
+            </n-form-item>
+            <n-button type="primary" size="large" block round @click="save">
+                <m-icon style="margin-right: 4px" icon="SaveSharp" />
+                保存信息
+            </n-button>
+        </n-form>
     </div>
 </template>
 
@@ -93,7 +91,6 @@ $common.objAssign(temp.value, userStore.getInfo, ['password'])
 <style scoped>
 .user-center {
     width: 1000px;
-    margin: 60px auto;
-    display: flex;
+    margin: 0 auto;
 }
 </style>
