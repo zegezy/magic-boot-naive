@@ -421,6 +421,9 @@ function loadColumnSummary(){
             if (col.summary) {
                 let colTotal = bindProps.data.reduce((total, it) => total + Number(it[col.field]), 0)
                 if (col.summary instanceof Object) {
+                    if(col.summary.handlerTotal){
+                        colTotal = col.summary.handlerTotal(colTotal)
+                    }
                     data[col.field] = (col.summary.prefix || '') + colTotal + (col.summary.suffix || '')
                 } else {
                     data[col.field] = colTotal
