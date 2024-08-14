@@ -56,15 +56,34 @@
         </template>
         <template v-else-if="type === 'image'">
             <n-image-group v-if="row[col.field]">
-                <n-space>
+                <div style="margin: 0 2px; display: inline-block" v-for="it in row[col.field].split(',')">
                     <n-image
-                        v-for="it in row[col.field].split(',')"
+                        v-if="it"
                         lazy
                         :width="componentProperties.table.image.width"
                         :height="componentProperties.table.image.height"
-                        :src="it && it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)"
+                        :src="it.startsWith('http') ? it : $global.filePrefix + encodeURIComponent(it)"
                     />
-                </n-space>
+                </div>
+            </n-image-group>
+        </template>
+        <template v-else-if="type === 'download'">
+            <n-image-group v-if="row[col.field]">
+                <div style="margin: 0 2px; display: inline-block" v-for="url in row[col.field].split(',')">
+                    <template v-if="url">
+                        <template v-if="['jpg', 'jpeg', 'png', 'gif'].includes($common.getFileSuffixToLowerCase(url))">
+                            <n-image
+                                lazy
+                                :width="componentProperties.table.image.width"
+                                :height="componentProperties.table.image.height"
+                                :src="url.startsWith('http') ? url : $global.filePrefix + encodeURIComponent(url)"
+                            />
+                        </template>
+                        <a v-else @click="$common.download(url)" href="javascript:;">
+                          {{ url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')) }}
+                        </a>
+                    </template>
+                </div>
             </n-image-group>
         </template>
         <template v-else>
