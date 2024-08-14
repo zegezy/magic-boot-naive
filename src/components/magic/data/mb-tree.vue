@@ -250,7 +250,7 @@ function getParentIds(id){
 
 function upRecursion(id, ids){
     let menu = sourceData.value.filter(it => it.id == id)[0]
-    if(menu && menu.pid != '0'){
+    if(menu && menu.pid && menu.pid != '0'){
         ids.push(menu.pid)
         let parentMenu = sourceData.value.filter(it => it.id == menu.pid)[0]
         if(parentMenu){
