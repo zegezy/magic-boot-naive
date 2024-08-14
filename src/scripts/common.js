@@ -373,4 +373,9 @@ common.mapLabelValue = (data, labelField, valueField) => {
     })
 }
 
+// 获取文件后缀
+common.getFileSuffixToLowerCase = (filePath) => {
+    return filePath.substr(filePath.lastIndexOf(".") + 1).toLocaleLowerCase()
+}
+
 export default common

@@ -32,6 +32,7 @@
         @scroll="onScroll"
         @dynamicSettingContextmenu="dynamicSettingContextmenu"
         @contextmenuSelect="contextmenuSelect"
+        @selected-row="onSelectedRow"
     >
         <template v-for="(col, colIndex) in cols" #[col.field]="{ row }">
             <template v-if="row">
@@ -188,6 +189,14 @@ const props = defineProps({
     keepCurrentPage: {
         type: Boolean,
         default: true
+    },
+    summary: {
+        type: Object,
+        default: undefined
+    },
+    onSelectedRow: {
+        type: Function,
+        default: () => {}
     }
 })
 // 深拷贝对象，取消对象引用
@@ -195,12 +204,13 @@ const tableOptions = reactive({
     id: props.id,
     page: props.page,
     showNo: props.showNo,
-    selectedRowEnable: false,
+    selectedRowEnable: true,
     contextmenuEnable: true,
     rowKey: props.rowKey,
     keepCurrentPage: props.keepCurrentPage,
     data: [],
     cols: [],
+    summary: props.summary,
     props: props.props
 })
 const currentColIndex = ref(0)
