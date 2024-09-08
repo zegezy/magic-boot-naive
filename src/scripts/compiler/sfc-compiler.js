@@ -31,9 +31,8 @@ export function compileCode(sourceCode){
 
 export function compileFile(code, compiled) {
 
-    const filename = 'mb-sfc-compiler.vue'
-
-    const id = hashId(filename)
+    const id = $common.uuid()
+    const filename = `${id}.vue`
     const { errors, descriptor } = SFCCompiler.parse(code, {
         filename,
         sourceMap: true
@@ -197,10 +196,6 @@ function doCompileTemplate(descriptor, id, bindingMetadata, compiled) {
             `$1 ${fnName}`
         )}` + `\n${COMP_IDENTIFIER}.${fnName} = ${fnName}`
     )
-}
-
-function hashId(filename) {
-    return btoa(filename).slice(0, 8)
 }
 
 function hasVueCompositionFunctions(content) {
