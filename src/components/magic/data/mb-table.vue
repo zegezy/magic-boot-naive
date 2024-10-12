@@ -450,8 +450,7 @@ function loadData(options) {
             }
         }
         requestData({ where, loading: options && options.loading })
-    }
-    if (props.data) {
+    } else if (props.data) {
         handlerData()
     }
     if(options){
