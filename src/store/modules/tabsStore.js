@@ -82,10 +82,40 @@ export const useTabsStore = defineStore('tabs', () => {
     const getShow = computed(() => isShow.value)
     const getTabs = computed(() => tabs.value)
 
+    function closeOtherTabs(path) {
+        // 保留首页和当前标签
+        const homeTab = tabs.value.find(tab => tab.path === '/home')
+        const currentTab = tabs.value.find(tab => tab.path === path)
+        
+        if (homeTab && currentTab) {
+            tabs.value = [homeTab]
+            if (path !== '/home') {
+                tabs.value.push(currentTab)
+                // 确保路由跳转到当前标签
+                router.push(path)
+                // 更新当前选中的标签
+                setCurrentTab(path)
+            } else {
+                // 如果关闭其他后只剩首页，就跳转到首页
+                router.push('/home')
+                setCurrentTab('/home')
+            }
+        }
+    }
+
+    function closeAllTabs() {
+        // 只保留首页标签
+        tabs.value = [{ path: '/home', meta: { title: '首页' } }]
+        router.push('/home')
+        setCurrentTab('/home')  // 确保更新当前选中的标签
+    }
+
     return {
         setCurrentTab,
         pushTab,
         closeTab,
+        closeOtherTabs,
+        closeAllTabs,
         show,
         hide,
         replaceTab,

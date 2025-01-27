@@ -2,6 +2,7 @@ import './styles/tailwind.css'
 import '@/assets/css/common.css'
 import 'vite-plugin-svg-icons/register'
 import {createApp} from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import {
     setupNaive,

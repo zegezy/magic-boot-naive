@@ -18,12 +18,11 @@ import {NConfigProvider, zhCN, dateZhCN} from 'naive-ui'
 import global from '@/scripts/global'
 const configProvider = reactive({})
 configProvider.themeOverrides = global.selectTheme.themeOverrides
-
 </script>
 
 <style lang="less">
 @import 'styles/index.less';
-.n-config-provider{
+.n-config-provider {
     height: 100%;
 }
 </style>

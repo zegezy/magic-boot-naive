@@ -1,6 +1,9 @@
 <template>
-    <n-layout position="absolute" has-sider>
+    <n-layout class="main-layout" :has-sider="layoutConfig.menuMode !== 'top'">
+        <!-- 侧边菜单 -->
         <n-layout-sider
+            v-if="layoutConfig.menuMode !== 'top'"
+            class="layout-sider"
             bordered
             collapse-mode="width"
             :collapsed-width="64"
@@ -9,77 +12,102 @@
             @update:collapsed="updateCollapsed"
             @after-enter="() => isCollapsed = false"
         >
-            <n-layout position="absolute">
-                <n-layout-header class="nav-bg">
-                    <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-if="!isCollapsed">
-                        {{ $global.title }}
-                    </p>
-                    <p class="text-center text-2xl m-0 pt-5 pb-5 text-white title" v-else>
-                        {{ $global.title.substring(0, 1) }}
-                    </p>
-                </n-layout-header>
-                <n-layout-content class="absolute top-16 right-0 bottom-0 left-0 nav-bg" :native-scrollbar="false">
+            <!-- Logo -->
+            <div class="logo-container nav-bg">
+                <p class="logo-text" v-if="!isCollapsed">{{ $global.title }}</p>
+                <p class="logo-text" v-else>{{ $global.title.substring(0, 1) }}</p>
+            </div>
+            <!-- 侧边菜单内容 -->
+            <div class="menu-container nav-bg">
+                <n-menu
+                    ref="menuRef"
+                    v-model:value="selectedKey"
+                    :indent="24"
+                    :collapsed-width="64"
+                    :collapsed-icon-size="22"
+                    :options="menuOptions"
+                    inverted
+                    accordion
+                />
+            </div>
+        </n-layout-sider>
+
+        <!-- 主内容区 -->
+        <n-layout class="layout-content">
+            <!-- 顶部区域 - 在侧边菜单模式下显示 -->
+            <n-layout-header v-if="layoutConfig.menuMode === 'side'" class="layout-header">
+                <layout-header/>
+            </n-layout-header>
+            
+            <!-- 顶部菜单 -->
+            <div v-if="layoutConfig.menuMode === 'top'" class="top-menu nav-bg">
+                <!-- 添加 Logo -->
+                <div class="logo-section">
+                    <p class="logo-text">{{ $global.title }}</p>
+                </div>
+                <div class="menu-section">
                     <n-menu
                         ref="menuRef"
                         v-model:value="selectedKey"
-                        :indent="24"
-                        :collapsed-width="64"
-                        :collapsed-icon-size="22"
+                        mode="horizontal"
                         :options="menuOptions"
+                        :indent="24"
                         inverted
-                        accordion
                     />
-                </n-layout-content>
-            </n-layout>
-        </n-layout-sider>
-        <n-layout>
-            <n-layout-header class="h-16" style="box-shadow: 1px 1px 6px #c6c6c6">
-                <layout-header/>
-            </n-layout-header>
-            <n-layout-content class="absolute right-0 bottom-0 left-0 bg-lightgray" style="top:4.3rem;">
-                <n-layout position="absolute">
-                    <n-layout-header class="h-12 p-2 bg-lightgray">
-                        <tabs/>
-                    </n-layout-header>
-                    <n-layout-content class="absolute top-12 right-0 bottom-0 left-0 px-4 router-view-content p-1 bg-lightgray">
-                        <div style="width: 100%;height: 100%">
-                            <component
-                                v-for="com in keepaliveIframes"
-                                :key="com.path"
-                                :is="IframeComponent"
-                                :url="common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
-                                v-show="com.path == $route.path"
-                            />
-                            <component
-                                v-for="com in keepaliveDynamicComponents"
-                                :key="com.path"
-                                :is="ShowComponent"
-                                :name="com.meta.componentName"
-                                v-show="com.path == $route.path"
-                            />
-                            <nested-router />
-                        </div>
-                    </n-layout-content>
-                </n-layout>
+                </div>
+                <user-info />
+            </div>
+
+            <!-- 页面内容区 -->
+            <n-layout-content class="page-container">
+                <!-- 标签页 -->
+                <div class="tabs-wrapper">
+                    <tabs/>
+                </div>
+                <!-- 顶部菜单模式下显示面包屑 -->
+                <div v-if="layoutConfig.menuMode === 'top' && layoutConfig.showBreadcrumb" class="breadcrumb-wrapper">
+                    <breadcrumb-nav />
+                </div>
+                <!-- 路由视图 -->
+                <div class="view-wrapper">
+                    <component
+                        v-for="com in keepaliveIframes"
+                        :key="com.path"
+                        :is="IframeComponent"
+                        :url="common.getUrlType(com.meta.path) == 2 ? '/#' + com.meta.path : com.meta.path"
+                        v-show="com.path == $route.path"
+                    />
+                    <component
+                        v-for="com in keepaliveDynamicComponents"
+                        :key="com.path"
+                        :is="ShowComponent"
+                        :name="com.meta.componentName"
+                        v-show="com.path == $route.path"
+                    />
+                    <nested-router />
+                </div>
             </n-layout-content>
         </n-layout>
     </n-layout>
 </template>
 
 <script setup>
-import {ref, h, watch, computed} from 'vue';
-import tabs from './tabs.vue'
-import NestedRouter from './nested-router.vue'
-import {RouterLink} from 'vue-router'
-// 此页面template内 不能直接使用$common 需要这里导入 才能使用 原因未知
+import {ref, h, watch, computed} from 'vue'
+import { RouterLink } from 'vue-router'
+import { isEmpty } from 'lodash-es'
+import { useUserStore } from "@/store/modules/userStore"
+import { useTabsStore } from "@/store/modules/tabsStore"
+import { useLayoutConfigStore } from '@/store/modules/layoutConfigStore'
 import common from '@/scripts/common'
-import {useUserStore} from "@/store/modules/userStore"
-import {useTabsStore} from "@/store/modules/tabsStore"
-import LayoutHeader from "@/layout/layout-header.vue";
+import Tabs from './tabs.vue'
+import NestedRouter from './nested-router.vue'
+import UserInfo from './components/user-info.vue'
 import IframeComponent from '@/views/common/iframe.vue'
 import ShowComponent from '@/views/common/show-component.vue'
-import { isEmpty } from 'lodash-es'
+import LayoutHeader from "@/layout/layout-header.vue";
+import BreadcrumbNav from './components/breadcrumb-nav.vue'
 
+const layoutConfig = useLayoutConfigStore()
 const tabsStore = useTabsStore()
 const userStore = useUserStore()
 const menuRef = ref()
@@ -88,8 +116,8 @@ const selectedKey = ref(currentTab)
 selectMenu(currentTab)
 watch(() => tabsStore.getCurrentTab, (key) => selectMenu(key))
 // 单独处理 "iframe" 并且开启缓存的页面
-const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => $common.filterIframeTabs(it)))
-// 缓存“动态组件”
+const keepaliveIframes = computed(() => tabsStore.getTabs.filter(it => common.filterIframeTabs(it)))
+// 缓存"动态组件"
 const keepaliveDynamicComponents = computed(() => tabsStore.getTabs.filter(it => it.meta.componentName && it.meta.keepAlive))
 
 function selectMenu(key) {
@@ -131,7 +159,7 @@ function recursionRouters(children) {
         } else {
             menu.key = chi.path
             if(chi.openMode == '1'){
-                let path = $common.handlerUrlPage(chi.path)
+                let path = common.handlerUrlPage(chi.path)
                 menu.label = () => h(
                     'a',
                     {
@@ -153,24 +181,192 @@ function recursionRouters(children) {
             }
         }
         if (chi.icon) {
-            menu.icon = $common.renderIcon(chi.icon)
+            menu.icon = common.renderIcon(chi.icon)
         }
         menus.push(menu)
     })
     return menus
 }
-
 </script>
 
-<style scoped>
-.nav-bg {
-    background-color: #041427;
+<style scoped lang="less">
+.main-layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    :deep(.n-layout-scroll-container) {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
-.title {
-    font-family: PoetsenOne;
+.layout-sider {
+    display: flex;
+    flex-direction: column;
+
+    :deep(.n-layout-sider-scroll-container) {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #041427;
+    }
+    
+    .logo-container {
+        flex-shrink: 0;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        .logo-text {
+            margin: 0;
+            padding: 20px 0;
+            color: white;
+            font-size: 24px;
+            font-family: PoetsenOne;
+        }
+    }
+    
+    .menu-container {
+        flex: 1;
+        overflow: hidden;
+
+        :deep(.n-menu .n-menu-item-content) {
+            transition: none !important;
+            background: transparent;
+
+            &:hover, &:active {
+                background: rgba(255, 255, 255, 0.09) !important;
+            }
+
+            &::before {
+                display: none !important;
+            }
+        }
+
+        :deep(.n-menu .n-menu-item-content.n-menu-item-content--selected) {
+            background: linear-gradient(90deg, #2b6abc 0%, #1a4987 50%, #041427 100%) !important;
+            
+            &::before {
+                display: block !important;
+                left: 0;
+                width: 4px;
+                height: 24px;
+                background: #40a9ff;
+                border-radius: 0 2px 2px 0;
+                content: '';
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    }
 }
-.bg-lightgray{
-    background-color: #fafafa;
+
+.layout-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    :deep(.n-layout-scroll-container) {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .layout-header {
+        flex-shrink: 0;
+        height: 64px;
+        background: white;
+        box-shadow: 0 1px 4px rgba(0,21,41,.08);
+    }
+    
+    .top-menu {
+        flex-shrink: 0;
+        height: 64px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .logo-section {
+            flex-shrink: 0;
+            padding: 0 24px;
+            
+            .logo-text {
+                margin: 0;
+                color: white;
+                font-size: 24px;
+                font-family: PoetsenOne;
+            }
+        }
+        
+        .menu-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        :deep(.n-menu .n-menu-item-content) {
+            transition: none !important;
+            background: transparent;
+
+            &:hover, &:active {
+                background: rgba(255, 255, 255, 0.09) !important;
+            }
+
+            &::before {
+                display: none !important;
+            }
+        }
+
+        :deep(.n-menu .n-menu-item-content.n-menu-item-content--selected) {
+            background: linear-gradient(180deg, #2b6abc 0%, #1a4987 50%, #041427 100%) !important;
+        }
+    }
+    
+    .page-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #f0f2f5;
+        overflow: hidden;
+
+        :deep(.n-layout-scroll-container) {
+            display: flex !important;
+            flex-direction: column;
+        }
+        
+        .tabs-wrapper {
+            flex-shrink: 0;
+            padding: 8px;
+            background: #fafafa;
+            
+            :deep(.n-tabs) {
+                display: flex;
+                align-items: center;
+            }
+        }
+        
+        .breadcrumb-wrapper {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .view-wrapper {
+            flex: 1;
+            padding: 16px;
+            overflow: auto;
+            
+            :deep(.n-layout) {
+                height: 100%;
+            }
+        }
+    }
+}
+
+.nav-bg {
+    background-color: #041427;
 }
 </style>
