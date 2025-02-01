@@ -110,12 +110,19 @@ export const useTabsStore = defineStore('tabs', () => {
         setCurrentTab('/home')  // 确保更新当前选中的标签
     }
 
+    // 清理所有标签（用于退出登录时）
+    function clearAllTabs() {
+        tabs.value = []
+        setCurrentTab('')
+    }
+
     return {
         setCurrentTab,
         pushTab,
         closeTab,
         closeOtherTabs,
         closeAllTabs,
+        clearAllTabs,
         show,
         hide,
         replaceTab,

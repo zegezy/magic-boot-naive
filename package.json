@@ -6,7 +6,8 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "demo": "vite build --mode demo"
+        "demo": "vite build --mode demo",
+        "generate-components": "node scripts/generate-components-definition.js"
     },
     "dependencies": {
         "@bpmn-io/properties-panel": "^3.23.0",

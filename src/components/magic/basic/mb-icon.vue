@@ -18,24 +18,35 @@
         <component :is="xicons[icon]" />
     </n-icon>
 </template>
+
 <script setup>
+// 图标组件
 import { computed, ref } from 'vue'
 import xicons from '@/scripts/xicons'
 import svgIcons from '@/scripts/svg-icons'
+
 const props = defineProps({
-	prefix: {
-		type: String,
-		default: 'mb-icon'
-	},
-	icon: String,
+    // 图标名称
+    icon: {
+        type: String,
+        required: true
+    },
+    // 图标前缀
+    prefix: {
+        type: String,
+        default: 'mb-icon'
+    },
+    // 图标大小
     size: {
         type: String,
         default: '1em'
     },
+    // 图标颜色
     color: {
         type: String,
         default: 'currentColor'
     },
+    // 鼠标悬浮显示标题
     title: {
         type: String,
         default: ''

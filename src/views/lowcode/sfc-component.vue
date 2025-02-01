@@ -159,9 +159,11 @@
 import { ref, reactive, onBeforeMount } from 'vue'
 import {compileCode} from "@/scripts/compiler/sfc-compiler";
 import {setupMonacoVolar} from "@/scripts/plugins/monacoVolar";
+
 onBeforeMount(async () => {
     await setupMonacoVolar()
 })
+
 const monacoVolarRefs = reactive({})
 const nameModal = ref()
 const formData = reactive({

@@ -87,6 +87,12 @@
 import {ref, reactive, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
 import RoleAssignPermissions from './role-assign-permissions'
+import { useUserStore } from '@/store/modules/userStore'
+
+const userStore = useUserStore()
+console.log('userStore:', userStore)
+console.log('userInfo:', userStore.getInfo)
+console.log('userType:', userStore.getInfo?.userType)
 
 const permissionData = reactive([{
     label: '全部',
@@ -112,12 +118,27 @@ const tableOptions = reactive({
     where: {
         name: {
             label: '角色名称'
+        },
+        tenantId: {
+            label: '所属租户',
+            component: 'select',
+            componentProps: {
+                url: '/system/tenant/list',
+                labelField: 'name',
+                valueField: 'id'
+            },
+            if: () => userStore.getInfo?.userType === 'SUPER'
         }
     },
     cols: [
         {
             field: 'name',
             label: '角色名称'
+        },
+        {
+            field: 'tenantName',
+            label: '所属租户',
+            if: () => userStore.getInfo?.userType === 'SUPER'
         },
         {
             field: 'code',
@@ -209,7 +230,8 @@ function getTemp() {
         offices: '',
         permission: '0',
         code: '',
-        descRibe: ''
+        descRibe: '',
+        tenantId: ''
     }
 }
 
@@ -230,6 +252,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
+            temp.value.tenantId = userStore.getCurrentTenant()?.id
             $common.post('/system/role/save', temp.value).then(() => {
                 d.hideLoading()
                 reloadTable()
@@ -255,6 +278,12 @@ function handleUpdate(row) {
     nextTick(() => {
         dataForm.value.restoreValidation()
     })
+}
+
+// 获取租户名称
+function getTenantName(tenantId) {
+    // 可以通过缓存或者接口获取租户信息
+    return tenantId 
 }
 
 </script>

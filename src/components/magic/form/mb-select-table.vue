@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+// 表格选择组件
 import { onBeforeUnmount, ref, watch, toRaw } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { clone, cloneDeep } from 'lodash-es'
@@ -42,33 +43,41 @@ const checkedRowKeys = ref()
 const showList = ref(false)
 
 const props = defineProps({
+    // 绑定值
     modelValue: {
         required: true
     },
+    // 表格宽度
     width: {
         type: Number,
         default: 500
     },
+    // 表格高度
     height: {
         type: Number,
         default: 300
     },
+    // 表格配置选项
     tableOptions: {
         type: Object,
         default: () => {}
     },
+    // 选择数据回调
     onSelectData: {
         type: Function,
         default: () => {}
     },
+    // 是否多选
     multiple: {
         type: Boolean,
         default: false
     },
+    // 关闭当前列编辑模式回调
     closeCurrentColEditMode: {
         type: Function,
         default: undefined
     },
+    // 搜索配置
     search: {
         type: Object,
         default: undefined

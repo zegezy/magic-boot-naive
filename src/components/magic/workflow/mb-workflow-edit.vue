@@ -11,6 +11,7 @@
 </template>
 
 <script setup>
+// 流程图拖拽绘制组件
 import {onMounted, ref} from "vue";
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import {
@@ -30,9 +31,7 @@ const canvas = ref();
 const properties = ref();
 
 const props = defineProps({
-    /**
-     * Camunda 流程定义ID
-     */
+    // Camunda 流程定义ID
     processDefinitionId: {
         type: String,
         default: ''

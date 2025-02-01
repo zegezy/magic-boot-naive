@@ -1,18 +1,7 @@
 <template>
     <div class="mb-list">
         <div class="mb-search">
-            <n-space>
-                <n-input :size="$global.uiSize.value" v-model:value="searchValue" @keyup.enter="searchOffice" placeholder="菜单名称、链接、权限标识"
-                         style="width: 200px"></n-input>
-                <n-button :size="$global.uiSize.value" type="primary" @click="searchOffice">
-                    <mb-icon icon="Search" />
-                    搜索
-                </n-button>
-                <n-button :size="$global.uiSize.value" @click="() => { searchValue = ''; searchOffice() }">
-                    <mb-icon icon="TrashOutline" />
-                    清空
-                </n-button>
-            </n-space>
+            <mb-search :where="tableOptions.where" @search="reloadTable"/>
         </div>
         <div class="mb-toolbar">
             <n-space>
@@ -73,23 +62,41 @@
 <script setup>
 import {ref, reactive, onMounted, watch, nextTick} from 'vue'
 import {push} from '@/scripts/router'
+import { useUserStore } from '@/store/modules/userStore'
 
 const officeData = ref([])
 const officeTree = ref([])
-const searchValue = ref('')
+const userStore = useUserStore()
 const table = ref()
+
 const tableOptions = reactive({
     id: 'office-list',
-    loading: false,
-    showNo: false,
-    page: false,
+    url: '/system/office/tree',
+    method: 'get',
+    where: {
+        name: {
+            label: '机构名称'
+        },
+        tenantId: {
+            label: '所属租户',
+            component: 'select',
+            componentProps: {
+                url: '/system/tenant/list',
+                labelField: 'name',
+                valueField: 'id'
+            },
+            if: () => userStore.getInfo?.userType === 'SUPER'
+        }
+    },
     cols: [
         {
             field: 'name',
-            label: '机构名称',
-            align: 'left',
-            type: 'html',
-            width: 280
+            label: '机构名称'
+        },
+        {
+            field: 'tenantName',
+            label: '所属租户',
+            if: () => userStore.getInfo?.userType === 'SUPER'
         },
         {
             field: 'code',
@@ -216,14 +223,6 @@ watch(officeData, () => {
     }]
 })
 
-function searchOffice() {
-    if (searchValue.value) {
-        tableOptions.data = $treeTable.recursionSearch(['name', 'code'], $common.copyNew(officeData.value), searchValue.value)
-    } else {
-        tableOptions.data = officeData.value
-    }
-}
-
 function getTemp() {
     return {
         id: '',
@@ -261,6 +260,7 @@ function save(d) {
     dataForm.value.validate((errors) => {
         if (!errors) {
             d.loading()
+            temp.value.tenantId = userStore.getCurrentTenant()?.id
             if (temp.value.pid == temp.value.id) {
                 $message.warning('上级机构不能选当前机构')
                 return
@@ -280,12 +280,7 @@ function save(d) {
 }
 
 function reloadTable() {
-    tableOptions.loading = true
-    $common.get('/system/office/tree').then(res => {
-        officeData.value = res.data.list
-        tableOptions.data = officeData.value
-        tableOptions.loading = false
-    })
+    table.value.reload()
 }
 
 function handleUpdate(row) {

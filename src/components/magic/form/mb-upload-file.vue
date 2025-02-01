@@ -47,6 +47,7 @@
 </template>
 
 <script setup>
+// 文件上传组件
 import {ref, watch, onMounted} from 'vue'
 import {useUserStore} from "@/store/modules/userStore";
 import global from '@/scripts/global'
@@ -54,70 +55,87 @@ import global from '@/scripts/global'
 const userStore = useUserStore()
 const emit = defineEmits(['change', 'update:modelValue'])
 const props = defineProps({
+    // 绑定值
     modelValue: {
         required: false
     },
+    // 最大上传数量
     multiple: {
         type: Boolean,
         default: false
     },
+    // 最大文件大小
     limit: {
         type: Number,
         default: 20
     },
+    // 最大文件大小
     maxFileSize: {
         type: Number,
         default: 200
     },
+    // 允许的文件类型
     accept: {
         type: String,
         default: ''
     },
+    // 外部ID
     externalId: {
         type: String,
         default: ''
     },
+    // 外部类型
     externalType: {
         type: String,
         default: ''
     },
+    // 文件格式
     formats: {
         type: String,
         default: ''
     },
+    // 上传按钮文字
     label: {
         type: String,
         default: '点击上传'
     },
+    // 是否显示提示
     showTip: {
         type: Boolean,
         default: () => true
     },
+    // 上传地址
     action: {
         type: String,
         default: ''
     },
+    // 是否显示文件列表
     showFileList: {
         type: Boolean,
         default: () => true
     },
+    // 上传成功回调
     onSuccess: {
         type: Function,
         default: () => {
         }
     },
+    // 是否显示删除提示
     deleteTip: {
         type: Boolean,
         default: () => true
     },
+    // 是否合并上传
     join: {
         type: Boolean,
         default: true
     },
+    // 是否支持拖拽上传
     directoryDnd: {
         type: Boolean,
         default: false
     },
+    // 是否自动上传
     defaultUpload: {
         type: Boolean,
         default: true

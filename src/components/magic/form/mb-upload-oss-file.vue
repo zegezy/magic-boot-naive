@@ -77,6 +77,7 @@ li:hover {
 </template>
 
 <script setup>
+// OSS文件上传组件
 import ossutil from '@/scripts/ossutil'
 import global from '@/scripts/global'
 import {Trash, Crop, Add} from "@vicons/ionicons5";
@@ -84,17 +85,23 @@ import {ref, onMounted, watch, nextTick} from 'vue'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 const props = defineProps({
+    // 绑定值
     modelValue: String,
+    // 组件宽度
     width: String,
+    // 组件高度
     height: String,
+    // 允许上传的文件类型
     accept: {
         type: String,
         default: ''
     },
+    // 允许上传的文件格式
     formats: {
         type: String,
         default: ''
     },
+    // 是否只读模式
     readonly: {
         type: Boolean,
         default: false

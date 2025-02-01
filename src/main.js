@@ -13,14 +13,14 @@ import {
     setupLayer
 } from '@/scripts/plugins'
 import {setupRouter} from '@/scripts/router'
-import {setupStore} from '@/store'
 import {setupComponents} from '@/components'
 import '@/scripts/compiler/magic-import'
 
-const app = createApp(App)
+let app;
 
 async function start() {
-    setupStore(app)
+    app = createApp(App)
+    app.use(createPinia())
     setupNaive(app)
     setupNaiveDiscreteApi()
     setupDirectives(app)
@@ -33,4 +33,7 @@ async function start() {
 }
 
 void start()
+
+// 导出 app 实例供其他模块使用
+export { app }
 

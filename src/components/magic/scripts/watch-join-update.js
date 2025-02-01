@@ -1,6 +1,16 @@
 import {computed, watch} from 'vue'
 import {isArray, isNumber, isString} from "lodash-es";
 
+/**
+ * 监听组件值变化的工具函数
+ * @param {Ref} componentValue - 组件的值
+ * @param {Object} props - 组件的props
+ * @param {Object} props.multiple - 是否开启多选
+ * @param {Object} props.join - 当多选时，是否使用逗号join。如果是false则modelValue是Array
+ * @param {Object} props.modelValue - 组件的值
+ * @param {Function} emit - 触发事件的函数
+ * @returns {Array} 返回watch清理函数数组
+ */
 export function watchValue(componentValue, props, emit){
     let watchList = []
     let multiple = props.multiple

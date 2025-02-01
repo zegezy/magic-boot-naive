@@ -12,10 +12,12 @@
 </template>
 
 <script setup>
+// 表格单元格提示组件
 import {computed, ref} from 'vue'
 import componentProperties from "@/components/magic-component-properties.js";
 
 const props = defineProps({
+    // 是否不换行
     nowrap: {
         type: Boolean,
         default: true

@@ -268,4 +268,4 @@ fs.writeFileSync(
     JSON.stringify(components, null, 2)
 )
 
-console.log('>>>>>>>>>>>>>>>>>>>> Monaco组件定义提示生成成功 ')
+console.log('>>>>>>>>>>>>>>>>>>>> Monaco组件定义提示生成成功 <<<<<<<<<<<<<<<<<<<<')

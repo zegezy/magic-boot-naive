@@ -12,6 +12,10 @@ service.interceptors.request.use(
         if (userStore.getToken()) {
             config.headers['token'] = userStore.getToken()
         }
+        const tenant = userStore.getCurrentTenant()
+        if (tenant) {
+            config.headers['tenant-id'] = tenant.id
+        }
         return config
     },
     error => {

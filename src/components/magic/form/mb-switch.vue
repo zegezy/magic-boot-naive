@@ -18,14 +18,19 @@
 </template>
 
 <script setup>
+// 开关组件
 import {ref, watch} from 'vue'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 const selectValue = ref('')
 const props = defineProps({
+    // 绑定值
     modelValue: Boolean | String | Number,
+    // 选中时的值
     checkedValue: Boolean | String | Number,
+    // 未选中时的值
     uncheckedValue: Boolean | String | Number,
+    // 组件属性配置
     props: Object
 })
 const _checkedValue = ref(true)

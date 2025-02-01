@@ -3,68 +3,122 @@
  * @author Yean
  * @date 2024-3-27 21:19:04
  */
-import webTypesData from 'naive-ui/web-types.json'; // 替换成你的web-types.json文件路径
-
-/**
- * 获取Naive UI组件自动提示项
- * @returns {*[]}
- */
-export function naiveUiCompletionItems(monaco) {
-    const naiveUiComponents = webTypesData.contributions.html['vue-components'];
-    return naiveUiComponents.flatMap(component => {
-        const componentName = component.name.replace(/^N/, '').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase(); // 去除首字母"N"并转为小写
-        const tagForm = `<n-${componentName} `;
-        const componentDescription = component.description;
-
-        // 组件自身提示项
-        const componentCompletion = {
-            label: tagForm,
-            kind: monaco.languages.CompletionItemKind.Text,
-            documentation: componentDescription,
-            insertText: tagForm,
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
-        };
-
-        // 组件props提示项
-        const componentProps = component.props.map(prop => ({
-            label: prop.name,
-            kind: monaco.languages.CompletionItemKind.Property,
-            documentation: prop.description,
-            detail: prop.type,
-            insertText: `{ ${prop.name}$1 }`, // $1 表示插入点
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
-        }));
-
-        // 组件事件提示项
-        const componentEvents = component.js?.events?.map(event => ({
-            label: `@${event.name}`,
-            kind: monaco.languages.CompletionItemKind.Event,
-            documentation: event.description || '',
-            insertText: `@${event.name}="$1"` // $1 表示插入点
-        }));
-
-        // 返回组件、props和事件的CompletionItems
-        return [componentCompletion, ...componentProps, ...(componentEvents || [])];
-    });
-}
+import * as monaco from 'monaco-editor-core'
+import componentsDefinition from './components-definition.json'
 
 /**
  * 注册Naive UI Monaco自动提示
  * @param monaco
  */
-export function registerNaiveMonacoCompletionProvider(monaco){
+export function registerNaiveMonacoCompletionProvider(monaco) {
+    // 注册 Vue 语言的提示
     monaco.languages.registerCompletionItemProvider('vue', {
-        triggerCharacters:['<','@','v-on:',' '],
+        triggerCharacters: ['<', ' ', ':', '@', '.'],
         provideCompletionItems: (model, position) => {
-            const word = model.getWordUntilPosition(position);
-            const range = {
+            const textUntilPosition = model.getValueInRange({
                 startLineNumber: position.lineNumber,
+                startColumn: 1,
                 endLineNumber: position.lineNumber,
-                startColumn: word.startColumn,
-                endColumn: word.endColumn,
-            };
+                endColumn: position.column
+            })
 
-            return { suggestions: naiveUiCompletionItems(monaco) };
+            const suggestions = []
+
+            // 组件标签提示
+            if (textUntilPosition.match(/<[^>]*$/)) {
+                const word = textUntilPosition.match(/[^<]*$/)[0]
+                
+                // Naive UI 组件提示
+                if (word.startsWith('n-') || !word) {
+                    Object.entries(componentsDefinition.naive).forEach(([tag, config]) => {
+                        suggestions.push({
+                            label: tag,
+                            kind: monaco.languages.CompletionItemKind.Class,
+                            insertText: tag,
+                            detail: config.description,
+                            documentation: { value: generateComponentDoc(tag, config) }
+                        })
+                    })
+                }
+
+                // MB 组件提示
+                if (word.startsWith('mb-') || !word) {
+                    Object.entries(componentsDefinition.mb).forEach(([tag, config]) => {
+                        suggestions.push({
+                            label: tag,
+                            kind: monaco.languages.CompletionItemKind.Class,
+                            insertText: tag,
+                            detail: config.description,
+                            documentation: { value: generateComponentDoc(tag, config) }
+                        })
+                    })
+                }
+            }
+
+            // 属性和事件提示
+            const tagMatch = textUntilPosition.match(/<([\w-]+)([^>]*)$/i)
+            if (tagMatch) {
+                const tag = tagMatch[1]
+                const component = componentsDefinition.naive[tag] || componentsDefinition.mb[tag]
+                
+                if (component) {
+                    // 属性提示
+                    Object.entries(component.props || {}).forEach(([prop, config]) => {
+                        suggestions.push({
+                            label: prop,
+                            kind: monaco.languages.CompletionItemKind.Property,
+                            insertText: config.type === 'boolean' ? prop : `:${prop}=""`,
+                            detail: `${config.description} (${config.type})`,
+                            documentation: { value: generatePropDoc(prop, config) }
+                        })
+                    })
+
+                    // 事件提示
+                    Object.entries(component.events || {}).forEach(([event, config]) => {
+                        suggestions.push({
+                            label: `@${event}`,
+                            kind: monaco.languages.CompletionItemKind.Event,
+                            insertText: `@${event}="$1"`,
+                            detail: config.description,
+                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                        })
+                    })
+                }
+            }
+
+            return { suggestions }
         }
-    });
+    })
+}
+
+function generateComponentDoc(tag, component) {
+    const props = Object.entries(component.props || {})
+        .map(([name, config]) => `  ${config.type === 'boolean' ? name : `:${name}=""`}`)
+        .join('\n')
+
+    const events = Object.keys(component.events || {})
+        .map(event => `  @${event}=""`)
+        .join('\n')
+
+    return [
+        '```vue',
+        `<${tag}`,
+        props,
+        events,
+        `/>`,
+        '```',
+        '',
+        component.description || ''
+    ].filter(Boolean).join('\n')
+}
+
+function generatePropDoc(prop, config) {
+    const docs = [`**${prop}** - ${config.description}`]
+    if (config.values) {
+        docs.push('\n可选值：' + config.values.join(', '))
+    }
+    if (config.default) {
+        docs.push(`\n默认值：${config.default}`)
+    }
+    return docs.join('\n')
 }

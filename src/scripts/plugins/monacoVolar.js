@@ -30,28 +30,21 @@ async function editorInit() {
         label: "vue",
         createData: {},
     });
+    
     const languageId = ["vue"];
     const getSyncUris = () => monaco.editor.getModels().map((model) => model.uri);
-    volar.editor.activateMarkers(
-        worker,
-        languageId,
-        "vue",
-        getSyncUris,
-        monaco.editor
-    );
+    
+    volar.editor.activateMarkers(worker, languageId, "vue", getSyncUris, monaco.editor);
     volar.editor.activateAutoInsertion(worker, languageId, getSyncUris, monaco.editor);
-    await volar.languages.registerProvides(
-        worker,
-        languageId,
-        getSyncUris,
-        monaco.languages
-    );
+    
+    // 注册 Vue 组件提示
+    await volar.languages.registerProvides(worker, languageId, getSyncUris, monaco.languages);
 }
 
 export async function setupMonacoVolar() {
     await loadOnigasm()
     monaco.languages.register({id: "vue", extensions: [".vue"]});
     monaco.languages.onLanguage("vue", editorInit);
-    // 注册naive-ui组件自动提示
+    // 注册组件提示
     registerNaiveMonacoCompletionProvider(monaco);
 }

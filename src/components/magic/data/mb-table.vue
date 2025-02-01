@@ -87,6 +87,7 @@
 </template>
 
 <script setup>
+// 表格组件
 import Sortable from 'sortablejs'
 import {ref, onMounted, nextTick, h, reactive, watch, onBeforeUnmount, computed, useSlots} from 'vue'
 import global from '@/scripts/global'
@@ -99,108 +100,134 @@ const permissionList = useUserStore().getAuths
 
 const slots = useSlots()
 const props = defineProps({
+    // 组件属性配置
     props: {
         type: Object,
         default: () => {
         }
     },
+    // 表格唯一标识
     id: {
         type: String,
         default: ''
     },
+    // 行数据的唯一键名
     rowKey: {
         type: String,
         default: 'id'
     },
+    // 是否不换行
     nowrap: {
         type: Boolean,
         default: undefined
     },
+    // 是否开启虚拟滚动
     virtualScroll: {
         type: Boolean,
         default: false
     },
+    // 远程加载URL
     url: {
         type: String,
         default: ''
     },
+    // 查询条件
     where: {
         type: Object,
         default: () => {
         }
     },
+    // 表格列配置
     cols: {
         type: Array,
         default: () => []
     },
+    // 请求方法
     method: {
         type: String,
         default: 'post'
     },
+    // 每页显示条数
     limit: {
         type: Number,
         default: 10
     },
+    // 是否分页
     page: {
         type: Boolean,
         default: true
     },
+    // 表格数据
     data: {
         type: Array,
         default: () => null
     },
+    // 数据加载完成回调
     done: {
         type: Function,
         default: () => {}
     },
+    // 是否显示加载中
     loading: {
         type: Boolean,
         default: () => true
     },
+    // 是否显示序号
     showNo: {
         type: Boolean,
         default: true
     },
+    // 是否开启多选
     selection: {
         type: Boolean,
         default: false
     },
+    // 是否显示斑马纹
     striped: {
         type: Boolean,
         default: true
     },
+    // 是否可选中行
     selectedRowEnable: {
         type: Boolean,
         default: true
     },
+    // 是否开启右键菜单
     contextmenuEnable: {
         type: Boolean,
         default: false
     },
+    // 是否默认选中第一行
     defaultSelectedRow: {
         type: Boolean,
         default: false
     },
+    // 默认列宽度
     defaultColWidth: {
         type: Number,
         default: 100
     },
+    // 选中行的keys
     checkedRowKeys: {
         type: Array,
         default: () => []
     },
+    // 是否保持当前页
     keepCurrentPage: {
         type: Boolean,
         default: false
     },
+    // 表格合计行配置
     summary: {
         type: Object,
         default: undefined
     },
+    // 滚动事件回调
     onScroll: {
         type: Function,
         default: () => {}
     },
+    // 右键菜单事件回调
     onContextmenu: {
         type: Function,
         default: () => {}

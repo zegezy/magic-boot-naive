@@ -15,15 +15,19 @@
 </template>
 
 <script setup>
+// 分页组件
 const props = defineProps({
+    // 当前页码
     page: {
         type: Number,
         default: 1
     },
+    // 每页显示条数
     pageSize: {
         type: Number,
         default: 10
     },
+    // 总条数
     itemCount: {
         type: Number,
         default: undefined

@@ -7,48 +7,62 @@
 </template>
 
 <script setup>
+// 模态框组件
 import { ref, reactive, watch } from 'vue'
 import { layer } from '@layui/layer-vue';
 const modalId = $common.uuid()
 $global.modal.create(modalId);
-const emit = defineEmits(['confirm'])
+const emit = defineEmits([
+    // 点击确定按钮时触发
+    'confirm'
+])
 const props = defineProps({
+    // 标题
     title: {
         type: String,
         default: ''
     },
+    // 宽度
     width: {
         type: String,
         default: 'auto'
     },
+    // 高度
     height: {
         type: String,
         default: 'auto'
     },
+    // 是否点击遮罩关闭
     shadeClose: {
         type: Boolean,
         default: false
     },
+    // 是否显示遮罩
     shade: {
         type: Boolean,
         default: true
     },
+    // 是否可调整大小
     resize: {
         type: Boolean,
         default: true
     },
+    // 是否显示最大化按钮
     maxmin: {
         type: Boolean,
         default: true
     },
+    // 遮罩透明度
     shadeOpacity: {
         type: String,
         default: '.4'
     },
+    // 是否显示底部
     showFooter: {
         type: Boolean,
         default: true
     },
+    // 按钮配置
     buttons: {
         type: Array,
         default: undefined

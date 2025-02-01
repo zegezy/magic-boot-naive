@@ -14,32 +14,40 @@
 </template>
 
 <script setup>
+// 日期选择组件
 import {watch, ref} from 'vue'
 
 const emit = defineEmits(['update:modelValue'])
 const selectValue = ref('')
 const props = defineProps({
+    // 绑定值
     modelValue: String,
+    // 日期选择类型
     type: {
         type: String,
         default: 'date'
     },
+    // 占位提示
     placeholder: {
         type: String,
         default: '请选择时间'
     },
+    // 日期格式
     format: {
         type: String,
         default: ''
     },
+    // 开始日期占位提示
     startPlaceholder: {
         type: String,
         default: '开始时间'
     },
+    // 结束日期占位提示
     endPlaceholder: {
         type: String,
         default: '结束时间'
     },
+    // 组件属性配置
     props: Object
 })
 

@@ -96,6 +96,7 @@
 </template>
 
 <script setup>
+// 表格列组件
 import {get as getValueByPath} from "lodash-es";
 import componentProperties from '@/components/magic-component-properties'
 import {useDictStore} from "@/store/modules/dictStore";
@@ -106,18 +107,22 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    // 行数据
     row: {
         type: Object,
         default: () => {}
     },
+    // 列数据
     col: {
         type: Object,
         default: () => {}
     },
+    // 行索引
     index: {
         type: Number,
         default: undefined
     },
+    // 是否不换行
     nowrap: {
         type: Boolean,
         default: undefined

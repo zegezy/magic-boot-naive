@@ -137,7 +137,7 @@
 </template>
 
 <script setup>
-
+// 可编辑表格组件
 import { reactive, ref, nextTick, toRaw, watch } from 'vue'
 import { getSelectData } from "@/api/components/mb-select.js";
 import { getTreeSelectData } from "@/api/components/mb-tree-select";
@@ -146,54 +146,67 @@ import treeTable from "@/scripts/treeTable";
 import common from '@/scripts/common'
 const magicTable = ref()
 const props = defineProps({
+    // 表格唯一标识
     id: {
         type: String,
         default: ''
     },
+    // 表格属性配置
     props: {
         type: Object,
         default: () => {}
     },
+    // 表格列配置
     cols: {
         type: Array,
         default: () => []
     },
+    // 是否显示序号
     showNo: {
         type: Boolean,
         default: true
     },
+    // 操作列配置
     operation: {
         type: Object,
         default: () => {}
     },
+    // 操作列宽度
     operationWidth: {
         type: Number,
         default: 85
     },
+    // 是否分页
     page: {
         type: Boolean,
         default: false
     },
+    // 行数据的唯一键
     rowKey: {
         type: String,
         default: 'id'
     },
+    // 是否预览模式
     preview: {
         type: Boolean,
         default: false
     },
+    // 是否开启行悬浮编辑
     rowHoverEdit: {
         type: Boolean,
         default: true
     },
+    // 是否保持当前页
     keepCurrentPage: {
         type: Boolean,
         default: true
     },
+    // 表格合计行配置
     summary: {
         type: Object,
         default: undefined
     },
+    // 选中行回调
     onSelectedRow: {
         type: Function,
         default: () => {}

@@ -27,14 +27,17 @@
 </template>
 
 <script setup>
+// 搜索表单组件
 import {nextTick, watch} from 'vue'
 
 const props = defineProps({
+	// 搜索条件对象
 	where: {
 		type: Object,
 		default: () => {
 		}
 	},
+	// 重置时不清空的字段
 	notReset: {
 		type: String,
 		default: ''
@@ -79,7 +82,10 @@ for (let key in props.where) {
 	}
 }
 
-const emit = defineEmits(['search'])
+const emit = defineEmits([
+	// 点击搜索按钮时触发
+	'search'
+])
 
 function input(input) {
 	if (input) {

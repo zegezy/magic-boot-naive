@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-
+// 树形组件
 import {watch, ref, nextTick, onBeforeMount, h} from 'vue'
 import treeTable from '@/scripts/treeTable'
 import { clone, uniq, pull, pullAll, isEmpty } from 'lodash-es'
@@ -68,6 +68,7 @@ const props = defineProps({
         default: () => {
         }
     },
+    // 绑定值
     modelValue: {
         type: String,
         default: ''
@@ -81,15 +82,18 @@ const props = defineProps({
         default: () => {
         }
     },
+    // 组件属性配置
     props: {
         type: Object,
         default: () => {
         }
     },
+    // 是否显示展开/折叠按钮
     expand: {
         type: Boolean,
         default: true
     },
+    // 是否显示复选框
     checked: {
         type: Boolean,
         default: true
@@ -126,6 +130,7 @@ const props = defineProps({
         type: Object,
         default: undefined
     },
+    // 是否默认展开所有节点
     defaultExpandAll: {
         type: Boolean,
         default: true

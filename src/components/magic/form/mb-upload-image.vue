@@ -79,6 +79,7 @@
 </template>
 
 <script setup>
+// 图片上传组件
 import 'vue-cropper/dist/index.css'
 import {ref, watch, onMounted} from 'vue'
 import {VueCropper} from 'vue-cropper'
@@ -90,50 +91,61 @@ import request from '@/scripts/request'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 const props = defineProps({
+    // 绑定值
     modelValue: {
         required: false
     },
+    // 外部ID,用于关联其他数据
     externalId: {
         type: String,
         default: ''
     },
+    // 外部类型,用于标识数据类型
     externalType: {
         type: String,
         default: ''
     },
+    // 是否支持多选
     multiple: {
         type: Boolean,
         default: false
     },
+    // 最大上传数量限制
     limit: {
         type: Number,
         default: 2
     },
+    // 图片裁剪配置
     cropperConfig: {
         type: Object,
-        default: () => {
-        }
+        default: () => {}
     },
+    // 图片显示宽度
     width: {
         type: Number,
         default: 100
     },
+    // 图片显示高度
     height: {
         type: Number,
         default: 100
     },
+    // 提示文字
     tip: {
         type: String,
         default: ''
     },
+    // 提示文字颜色
     tipColor: {
         type: String,
         default: ''
     },
+    // 是否显示删除提示
     deleteTip: {
         type: Boolean,
         default: () => true
     },
+    // 多选时是否使用逗号连接
     join: {
         type: Boolean,
         default: true

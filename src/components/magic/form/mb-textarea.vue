@@ -11,14 +11,26 @@
 </template>
 
 <script setup>
+// 文本域组件
 import { useVModel } from "@vueuse/core";
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
-    modelValue: String,
-    props: Object,
+    // 绑定值
+    modelValue: {
+        type: String,
+        default: ''
+    },
+    // 选项标签
     itemLabel: String,
+    // 占位提示
     placeholder: String,
-    rows: Number
+    // 组件属性配置
+    props: Object,
+    // 文本域行数
+    rows: {
+        type: Number,
+        default: 3
+    }
 })
 const selectValue = useVModel(props, 'modelValue', emit)
 </script>

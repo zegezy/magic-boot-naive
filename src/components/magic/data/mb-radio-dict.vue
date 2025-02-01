@@ -12,6 +12,7 @@
 </template>
 
 <script setup>
+// 单选字典组件
 import {ref, watch} from "vue";
 import {useDictStore} from "@/store/modules/dictStore";
 
