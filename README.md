@@ -19,7 +19,7 @@ QQ群（[ **576433387** ](https://jq.qq.com/?_wv=1027&k=KD6DPvB0)）
 
 | 代码 | 效果 |
 |----|----|
-| ![](https://magicboot.oss-cn-beijing.aliyuncs.com/code.png)  | ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/1.png)  |
+| ![](https://assets.magicboot.net/code.png)  | ![](https://assets.magicboot.net/system/1.png)  |
 
 
 ## 功能
@@ -42,11 +42,11 @@ QQ群（[ **576433387** ](https://jq.qq.com/?_wv=1027&k=KD6DPvB0)）
 - 账号：system/123456
 
 ## 系统截图
-| ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/1.png)  | ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/2.png)  |
+| ![](https://assets.magicboot.net/system/1.png)  | ![](https://assets.magicboot.net/system/2.png)  |
 |---|---|
-| ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/3.png)  | ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/4.png)  |
-| ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/5.png)  | ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/6.png)  |
-| ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/7.png)  | ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/8.png)  |
-| ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/9.png)  | ![](https://magicboot.oss-cn-beijing.aliyuncs.com/system/10.png)  |
+| ![](https://assets.magicboot.net/system/3.png)  | ![](https://assets.magicboot.net/system/4.png)  |
+| ![](https://assets.magicboot.net/system/5.png)  | ![](https://assets.magicboot.net/system/6.png)  |
+| ![](https://assets.magicboot.net/system/7.png)  | ![](https://assets.magicboot.net/system/8.png)  |
+| ![](https://assets.magicboot.net/system/9.png)  | ![](https://assets.magicboot.net/system/10.png)  |
 
 
