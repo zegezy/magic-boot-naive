@@ -16,16 +16,16 @@
 基于[ **magic-api** ](https://gitee.com/ssssssss-team/magic-api)搭建的快速开发平台，前端采用Vue3 + naive-ui最新版本搭建，依赖较少，运行速度快。对常用组件进行封装。利用Vue3的`@vue/compiler-sfc`单文件编译，动态编译组件，可以实现在浏览器编写Vue代码，既改即生效快速开发。
 
 
-| 代码 | 效果 |
-|----|----|
-| ![](https://assets.magicboot.net/code.png)  | ![](https://assets.magicboot.net/system/1.png)  |
+| 代码                                         | 效果                                             |
+|--------------------------------------------|------------------------------------------------|
+| ![](https://assets.magicboot.net/code.png) | ![](https://assets.magicboot.net/system/1.png) |
 
 ## 交流群
 
-| 微信群 | QQ群 |
-| ----- | --- |
-| <img src="https://assets.magicboot.net/ljz-wx.png" alt="作者微信" width="320px"> | <img src="https://assets.magicboot.net/mb-qq-group.png" alt="QQ群" width="320px"> |
-| 备注：加群，邀您加入群聊| <a href="https://qm.qq.com/q/KZJ6zBrXqM" target="_blank">点击加入QQ群：576433387</a> |
+| 微信群                                                                          | QQ群                                                                              |
+|------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| <img src="https://assets.magicboot.net/ljz-wx.png" alt="作者微信" width="200px"> | <img src="https://assets.magicboot.net/mb-qq-group.png" alt="QQ群" width="200px"> |
+| 备注：加群，邀您加入群聊                                                                 | <a href="https://qm.qq.com/q/KZJ6zBrXqM" target="_blank">点击加入QQ群：576433387</a>   |
 
 ## 功能
 - 菜单管理：树结构，配置菜单、权限按钮、选择关联组件等，支持全局模糊搜索
